@@ -12,6 +12,7 @@ use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
 use App\Controllers\LessonController;
+use App\Controllers\PasswordResetController;
 use App\Controllers\ProgramController;
 use App\Controllers\ProgressController;
 use App\Router;
@@ -65,6 +66,12 @@ $router->get('/',          [HomeController::class, 'index']);
 $router->get('/login',     [AuthController::class, 'showLogin']);
 $router->post('/login',    [AuthController::class, 'login']);
 $router->post('/logout',   [AuthController::class, 'logout']);
+
+// Recuperación de contraseña (URL "secreta", sin enlaces desde la app).
+$router->get('/ctoadmin',                [PasswordResetController::class, 'show']);
+$router->post('/ctoadmin',               [PasswordResetController::class, 'request']);
+$router->get('/restablecer/{token}',     [PasswordResetController::class, 'showReset']);
+$router->post('/restablecer/{token}',    [PasswordResetController::class, 'reset']);
 
 // Área privada (los controladores verifican Auth::requireLogin internamente)
 $router->get('/dashboard',                       [DashboardController::class, 'index']);
