@@ -888,11 +888,57 @@ p { margin: 0 0 var(--space-3); }
 
 .confirm-form { margin: 0; }
 
+/* ---------- Batch import ---------- */
+
+.page-head-actions {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.batch-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.batch-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
+}
+.batch-card h2 { margin-bottom: var(--space-3); }
+.batch-card ul { padding-left: var(--space-5); }
+.batch-card li { margin-bottom: var(--space-1); }
+
+.batch-format {
+    background: var(--color-cream);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+}
+
+.batch-columns {
+    columns: 1;
+    column-gap: var(--space-5);
+    padding-left: var(--space-5);
+}
+.batch-columns li { margin-bottom: var(--space-1); break-inside: avoid; }
+
+.batch-errors {
+    color: var(--color-error-fg);
+}
+
 /* ---------- Breakpoints admin ---------- */
 
 @media (min-width: 640px) {
     .admin-shortcuts { grid-template-columns: repeat(2, 1fr); }
     .field-row       { grid-template-columns: 1fr 1fr; align-items: end; }
+    .batch-grid      { grid-template-columns: 1fr 1fr; }
+    .batch-columns   { columns: 2; }
 }
 
 /* ---------- Reducir movimiento si el usuario lo prefiere ---------- */

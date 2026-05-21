@@ -17,7 +17,10 @@ $pageTitle = 'Lecciones — ' . (string) $program['title'];
     </p>
     <div class="page-head-row">
         <h1>Lecciones — <?= e($program['title']) ?></h1>
-        <a class="button button-primary" href="/admin/programas/<?= e($program['id']) ?>/lecciones/nueva">Nueva lección</a>
+        <div class="page-head-actions">
+            <a class="button button-ghost" href="/admin/programas/<?= e($program['id']) ?>/batch">Cargar batch (XLSX)</a>
+            <a class="button button-primary" href="/admin/programas/<?= e($program['id']) ?>/lecciones/nueva">Nueva lección</a>
+        </div>
     </div>
 </section>
 

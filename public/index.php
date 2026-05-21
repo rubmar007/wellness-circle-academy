@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Auth;
+use App\Controllers\AdminBatchController;
 use App\Controllers\AdminController;
 use App\Controllers\AdminLessonsController;
 use App\Controllers\AdminProgramsController;
@@ -99,5 +100,10 @@ $router->get('/admin/lecciones/{id}/editar',                  [AdminLessonsContr
 $router->post('/admin/lecciones/{id}',                        [AdminLessonsController::class, 'update']);
 $router->get('/admin/lecciones/{id}/eliminar',                [AdminLessonsController::class, 'confirmDestroy']);
 $router->post('/admin/lecciones/{id}/eliminar',               [AdminLessonsController::class, 'destroy']);
+
+// Admin · carga batch de lecciones desde XLSX
+$router->get('/admin/programas/{id}/batch',             [AdminBatchController::class, 'show']);
+$router->post('/admin/programas/{id}/batch',            [AdminBatchController::class, 'process']);
+$router->get('/admin/programas/{id}/batch/plantilla',   [AdminBatchController::class, 'downloadTemplate']);
 
 $router->dispatch();
