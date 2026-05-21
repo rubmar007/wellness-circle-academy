@@ -76,35 +76,3 @@ final class View
         exit;
     }
 }
-
-/**
- * Escape de HTML. Helper global usado por las plantillas.
- */
-if (!function_exists('e')) {
-    function e(mixed $value): string
-    {
-        if ($value === null) {
-            return '';
-        }
-        if (is_bool($value)) {
-            return $value ? '1' : '0';
-        }
-        if (is_array($value) || is_object($value)) {
-            $value = json_encode($value, JSON_UNESCAPED_UNICODE);
-        }
-        return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    }
-}
-
-/**
- * Convierte texto plano a HTML preservando saltos de línea. Escapado siempre.
- */
-if (!function_exists('e_nl2br')) {
-    function e_nl2br(?string $value): string
-    {
-        if ($value === null || $value === '') {
-            return '';
-        }
-        return nl2br(htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'), false);
-    }
-}
