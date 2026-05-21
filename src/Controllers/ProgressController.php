@@ -80,10 +80,12 @@ final class ProgressController
         // Solo permitir redirecciones a rutas internas absolutas con un
         // conjunto restringido de caracteres. Bloquea // (open redirect),
         // protocol-relative URLs y cualquier carácter fuera del whitelist.
+        // Delimitador ~ a propósito: el patrón contiene # (fragment de ancla),
+        // y usar # como delimitador rompía el regex (cerraba prematuro).
         if ($back === '' || $back[0] !== '/' || str_starts_with($back, '//')) {
             return '/dashboard';
         }
-        if (preg_match('#^/[A-Za-z0-9_\-./#]*$#', $back) !== 1) {
+        if (preg_match('~^/[A-Za-z0-9_\-./#]*$~', $back) !== 1) {
             return '/dashboard';
         }
         return $back;
