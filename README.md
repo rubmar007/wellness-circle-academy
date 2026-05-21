@@ -108,13 +108,21 @@ Fases implementadas en el esqueleto:
 - [x] Estructura PSR-4, front controller, router minimal.
 - [x] Conexión PostgreSQL (Neon) desde `DATABASE_URL`.
 - [x] Esquema de BD: `users`, `programs`, `lessons`, `user_progress`, `login_attempts`.
-- [x] Auth: registro, login, logout, sesión, CSRF, rate limit.
-- [x] Layout, CSS mobile-first con la paleta del documento.
+- [x] Auth: login, logout, sesión, CSRF, rate limit. **Sin registro público** — los usuarios se crean por CLI (`bin/create-user.php`) o desde el panel admin (próxima fase).
+- [x] Layout, CSS mobile-first con la paleta del documento. La primera pantalla es el login.
 - [x] Dashboard de programas y vista de día con checklist.
 - [x] Botón "Copiar texto" (único JS permitido).
 - [x] Botón "Descargar imagen" (HTML puro).
-- [ ] Panel admin completo (crear/editar programas y lecciones, subir imágenes).
+- [ ] Panel admin completo (crear/editar programas, lecciones e usuarios, subir imágenes).
 - [ ] Despliegue en Railway.
+
+### Crear usuarios (mientras no exista la UI de admin)
+
+```bash
+php bin/create-user.php
+```
+
+El script pide nombre, email, rol (`admin` o `member`) y contraseña de forma interactiva (la contraseña no se muestra en pantalla ni queda en el historial del shell).
 
 ## Documentación final
 

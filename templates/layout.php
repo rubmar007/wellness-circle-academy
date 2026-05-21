@@ -44,9 +44,6 @@ $title = isset($pageTitle) && is_string($pageTitle) && $pageTitle !== ''
                         <input type="hidden" name="_csrf" value="<?= e($csrf) ?>">
                         <button type="submit" class="link-button">Cerrar sesión</button>
                     </form>
-                <?php else: ?>
-                    <a href="/login">Entrar</a>
-                    <a class="cta" href="/registro">Crear cuenta</a>
                 <?php endif; ?>
             </nav>
         </div>

@@ -56,12 +56,10 @@ Security::applyHeaders($isHttps);
 
 $router = new Router();
 
-// Públicas
+// Públicas (la home redirige a /login o /dashboard según sesión).
 $router->get('/',          [HomeController::class, 'index']);
 $router->get('/login',     [AuthController::class, 'showLogin']);
 $router->post('/login',    [AuthController::class, 'login']);
-$router->get('/registro',  [AuthController::class, 'showRegister']);
-$router->post('/registro', [AuthController::class, 'register']);
 $router->post('/logout',   [AuthController::class, 'logout']);
 
 // Área privada (los controladores verifican Auth::requireLogin internamente)

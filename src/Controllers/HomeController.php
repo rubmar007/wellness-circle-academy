@@ -14,8 +14,8 @@ final class HomeController
     {
         if (Auth::check()) {
             View::redirect('/dashboard');
+            return;
         }
-
-        View::render('home');
+        View::redirect('/login');
     }
 }
