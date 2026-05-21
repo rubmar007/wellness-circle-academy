@@ -61,10 +61,16 @@ final class Connection
             implode(';', $dsnExtras)
         );
 
+        // EMULATE_PREPARES=true: el escape de parámetros se hace en el cliente
+        // (PDO_pgsql) y manda SQL ya armado al servidor. Necesario para los
+        // poolers tipo pgbouncer (Neon usa uno propio) que no manejan bien
+        // múltiples prepared statements server-side dentro de la misma
+        // transacción cuando tocan tablas distintas. El escape de PDO_pgsql
+        // está probado y es seguro contra SQL injection.
         self::$instance = new PDO($dsn, $user, $pass, [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::ATTR_EMULATE_PREPARES   => true,
             PDO::ATTR_STRINGIFY_FETCHES  => false,
             PDO::ATTR_PERSISTENT         => false,
         ]);
