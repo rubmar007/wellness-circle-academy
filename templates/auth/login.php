@@ -53,6 +53,6 @@ $pageTitle = 'Entrar';
     </form>
 
     <p class="auth-footer">
-        ¿Aún no tienes cuenta? <a href="/registro">Crea una</a>.
+        ¿Aún no tienes cuenta? Contacta a tu Promotor para obtener una.
     </p>
 </section>
