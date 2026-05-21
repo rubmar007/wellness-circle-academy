@@ -89,6 +89,9 @@ $pageTitle = 'Cargar batch — ' . (string) $program['title'];
     <p class="muted small">
         <strong>Checklist:</strong> separa los ítems con el carácter <code>|</code> o con saltos de línea dentro de la misma celda.
         <strong>Publicado:</strong> usa <code>1</code> o <code>sí</code> para publicar, <code>0</code> o vacío para dejarlo en borrador.
+        <strong>URL imagen:</strong> pega un link de Google Drive (formato <code>https://drive.google.com/file/d/&hellip;</code>).
+        El archivo debe estar como <em>"cualquier persona con el enlace puede ver"</em>. El servidor descarga la imagen y la guarda como JPG/PNG/WebP. Tamaño máx. 5 MB.
+        Si la celda está vacía, se conserva la imagen actual de la lección (no se borra).
         Las filas completamente vacías se ignoran.
     </p>
 </section>

@@ -8,6 +8,8 @@ use App\Auth;
 use App\BatchImporter;
 use App\Csrf;
 use App\Database\Connection;
+use App\RemoteImage;
+use App\Upload;
 use App\View;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Common\Entity\Style\Border;
@@ -93,6 +95,7 @@ final class AdminBatchController
                 'Cuanto más natural sea tu publicación, más conexión genera. No fuerces el tono comercial.',
                 'Ya publiqué|Ya subí stories|Ya hablé con 3 personas|Ya vi el entrenamiento',
                 1,
+                '', // sin imagen en este ejemplo; pega un link de Drive aquí
             ],
             [
                 2,
@@ -105,6 +108,7 @@ final class AdminBatchController
                 'Tip o consejo para el día.',
                 'Item 1|Item 2|Item 3',
                 0,
+                'https://drive.google.com/file/d/REEMPLAZA-CON-TU-FILE-ID/view?usp=sharing',
             ],
         ];
 
@@ -195,15 +199,51 @@ final class AdminBatchController
         $created = [];
         $updated = [];
 
+        // Pre-procesar: descargar todas las imágenes ANTES de tocar la BD.
+        // Si una descarga falla, abortamos todo sin haber modificado nada.
+        // Las imágenes descargadas las guardamos para limpiar si falla algo después.
+        $downloadedPaths = [];
+        $rowImageLocal   = []; // lineNumber => path local (o null si no hay imagen)
+
+        try {
+            foreach ($result['rows'] as $row) {
+                $url = (string) ($row['data']['image_url'] ?? '');
+                if ($url === '') {
+                    $rowImageLocal[$row['lineNumber']] = null;
+                    continue;
+                }
+                try {
+                    $localPath = RemoteImage::fetchToUploads($url);
+                    $rowImageLocal[$row['lineNumber']] = $localPath;
+                    $downloadedPaths[] = $localPath;
+                } catch (Throwable $e) {
+                    throw new \RuntimeException('Fila ' . $row['lineNumber'] . ' (URL imagen): ' . $e->getMessage(), 0, $e);
+                }
+            }
+        } catch (Throwable $e) {
+            // Cleanup de imágenes ya descargadas; nada en BD aún.
+            foreach ($downloadedPaths as $p) {
+                Upload::deleteImage($p);
+            }
+            View::render('admin/batch/result', [
+                'program' => $program,
+                'success' => false,
+                'errors'  => [$e->getMessage()],
+                'created' => [],
+                'updated' => [],
+            ]);
+            return;
+        }
+
         try {
             $pdo->beginTransaction();
 
-            $existsStmt = $pdo->prepare('SELECT id FROM lessons WHERE program_id = :pid AND day_number = :day');
+            $existsStmt = $pdo->prepare('SELECT id, image_url FROM lessons WHERE program_id = :pid AND day_number = :day');
             $insertStmt = $pdo->prepare(
                 'INSERT INTO lessons (program_id, day_number, title, objective,
                     post_text, story_text, conversation_text, action_text, tip_text,
-                    checklist_items, is_published)
-                 VALUES (:pid, :day, :t, :obj, :post, :story, :conv, :act, :tip, :chk::jsonb, :pub)'
+                    checklist_items, is_published, image_url)
+                 VALUES (:pid, :day, :t, :obj, :post, :story, :conv, :act, :tip, :chk::jsonb, :pub, :img)'
             );
             $updateStmt = $pdo->prepare(
                 'UPDATE lessons
@@ -215,14 +255,26 @@ final class AdminBatchController
                         action_text = :act,
                         tip_text = :tip,
                         checklist_items = :chk::jsonb,
-                        is_published = :pub
+                        is_published = :pub,
+                        image_url = :img
                   WHERE id = :id'
             );
+
+            // Lista de imágenes viejas que quedarán huérfanas tras un UPDATE
+            // exitoso, para borrar del disco solo si la transacción commitea.
+            $imagesToDeleteOnCommit = [];
 
             foreach ($result['rows'] as $row) {
                 $data = $row['data'];
                 $existsStmt->execute([':pid' => $programId, ':day' => $data['day_number']]);
-                $existingId = $existsStmt->fetchColumn();
+                $existing = $existsStmt->fetch();
+
+                $newImage = $rowImageLocal[$row['lineNumber']] ?? null;
+                $finalImage = $newImage; // si trae imagen nueva, se usa
+                if ($newImage === null && $existing !== false) {
+                    // Sin imagen nueva: conserva la actual (no la borra).
+                    $finalImage = $existing['image_url'] ?? null;
+                }
 
                 $payload = [
                     ':t'     => $data['title'],
@@ -234,10 +286,16 @@ final class AdminBatchController
                     ':tip'   => self::nullable($data['tip_text']),
                     ':chk'   => json_encode($data['checklist_items'], JSON_UNESCAPED_UNICODE),
                     ':pub'   => $data['is_published'] ? 't' : 'f',
+                    ':img'   => ($finalImage !== null && $finalImage !== '') ? $finalImage : null,
                 ];
 
-                if ($existingId !== false) {
-                    $updateStmt->execute(array_merge($payload, [':id' => (int) $existingId]));
+                if ($existing !== false) {
+                    // Si subimos una imagen nueva, la vieja queda huérfana en disco.
+                    if ($newImage !== null && !empty($existing['image_url'])
+                        && $existing['image_url'] !== $newImage) {
+                        $imagesToDeleteOnCommit[] = (string) $existing['image_url'];
+                    }
+                    $updateStmt->execute(array_merge($payload, [':id' => (int) $existing['id']]));
                     $updated[] = ['day' => $data['day_number'], 'title' => $data['title']];
                 } else {
                     $insertStmt->execute(array_merge(
@@ -249,9 +307,19 @@ final class AdminBatchController
             }
 
             $pdo->commit();
+
+            // Commit OK: ahora sí limpiamos imágenes viejas que reemplazamos.
+            foreach ($imagesToDeleteOnCommit as $oldPath) {
+                Upload::deleteImage($oldPath);
+            }
         } catch (Throwable $e) {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
+            }
+            // Limpiar imágenes que descargamos: nada se guardó en BD, no hay
+            // por qué dejarlas huérfanas en disco.
+            foreach ($downloadedPaths as $p) {
+                Upload::deleteImage($p);
             }
             error_log('[wca] batch: fallo upsert: ' . $e->getMessage());
             View::render('admin/batch/result', [

@@ -28,7 +28,7 @@ use RuntimeException;
  */
 final class BatchImporter
 {
-    public const COLUMN_COUNT = 10;
+    public const COLUMN_COUNT = 11;
 
     public const HEADERS = [
         'day_number',
@@ -41,6 +41,7 @@ final class BatchImporter
         'tip_text',
         'checklist',
         'is_published',
+        'image_url',
     ];
 
     public const HEADERS_HUMAN = [
@@ -54,6 +55,7 @@ final class BatchImporter
         'Tip',
         'Checklist (ítems separados por |)',
         'Publicado (1/0)',
+        'URL imagen (Google Drive)',
     ];
 
     /**
@@ -174,6 +176,7 @@ final class BatchImporter
             'tip_text'          => $this->cleanLongText($values[7]),
             'checklist_items'   => $this->parseChecklist($values[8]),
             'is_published'      => $this->parseBool($values[9]),
+            'image_url'         => trim($values[10]),
         ];
     }
 
@@ -251,6 +254,13 @@ final class BatchImporter
         $checklistTotal = array_sum(array_map('mb_strlen', $row['checklist_items']));
         if ($checklistTotal > 4000) {
             $errors[] = 'Checklist demasiado larga (máx. 4000 caracteres entre todos los ítems).';
+        }
+
+        if ($row['image_url'] !== '' && mb_strlen($row['image_url']) > 500) {
+            $errors[] = 'URL de imagen demasiado larga (máx. 500 caracteres).';
+        }
+        if ($row['image_url'] !== '' && !str_starts_with($row['image_url'], 'https://')) {
+            $errors[] = 'La URL de imagen debe empezar con https:// (link de Google Drive).';
         }
 
         return $errors;
