@@ -28,7 +28,7 @@ use RuntimeException;
  */
 final class BatchImporter
 {
-    public const COLUMN_COUNT = 11;
+    public const COLUMN_COUNT = 13;
 
     public const HEADERS = [
         'day_number',
@@ -42,6 +42,8 @@ final class BatchImporter
         'checklist',
         'is_published',
         'image_url',
+        'video_url',
+        'download_url',
     ];
 
     public const HEADERS_HUMAN = [
@@ -56,6 +58,8 @@ final class BatchImporter
         'Checklist (ítems separados por |)',
         'Publicado (1/0)',
         'URL imagen (Google Drive)',
+        'URL video (YouTube/Vimeo)',
+        'URL descarga (Google Drive)',
     ];
 
     /**
@@ -177,6 +181,8 @@ final class BatchImporter
             'checklist_items'   => $this->parseChecklist($values[8]),
             'is_published'      => $this->parseBool($values[9]),
             'image_url'         => trim($values[10]),
+            'video_url'         => trim($values[11]),
+            'download_url'      => trim($values[12]),
         ];
     }
 
@@ -261,6 +267,22 @@ final class BatchImporter
         }
         if ($row['image_url'] !== '' && !str_starts_with($row['image_url'], 'https://')) {
             $errors[] = 'La URL de imagen debe empezar con https:// (link de Google Drive).';
+        }
+
+        if ($row['video_url'] !== '') {
+            if (mb_strlen($row['video_url']) > 500) {
+                $errors[] = 'URL de video demasiado larga (máx. 500 caracteres).';
+            } elseif (\App\Embed::parseVideo($row['video_url']) === null) {
+                $errors[] = 'URL de video inválida (solo YouTube y Vimeo).';
+            }
+        }
+
+        if ($row['download_url'] !== '') {
+            if (mb_strlen($row['download_url']) > 500) {
+                $errors[] = 'URL de descarga demasiado larga (máx. 500 caracteres).';
+            } elseif (\App\Embed::sanitizeDownloadUrl($row['download_url']) === null) {
+                $errors[] = 'URL de descarga inválida (solo links de Google Drive).';
+            }
         }
 
         return $errors;

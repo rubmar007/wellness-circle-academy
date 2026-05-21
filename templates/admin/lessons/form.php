@@ -118,6 +118,40 @@ $action    = $isCreate
     </div>
 
     <div class="field">
+        <label for="video_url">URL de video (YouTube o Vimeo)</label>
+        <input
+            type="url"
+            id="video_url"
+            name="video_url"
+            value="<?= e($old['video_url'] ?? '') ?>"
+            maxlength="500"
+            autocapitalize="none"
+            spellcheck="false"
+            placeholder="https://www.youtube.com/watch?v=...">
+        <small class="field-hint">Si está vacío, no se muestra la sección de video.</small>
+        <?php if (!empty($errors['video_url'])): ?>
+            <small class="field-error"><?= e($errors['video_url']) ?></small>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="download_url">URL de descarga (Google Drive)</label>
+        <input
+            type="url"
+            id="download_url"
+            name="download_url"
+            value="<?= e($old['download_url'] ?? '') ?>"
+            maxlength="500"
+            autocapitalize="none"
+            spellcheck="false"
+            placeholder="https://drive.google.com/file/d/...">
+        <small class="field-hint">El archivo debe estar como "cualquier persona con el enlace puede ver". Si está vacío, no se muestra la sección.</small>
+        <?php if (!empty($errors['download_url'])): ?>
+            <small class="field-error"><?= e($errors['download_url']) ?></small>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
         <label for="checklist_text">Checklist (un ítem por línea)</label>
         <textarea id="checklist_text" name="checklist_text" rows="5" maxlength="4000" placeholder="Ya publiqué&#10;Ya subí stories&#10;Ya hablé con 3 personas"><?= e($old['checklist_text'] ?? '') ?></textarea>
         <small class="field-hint">Máximo 20 ítems, 200 caracteres por ítem.</small>

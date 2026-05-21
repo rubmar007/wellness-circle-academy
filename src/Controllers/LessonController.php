@@ -45,6 +45,8 @@ final class LessonController
                     l.action_text,
                     l.tip_text,
                     l.image_url,
+                    l.video_url,
+                    l.download_url,
                     l.checklist_items
                FROM lessons l
                JOIN programs p ON p.id = l.program_id

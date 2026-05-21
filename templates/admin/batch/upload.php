@@ -91,7 +91,9 @@ $pageTitle = 'Cargar batch — ' . (string) $program['title'];
         <strong>Publicado:</strong> usa <code>1</code> o <code>sí</code> para publicar, <code>0</code> o vacío para dejarlo en borrador.
         <strong>URL imagen:</strong> pega un link de Google Drive (formato <code>https://drive.google.com/file/d/&hellip;</code>).
         El archivo debe estar como <em>"cualquier persona con el enlace puede ver"</em>. El servidor descarga la imagen y la guarda como JPG/PNG/WebP. Tamaño máx. 5 MB.
-        Si la celda está vacía, se conserva la imagen actual de la lección (no se borra).
+        <strong>URL video:</strong> link de <em>YouTube</em> o <em>Vimeo</em>. La sección de video solo aparece para el miembro si esta celda tiene una URL válida.
+        <strong>URL descarga:</strong> link de Google Drive a un archivo que los miembros podrán abrir. Aparece como botón "Abrir descarga en Drive".
+        Si cualquiera de las tres URLs viene vacía, se conserva el valor actual de la lección (no se limpia).
         Las filas completamente vacías se ignoran.
     </p>
 </section>

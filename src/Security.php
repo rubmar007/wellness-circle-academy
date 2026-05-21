@@ -23,6 +23,7 @@ final class Security
 
         // Content Security Policy estricta. El único script permitido es el inline
         // o externo del propio origen cuyo nonce coincida con el de la respuesta.
+        // frame-src permite embeber videos de YouTube (sin cookies) y Vimeo.
         $csp = [
             "default-src 'self'",
             "base-uri 'self'",
@@ -34,6 +35,7 @@ final class Security
             "script-src 'self' 'nonce-{$nonce}'",
             "object-src 'none'",
             "connect-src 'self'",
+            "frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com https://player.vimeo.com",
         ];
 
         header('Content-Security-Policy: ' . implode('; ', $csp));

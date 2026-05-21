@@ -78,6 +78,42 @@ $renderCopyCard = function (string $title, ?string $body, string $idPrefix) use 
     </article>
 <?php endif; ?>
 
+<?php
+$video = \App\Embed::parseVideo($lesson['video_url'] ?? null);
+if ($video !== null):
+?>
+    <article class="video-card">
+        <h2><?= e($video['title']) ?></h2>
+        <div class="video-frame">
+            <iframe
+                src="<?= e($video['embed_url']) ?>"
+                title="<?= e($video['title']) ?>"
+                loading="lazy"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+        </div>
+    </article>
+<?php endif; ?>
+
+<?php
+$downloadUrl = \App\Embed::sanitizeDownloadUrl($lesson['download_url'] ?? null);
+if ($downloadUrl !== null):
+?>
+    <article class="info-card">
+        <h2>Contenido descargable</h2>
+        <p class="muted">Archivo alojado en Google Drive. Se abre en una nueva pestaña.</p>
+        <p>
+            <a class="button button-primary"
+               href="<?= e($downloadUrl) ?>"
+               target="_blank"
+               rel="noopener noreferrer">
+                Abrir descarga en Drive
+            </a>
+        </p>
+    </article>
+<?php endif; ?>
+
 <?php if (!empty($lesson['action_text'])): ?>
     <article class="info-card">
         <h2>Acción del día</h2>

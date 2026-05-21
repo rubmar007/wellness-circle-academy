@@ -73,6 +73,8 @@ final class AdminLessonsController
                 'tip_text'          => '',
                 'checklist_text'    => '',
                 'is_published'      => '',
+                'video_url'         => '',
+                'download_url'      => '',
             ],
         ]);
     }
@@ -118,23 +120,25 @@ final class AdminLessonsController
         $stmt = Connection::get()->prepare(
             'INSERT INTO lessons (program_id, day_number, title, objective,
                 post_text, story_text, conversation_text, action_text, tip_text,
-                image_url, checklist_items, is_published)
+                image_url, video_url, download_url, checklist_items, is_published)
              VALUES (:pid, :day, :t, :obj, :post, :story, :conv, :act, :tip,
-                :img, :chk::jsonb, :pub)'
+                :img, :video, :download, :chk::jsonb, :pub)'
         );
         $stmt->execute([
-            ':pid'   => $programId,
-            ':day'   => (int) $data['day_number'],
-            ':t'     => $data['title'],
-            ':obj'   => self::nullable($data['objective']),
-            ':post'  => self::nullable($data['post_text']),
-            ':story' => self::nullable($data['story_text']),
-            ':conv'  => self::nullable($data['conversation_text']),
-            ':act'   => self::nullable($data['action_text']),
-            ':tip'   => self::nullable($data['tip_text']),
-            ':img'   => $imageUrl !== '' ? $imageUrl : null,
-            ':chk'   => json_encode($checklist, JSON_UNESCAPED_UNICODE),
-            ':pub'   => $data['is_published'] === '1' ? 't' : 'f',
+            ':pid'      => $programId,
+            ':day'      => (int) $data['day_number'],
+            ':t'        => $data['title'],
+            ':obj'      => self::nullable($data['objective']),
+            ':post'     => self::nullable($data['post_text']),
+            ':story'    => self::nullable($data['story_text']),
+            ':conv'     => self::nullable($data['conversation_text']),
+            ':act'      => self::nullable($data['action_text']),
+            ':tip'      => self::nullable($data['tip_text']),
+            ':img'      => $imageUrl !== '' ? $imageUrl : null,
+            ':video'    => self::nullable($data['video_url']),
+            ':download' => self::nullable($data['download_url']),
+            ':chk'      => json_encode($checklist, JSON_UNESCAPED_UNICODE),
+            ':pub'      => $data['is_published'] === '1' ? 't' : 'f',
         ]);
 
         self::setFlash('Lección creada.');
@@ -174,6 +178,8 @@ final class AdminLessonsController
                 'tip_text'          => (string) $lesson['tip_text'],
                 'checklist_text'    => self::checklistToText($lesson['checklist_items']),
                 'is_published'      => $lesson['is_published'] ? '1' : '',
+                'video_url'         => (string) ($lesson['video_url']    ?? ''),
+                'download_url'      => (string) ($lesson['download_url'] ?? ''),
             ],
         ]);
     }
@@ -237,23 +243,27 @@ final class AdminLessonsController
                     action_text = :act,
                     tip_text = :tip,
                     image_url = :img,
+                    video_url = :video,
+                    download_url = :download,
                     checklist_items = :chk::jsonb,
                     is_published = :pub
               WHERE id = :id'
         );
         $stmt->execute([
-            ':day'   => (int) $data['day_number'],
-            ':t'     => $data['title'],
-            ':obj'   => self::nullable($data['objective']),
-            ':post'  => self::nullable($data['post_text']),
-            ':story' => self::nullable($data['story_text']),
-            ':conv'  => self::nullable($data['conversation_text']),
-            ':act'   => self::nullable($data['action_text']),
-            ':tip'   => self::nullable($data['tip_text']),
-            ':img'   => $imageUrl !== '' && $imageUrl !== null ? $imageUrl : null,
-            ':chk'   => json_encode($checklist, JSON_UNESCAPED_UNICODE),
-            ':pub'   => $data['is_published'] === '1' ? 't' : 'f',
-            ':id'    => $id,
+            ':day'      => (int) $data['day_number'],
+            ':t'        => $data['title'],
+            ':obj'      => self::nullable($data['objective']),
+            ':post'     => self::nullable($data['post_text']),
+            ':story'    => self::nullable($data['story_text']),
+            ':conv'     => self::nullable($data['conversation_text']),
+            ':act'      => self::nullable($data['action_text']),
+            ':tip'      => self::nullable($data['tip_text']),
+            ':img'      => $imageUrl !== '' && $imageUrl !== null ? $imageUrl : null,
+            ':video'    => self::nullable($data['video_url']),
+            ':download' => self::nullable($data['download_url']),
+            ':chk'      => json_encode($checklist, JSON_UNESCAPED_UNICODE),
+            ':pub'      => $data['is_published'] === '1' ? 't' : 'f',
+            ':id'       => $id,
         ]);
 
         self::setFlash('Lección actualizada.');
@@ -313,7 +323,7 @@ final class AdminLessonsController
      *   day_number:string, title:string, objective:string,
      *   post_text:string, story_text:string, conversation_text:string,
      *   action_text:string, tip_text:string, checklist_text:string,
-     *   is_published:string
+     *   is_published:string, video_url:string, download_url:string
      * }
      */
     private static function extractInput(): array
@@ -329,6 +339,8 @@ final class AdminLessonsController
             'tip_text'          => (string) ($_POST['tip_text'] ?? ''),
             'checklist_text'    => (string) ($_POST['checklist_text'] ?? ''),
             'is_published'      => isset($_POST['is_published']) ? '1' : '',
+            'video_url'         => trim((string) ($_POST['video_url'] ?? '')),
+            'download_url'      => trim((string) ($_POST['download_url'] ?? '')),
         ];
     }
 
@@ -353,6 +365,22 @@ final class AdminLessonsController
         }
         if (mb_strlen($data['checklist_text']) > 4000) {
             $errors['checklist_text'] = 'Checklist demasiado larga (máx. 4000 caracteres).';
+        }
+
+        if ($data['video_url'] !== '') {
+            if (mb_strlen($data['video_url']) > 500) {
+                $errors['video_url'] = 'URL de video demasiado larga (máx. 500 caracteres).';
+            } elseif (\App\Embed::parseVideo($data['video_url']) === null) {
+                $errors['video_url'] = 'URL inválida. Solo se aceptan YouTube y Vimeo.';
+            }
+        }
+
+        if ($data['download_url'] !== '') {
+            if (mb_strlen($data['download_url']) > 500) {
+                $errors['download_url'] = 'URL de descarga demasiado larga (máx. 500 caracteres).';
+            } elseif (\App\Embed::sanitizeDownloadUrl($data['download_url']) === null) {
+                $errors['download_url'] = 'URL inválida. Solo se aceptan links de Google Drive.';
+            }
         }
 
         if (!isset($errors['day_number'])) {

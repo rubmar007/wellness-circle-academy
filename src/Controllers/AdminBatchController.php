@@ -95,7 +95,9 @@ final class AdminBatchController
                 'Cuanto más natural sea tu publicación, más conexión genera. No fuerces el tono comercial.',
                 'Ya publiqué|Ya subí stories|Ya hablé con 3 personas|Ya vi el entrenamiento',
                 1,
-                '', // sin imagen en este ejemplo; pega un link de Drive aquí
+                '', // imagen (Drive)
+                '', // video (YouTube/Vimeo)
+                '', // descarga (Drive)
             ],
             [
                 2,
@@ -108,6 +110,8 @@ final class AdminBatchController
                 'Tip o consejo para el día.',
                 'Item 1|Item 2|Item 3',
                 0,
+                'https://drive.google.com/file/d/REEMPLAZA-CON-TU-FILE-ID/view?usp=sharing',
+                'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
                 'https://drive.google.com/file/d/REEMPLAZA-CON-TU-FILE-ID/view?usp=sharing',
             ],
         ];
@@ -238,12 +242,16 @@ final class AdminBatchController
         try {
             $pdo->beginTransaction();
 
-            $existsStmt = $pdo->prepare('SELECT id, image_url FROM lessons WHERE program_id = :pid AND day_number = :day');
+            $existsStmt = $pdo->prepare(
+                'SELECT id, image_url, video_url, download_url
+                   FROM lessons WHERE program_id = :pid AND day_number = :day'
+            );
             $insertStmt = $pdo->prepare(
                 'INSERT INTO lessons (program_id, day_number, title, objective,
                     post_text, story_text, conversation_text, action_text, tip_text,
-                    checklist_items, is_published, image_url)
-                 VALUES (:pid, :day, :t, :obj, :post, :story, :conv, :act, :tip, :chk::jsonb, :pub, :img)'
+                    checklist_items, is_published, image_url, video_url, download_url)
+                 VALUES (:pid, :day, :t, :obj, :post, :story, :conv, :act, :tip,
+                    :chk::jsonb, :pub, :img, :video, :download)'
             );
             $updateStmt = $pdo->prepare(
                 'UPDATE lessons
@@ -256,7 +264,9 @@ final class AdminBatchController
                         tip_text = :tip,
                         checklist_items = :chk::jsonb,
                         is_published = :pub,
-                        image_url = :img
+                        image_url = :img,
+                        video_url = :video,
+                        download_url = :download
                   WHERE id = :id'
             );
 
@@ -276,17 +286,30 @@ final class AdminBatchController
                     $finalImage = $existing['image_url'] ?? null;
                 }
 
+                // video_url y download_url: si la celda viene vacía en el XLSX,
+                // se conserva el valor actual de la BD (no se limpia). Para
+                // limpiar el campo hay que editar la lección desde el form.
+                $videoFinal = $data['video_url'] !== ''
+                    ? $data['video_url']
+                    : ($existing !== false ? ($existing['video_url'] ?? null) : null);
+
+                $downloadFinal = $data['download_url'] !== ''
+                    ? $data['download_url']
+                    : ($existing !== false ? ($existing['download_url'] ?? null) : null);
+
                 $payload = [
-                    ':t'     => $data['title'],
-                    ':obj'   => self::nullable($data['objective']),
-                    ':post'  => self::nullable($data['post_text']),
-                    ':story' => self::nullable($data['story_text']),
-                    ':conv'  => self::nullable($data['conversation_text']),
-                    ':act'   => self::nullable($data['action_text']),
-                    ':tip'   => self::nullable($data['tip_text']),
-                    ':chk'   => json_encode($data['checklist_items'], JSON_UNESCAPED_UNICODE),
-                    ':pub'   => $data['is_published'] ? 't' : 'f',
-                    ':img'   => ($finalImage !== null && $finalImage !== '') ? $finalImage : null,
+                    ':t'        => $data['title'],
+                    ':obj'      => self::nullable($data['objective']),
+                    ':post'     => self::nullable($data['post_text']),
+                    ':story'    => self::nullable($data['story_text']),
+                    ':conv'     => self::nullable($data['conversation_text']),
+                    ':act'      => self::nullable($data['action_text']),
+                    ':tip'      => self::nullable($data['tip_text']),
+                    ':chk'      => json_encode($data['checklist_items'], JSON_UNESCAPED_UNICODE),
+                    ':pub'      => $data['is_published'] ? 't' : 'f',
+                    ':img'      => ($finalImage !== null && $finalImage !== '') ? $finalImage : null,
+                    ':video'    => ($videoFinal    !== null && $videoFinal    !== '') ? $videoFinal    : null,
+                    ':download' => ($downloadFinal !== null && $downloadFinal !== '') ? $downloadFinal : null,
                 ];
 
                 if ($existing !== false) {
