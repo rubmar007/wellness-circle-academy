@@ -654,6 +654,247 @@ p { margin: 0 0 var(--space-3); }
     .main-area     { padding-top: var(--space-6); padding-bottom: var(--space-6); }
 }
 
+/* ---------- Admin: cabeceras, tablas, badges ---------- */
+
+.page-head-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.stat-card-link {
+    text-decoration: none;
+    color: inherit;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.stat-card-link:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.admin-shortcuts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin: var(--space-5) 0;
+}
+
+.admin-shortcut {
+    display: block;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-gold);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow-sm);
+}
+.admin-shortcut:hover { background: var(--color-sky-soft); }
+.admin-shortcut h2 { margin-bottom: var(--space-2); }
+.admin-shortcut p  { color: var(--color-text-muted); margin: 0; }
+
+.table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-white);
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+}
+
+.admin-table thead th {
+    background: var(--color-sky-soft);
+    color: var(--color-navy);
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.admin-table tbody td {
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+}
+
+.admin-table tbody tr:last-child td { border-bottom: 0; }
+.admin-table tbody tr:hover { background: var(--color-cream); }
+
+.admin-table code {
+    background: var(--color-cream);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+}
+
+.ta-right { text-align: right; }
+
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid transparent;
+}
+.badge-gold    { background: var(--color-gold-soft); color: #6b4a17; border-color: #e2cda6; }
+.badge-sky     { background: var(--color-sky-soft);  color: var(--color-navy); border-color: #bcd9eb; }
+.badge-success { background: var(--color-success-bg); color: var(--color-success-fg); border-color: #b8e0c5; }
+.badge-muted   { background: #eef1f5; color: var(--color-text-muted); border-color: var(--color-border); }
+.badge-error   { background: var(--color-error-bg); color: var(--color-error-fg); border-color: #f5c6c0; }
+
+/* ---------- Admin: formularios ---------- */
+
+.admin-form {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    box-shadow: var(--shadow-sm);
+    max-width: 760px;
+}
+
+.admin-form textarea {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.55;
+    background: var(--color-white);
+    color: var(--color-text);
+    resize: vertical;
+    min-height: 80px;
+}
+.admin-form textarea:focus {
+    outline: 3px solid var(--color-gold);
+    outline-offset: 1px;
+    border-color: var(--color-navy);
+}
+
+.admin-form select {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    background: var(--color-white);
+    color: var(--color-text);
+    min-height: 44px;
+}
+.admin-form select:focus {
+    outline: 3px solid var(--color-gold);
+    outline-offset: 1px;
+    border-color: var(--color-navy);
+}
+
+.admin-form input[type="file"] {
+    width: 100%;
+    padding: var(--space-2);
+    background: var(--color-cream);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+}
+
+.field-checkbox label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: 500;
+    cursor: pointer;
+}
+.field-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+}
+
+.field-hint-inline {
+    color: var(--color-text-muted);
+    font-weight: normal;
+    font-size: 0.875rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: flex-end;
+    margin-top: var(--space-5);
+    flex-wrap: wrap;
+}
+
+.form-image-current {
+    margin: 0 0 var(--space-3);
+}
+.form-image-current img {
+    max-width: 280px;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    margin-bottom: var(--space-1);
+}
+
+/* ---------- Botones extra ---------- */
+
+.button-sm {
+    padding: 0.45rem 0.8rem;
+    font-size: 0.875rem;
+    min-height: 36px;
+    border-radius: var(--radius-sm);
+}
+
+.button-danger {
+    background: var(--color-error-bg);
+    color: var(--color-error-fg);
+    border-color: #f5c6c0;
+}
+.button-danger:hover {
+    background: #f8d7d4;
+    color: var(--color-error-fg);
+}
+
+/* ---------- Confirmaciones de borrado ---------- */
+
+.confirm-box {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-error-fg);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    max-width: 640px;
+    box-shadow: var(--shadow-sm);
+}
+
+.confirm-form { margin: 0; }
+
+/* ---------- Breakpoints admin ---------- */
+
+@media (min-width: 640px) {
+    .admin-shortcuts { grid-template-columns: repeat(2, 1fr); }
+    .field-row       { grid-template-columns: 1fr 1fr; align-items: end; }
+}
+
 /* ---------- Reducir movimiento si el usuario lo prefiere ---------- */
 
 @media (prefers-reduced-motion: reduce) {

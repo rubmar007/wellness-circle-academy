@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use App\Auth;
 use App\Controllers\AdminController;
+use App\Controllers\AdminLessonsController;
+use App\Controllers\AdminProgramsController;
+use App\Controllers\AdminUsersController;
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
@@ -70,5 +73,31 @@ $router->post('/progreso',                       [ProgressController::class,  't
 
 // Admin (los controladores verifican Auth::requireAdmin internamente)
 $router->get('/admin',     [AdminController::class, 'index']);
+
+// Admin · usuarios
+$router->get('/admin/usuarios',              [AdminUsersController::class, 'index']);
+$router->get('/admin/usuarios/nuevo',        [AdminUsersController::class, 'create']);
+$router->post('/admin/usuarios',             [AdminUsersController::class, 'store']);
+$router->get('/admin/usuarios/{id}/editar',  [AdminUsersController::class, 'edit']);
+$router->post('/admin/usuarios/{id}',        [AdminUsersController::class, 'update']);
+$router->post('/admin/usuarios/{id}/toggle', [AdminUsersController::class, 'toggleActive']);
+
+// Admin · programas
+$router->get('/admin/programas',                [AdminProgramsController::class, 'index']);
+$router->get('/admin/programas/nuevo',          [AdminProgramsController::class, 'create']);
+$router->post('/admin/programas',               [AdminProgramsController::class, 'store']);
+$router->get('/admin/programas/{id}/editar',    [AdminProgramsController::class, 'edit']);
+$router->post('/admin/programas/{id}',          [AdminProgramsController::class, 'update']);
+$router->get('/admin/programas/{id}/eliminar',  [AdminProgramsController::class, 'confirmDestroy']);
+$router->post('/admin/programas/{id}/eliminar', [AdminProgramsController::class, 'destroy']);
+
+// Admin · lecciones (anidadas bajo el programa para crear/listar; sueltas para editar/eliminar)
+$router->get('/admin/programas/{programId}/lecciones',        [AdminLessonsController::class, 'index']);
+$router->get('/admin/programas/{programId}/lecciones/nueva',  [AdminLessonsController::class, 'create']);
+$router->post('/admin/programas/{programId}/lecciones',       [AdminLessonsController::class, 'store']);
+$router->get('/admin/lecciones/{id}/editar',                  [AdminLessonsController::class, 'edit']);
+$router->post('/admin/lecciones/{id}',                        [AdminLessonsController::class, 'update']);
+$router->get('/admin/lecciones/{id}/eliminar',                [AdminLessonsController::class, 'confirmDestroy']);
+$router->post('/admin/lecciones/{id}/eliminar',               [AdminLessonsController::class, 'destroy']);
 
 $router->dispatch();

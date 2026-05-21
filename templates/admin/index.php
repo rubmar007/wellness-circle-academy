@@ -8,30 +8,38 @@ $pageTitle = 'Panel admin';
 ?>
 <section class="page-head">
     <h1>Panel de administración</h1>
-    <p class="muted">Resumen y accesos rápidos. La gestión completa se añadirá en la próxima fase.</p>
+    <p class="muted">Resumen y accesos rápidos.</p>
 </section>
 
 <section class="stats-row">
-    <div class="stat-card">
+    <a class="stat-card stat-card-link" href="/admin/usuarios">
         <span class="stat-card-value"><?= e($totals['users']) ?></span>
         <span class="stat-card-label">usuarios</span>
-    </div>
-    <div class="stat-card">
+    </a>
+    <a class="stat-card stat-card-link" href="/admin/programas">
         <span class="stat-card-value"><?= e($totals['programs']) ?></span>
         <span class="stat-card-label">programas</span>
-    </div>
-    <div class="stat-card">
+    </a>
+    <a class="stat-card stat-card-link" href="/admin/programas">
         <span class="stat-card-value"><?= e($totals['lessons']) ?></span>
         <span class="stat-card-label">lecciones</span>
-    </div>
+    </a>
 </section>
 
-<section>
-    <h2>Programas</h2>
+<section class="admin-shortcuts">
+    <a class="admin-shortcut" href="/admin/usuarios">
+        <h2>Usuarios</h2>
+        <p>Crear, editar y activar/desactivar cuentas de miembros y administradores.</p>
+    </a>
+    <a class="admin-shortcut" href="/admin/programas">
+        <h2>Programas y lecciones</h2>
+        <p>Crear y editar programas, gestionar sus lecciones, subir imágenes y publicar contenido.</p>
+    </a>
+</section>
 
-    <?php if ($programs === []): ?>
-        <p class="empty-state">No hay programas creados todavía.</p>
-    <?php else: ?>
+<?php if ($programs !== []): ?>
+    <section>
+        <h2>Programas existentes</h2>
         <ul class="admin-list">
             <?php foreach ($programs as $program): ?>
                 <li class="admin-list-item">
@@ -41,13 +49,9 @@ $pageTitle = 'Panel admin';
                         ·
                         <?= $program['is_published'] ? 'publicado' : 'borrador' ?>
                     </span>
+                    <a class="button button-ghost button-sm" href="/admin/programas/<?= e($program['id']) ?>/editar">Editar</a>
                 </li>
             <?php endforeach; ?>
         </ul>
-    <?php endif; ?>
-</section>
-
-<p class="muted small">
-    La creación/edición de programas y lecciones desde la UI se implementará en la siguiente fase.
-    Por ahora, los administradores pueden cargar contenido directamente en la base de datos.
-</p>
+    </section>
+<?php endif; ?>
