@@ -35,14 +35,30 @@ final class Connection
         if (!empty($parts['query'])) {
             parse_str($parts['query'], $query);
         }
-        $sslmode = isset($query['sslmode']) && is_string($query['sslmode']) ? $query['sslmode'] : 'require';
+
+        // Parámetros de libpq que aceptamos en la URL. Se validan estrictamente
+        // antes de incrustarse en el DSN para evitar inyección de opciones.
+        $allowed = ['sslmode', 'channel_binding', 'connect_timeout', 'application_name', 'sslrootcert'];
+        $dsnExtras = [];
+        foreach ($allowed as $key) {
+            if (!isset($query[$key]) || !is_string($query[$key]) || $query[$key] === '') {
+                continue;
+            }
+            if (preg_match('/^[A-Za-z0-9._\\-\\/]+$/', $query[$key]) !== 1) {
+                continue;
+            }
+            $dsnExtras[] = $key . '=' . $query[$key];
+        }
+        if (!isset($query['sslmode'])) {
+            $dsnExtras[] = 'sslmode=require';
+        }
 
         $dsn = sprintf(
-            'pgsql:host=%s;port=%d;dbname=%s;sslmode=%s',
+            'pgsql:host=%s;port=%d;dbname=%s;%s',
             $host,
             (int) $port,
             $db,
-            $sslmode
+            implode(';', $dsnExtras)
         );
 
         self::$instance = new PDO($dsn, $user, $pass, [
