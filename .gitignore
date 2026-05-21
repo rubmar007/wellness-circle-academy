@@ -1,0 +1,26 @@
+# Dependencias
+/vendor/
+
+# Variables de entorno (NUNCA committear)
+/.env
+/.env.local
+/.env.*.local
+
+# Uploads de desarrollo local (sin contenido real)
+/public/assets/uploads/*
+!/public/assets/uploads/.gitkeep
+!/public/assets/uploads/.htaccess
+
+# Editores / SO
+/.idea/
+/.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+/storage/logs/
+/tmp/
+
+# Composer
+composer.phar

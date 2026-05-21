@@ -1,0 +1,31 @@
+# Carpeta de uploads — solo servir archivos estáticos, jamás ejecutar nada.
+# Esta defensa es crítica: si alguien lograra subir un .php disfrazado,
+# Apache lo trataría como texto plano y no lo ejecutaría.
+
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+
+# Quitar handlers ejecutables conocidos.
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phps .pht
+RemoveType    .php .phtml .php3 .php4 .php5 .php7 .php8 .phps .pht
+
+# Forzar Content-Type seguro para cualquier cosa que se sirva desde aquí.
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# Solo permitir tipos de archivo whitelisteados.
+<FilesMatch "\.(jpe?g|png|webp|gif|svg)$">
+    Require all granted
+</FilesMatch>
+
+<FilesMatch "^(?!.*\.(jpe?g|png|webp|gif|svg)$).*$">
+    Require all denied
+</FilesMatch>
