@@ -97,16 +97,18 @@ $renderCopyCard = function (string $title, ?string $body, string $idPrefix) use 
         <h2>Checklist</h2>
         <ul class="checklist">
             <?php foreach ($checklist as $i => $label):
-                $isDone = isset($completedSet[(int) $i]);
-                $action = $isDone ? 'uncheck' : 'check';
+                $isDone   = isset($completedSet[(int) $i]);
+                $action   = $isDone ? 'uncheck' : 'check';
+                $itemId   = 'chk-' . (int) $i;
+                $backWithAnchor = $backPath . '#' . $itemId;
             ?>
-                <li class="checklist-item <?= $isDone ? 'checklist-item-done' : '' ?>">
+                <li id="<?= e($itemId) ?>" class="checklist-item <?= $isDone ? 'checklist-item-done' : '' ?>">
                     <form method="post" action="/progreso" class="checklist-form">
                         <input type="hidden" name="_csrf"     value="<?= e($csrf) ?>">
                         <input type="hidden" name="lesson_id" value="<?= e($lesson['lesson_id']) ?>">
                         <input type="hidden" name="item_index" value="<?= e($i) ?>">
                         <input type="hidden" name="action"    value="<?= e($action) ?>">
-                        <input type="hidden" name="back"      value="<?= e($backPath) ?>">
+                        <input type="hidden" name="back"      value="<?= e($backWithAnchor) ?>">
                         <button type="submit" class="checklist-toggle" aria-pressed="<?= $isDone ? 'true' : 'false' ?>">
                             <span class="checklist-box" aria-hidden="true"><?= $isDone ? '✓' : '' ?></span>
                             <span class="checklist-label"><?= e($label) ?></span>

@@ -77,8 +77,13 @@ final class ProgressController
 
     private function sanitizeBack(string $back): string
     {
-        // Solo permitir redirecciones a rutas internas absolutas.
+        // Solo permitir redirecciones a rutas internas absolutas con un
+        // conjunto restringido de caracteres. Bloquea // (open redirect),
+        // protocol-relative URLs y cualquier carácter fuera del whitelist.
         if ($back === '' || $back[0] !== '/' || str_starts_with($back, '//')) {
+            return '/dashboard';
+        }
+        if (preg_match('#^/[A-Za-z0-9_\-./#]*$#', $back) !== 1) {
             return '/dashboard';
         }
         return $back;
