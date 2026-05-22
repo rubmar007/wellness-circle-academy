@@ -45,6 +45,18 @@ require $basePath . '/vendor/autoload.php';
 
 Env::load($basePath);
 
+// En producción, forzar HTTPS con redirect 301. Defensa contra envío de
+// credenciales en HTTP plano. Se usa el host real del request para que
+// funcione con cualquier custom domain sin depender de APP_URL.
+if (Env::get('APP_ENV') === 'production' && !\App\Security::isHttps()) {
+    $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
+    $uri  = (string) ($_SERVER['REQUEST_URI'] ?? '/');
+    if ($host !== '' && preg_match('/^[A-Za-z0-9.\-:]+$/', $host) === 1) {
+        header('Location: https://' . $host . $uri, true, 301);
+        exit;
+    }
+}
+
 $debug = Env::bool('APP_DEBUG', false);
 ini_set('display_errors', $debug ? '1' : '0');
 ini_set('log_errors', '1');
