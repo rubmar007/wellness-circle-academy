@@ -1,0 +1,25 @@
+# Configuración explícita de Nixpacks para Railway.
+# Le decimos exactamente qué versión de PHP usar, qué extensiones, y cómo arrancar.
+
+[phases.setup]
+nixPkgs = [
+    'php83',
+    'php83Extensions.pdo',
+    'php83Extensions.pdo_pgsql',
+    'php83Extensions.mbstring',
+    'php83Extensions.fileinfo',
+    'php83Extensions.curl',
+    'php83Extensions.openssl',
+    'php83Packages.composer',
+]
+
+[phases.install]
+cmds = [
+    'composer install --no-dev --optimize-autoloader --no-interaction --no-scripts',
+]
+
+[start]
+# Servidor built-in de PHP. El último argumento es el "router script":
+# cualquier request que no corresponda a un archivo físico va a public/index.php.
+# Railway inyecta $PORT automáticamente.
+cmd = 'php -S 0.0.0.0:$PORT -t public public/index.php'

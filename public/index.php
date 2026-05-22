@@ -2,6 +2,26 @@
 
 declare(strict_types=1);
 
+// Cuando este archivo se ejecuta como router de `php -S` (servidor built-in,
+// usado en Railway), tenemos que indicarle al servidor que sirva los archivos
+// estáticos directamente devolviendo false. En SAPI distinto (Apache, fpm),
+// el servidor web ya sirve estáticos por sí mismo y este bloque es no-op.
+if (PHP_SAPI === 'cli-server') {
+    $requested = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+    if ($requested !== '/' && $requested !== false) {
+        $candidate = __DIR__ . '/' . ltrim($requested, '/');
+        // Resolver y verificar que el archivo está dentro de public/ para
+        // bloquear path traversal (../../etc/passwd, etc).
+        $real     = realpath($candidate);
+        $publicDir = realpath(__DIR__);
+        if ($real !== false && $publicDir !== false
+            && str_starts_with($real, $publicDir . DIRECTORY_SEPARATOR)
+            && is_file($real)) {
+            return false; // php -S sirve el archivo estático tal cual.
+        }
+    }
+}
+
 use App\Auth;
 use App\Controllers\AdminBatchController;
 use App\Controllers\AdminController;
