@@ -99,9 +99,7 @@ final class PasswordResetController
                 ':ip'  => Security::clientIp(),
             ]);
 
-            $appUrl = (string) (Env::get('APP_URL', 'http://localhost:8080') ?? 'http://localhost:8080');
-            $appUrl = rtrim($appUrl, '/');
-            $link   = $appUrl . '/restablecer/' . $tokenPlain;
+            $link = self::resolveAppUrl() . '/restablecer/' . $tokenPlain;
 
             try {
                 Mailer::send(
@@ -228,6 +226,38 @@ final class PasswordResetController
     }
 
     // ----------------------------------------------------------------
+
+    /**
+     * Resuelve el origen base (scheme + host) para construir el link del email.
+     *
+     * Estrategia (en orden de prioridad):
+     *   1. HTTP_HOST del request actual + scheme detectado por Security::isHttps().
+     *      Es la fuente de verdad: el usuario está usando el dominio real al
+     *      pedir el reset, así que el email debe llevarlo de vuelta a ese mismo
+     *      dominio. Sobrevive a deploys con APP_URL desconfigurado.
+     *   2. APP_URL del entorno, si HTTP_HOST falla la validación de regex.
+     *   3. http://localhost:8080 como último recurso (solo en local sin nada).
+     *
+     * Validación anti host-header-injection:
+     *   - El host del request debe matchear regex de dominio + puerto opcional.
+     *   - Letras, dígitos, guion, punto y puntos. Si trae caracteres raros
+     *     (CRLF, espacios, espacios en blanco) se descarta.
+     */
+    private static function resolveAppUrl(): string
+    {
+        $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
+        if (preg_match('/^[A-Za-z0-9.\-]+(:[0-9]{1,5})?$/', $host) === 1) {
+            $scheme = Security::isHttps() ? 'https' : 'http';
+            return $scheme . '://' . $host;
+        }
+
+        $appUrl = trim((string) (Env::get('APP_URL', '') ?? ''));
+        if ($appUrl !== '' && preg_match('#^https?://[A-Za-z0-9.\-]+(:[0-9]{1,5})?(/.*)?$#', $appUrl) === 1) {
+            return rtrim($appUrl, '/');
+        }
+
+        return 'http://localhost:8080';
+    }
 
     /** @return array<string,mixed>|null */
     private static function findActiveAdminByEmail(string $email): ?array
