@@ -44,6 +44,7 @@ final class AdminProgramsController
             'old'     => [
                 'slug'          => '',
                 'title'         => '',
+                'presentation'  => '',
                 'description'   => '',
                 'display_order' => '0',
                 'is_published'  => '',
@@ -80,16 +81,17 @@ final class AdminProgramsController
         }
 
         $stmt = Connection::get()->prepare(
-            'INSERT INTO programs (slug, title, description, cover_image, display_order, is_published)
-             VALUES (:s, :t, :d, :c, :o, :p)'
+            'INSERT INTO programs (slug, title, presentation, description, cover_image, display_order, is_published)
+             VALUES (:s, :t, :pres, :d, :c, :o, :p)'
         );
         $stmt->execute([
-            ':s' => $data['slug'],
-            ':t' => $data['title'],
-            ':d' => $data['description'] !== '' ? $data['description'] : null,
-            ':c' => $coverPath !== '' ? $coverPath : null,
-            ':o' => (int) $data['display_order'],
-            ':p' => $data['is_published'] === '1' ? 't' : 'f',
+            ':s'    => $data['slug'],
+            ':t'    => $data['title'],
+            ':pres' => $data['presentation'] !== '' ? $data['presentation'] : null,
+            ':d'    => $data['description'] !== '' ? $data['description'] : null,
+            ':c'    => $coverPath !== '' ? $coverPath : null,
+            ':o'    => (int) $data['display_order'],
+            ':p'    => $data['is_published'] === '1' ? 't' : 'f',
         ]);
 
         self::setFlash('Programa creado.');
@@ -114,6 +116,7 @@ final class AdminProgramsController
             'old'     => [
                 'slug'          => $program['slug'],
                 'title'         => $program['title'],
+                'presentation'  => (string) ($program['presentation'] ?? ''),
                 'description'   => (string) $program['description'],
                 'display_order' => (string) $program['display_order'],
                 'is_published'  => $program['is_published'] ? '1' : '',
@@ -162,18 +165,19 @@ final class AdminProgramsController
 
         $stmt = Connection::get()->prepare(
             'UPDATE programs
-                SET slug = :s, title = :t, description = :d,
+                SET slug = :s, title = :t, presentation = :pres, description = :d,
                     cover_image = :c, display_order = :o, is_published = :p
               WHERE id = :id'
         );
         $stmt->execute([
-            ':s'  => $data['slug'],
-            ':t'  => $data['title'],
-            ':d'  => $data['description'] !== '' ? $data['description'] : null,
-            ':c'  => $coverPath !== '' ? $coverPath : null,
-            ':o'  => (int) $data['display_order'],
-            ':p'  => $data['is_published'] === '1' ? 't' : 'f',
-            ':id' => $id,
+            ':s'    => $data['slug'],
+            ':t'    => $data['title'],
+            ':pres' => $data['presentation'] !== '' ? $data['presentation'] : null,
+            ':d'    => $data['description'] !== '' ? $data['description'] : null,
+            ':c'    => $coverPath !== '' ? $coverPath : null,
+            ':o'    => (int) $data['display_order'],
+            ':p'    => $data['is_published'] === '1' ? 't' : 'f',
+            ':id'   => $id,
         ]);
 
         self::setFlash('Programa actualizado.');
@@ -232,12 +236,13 @@ final class AdminProgramsController
 
     // ----------------------------------------------------------------
 
-    /** @return array{slug:string,title:string,description:string,display_order:string,is_published:string} */
+    /** @return array{slug:string,title:string,presentation:string,description:string,display_order:string,is_published:string} */
     private static function extractInput(): array
     {
         return [
             'slug'          => mb_strtolower(trim((string) ($_POST['slug']  ?? ''))),
             'title'         => trim((string) ($_POST['title'] ?? '')),
+            'presentation'  => trim((string) ($_POST['presentation'] ?? '')),
             'description'   => trim((string) ($_POST['description']  ?? '')),
             'display_order' => trim((string) ($_POST['display_order'] ?? '0')),
             'is_published'  => isset($_POST['is_published']) ? '1' : '',
@@ -245,7 +250,7 @@ final class AdminProgramsController
     }
 
     /**
-     * @param array{slug:string,title:string,description:string,display_order:string,is_published:string} $data
+     * @param array{slug:string,title:string,presentation:string,description:string,display_order:string,is_published:string} $data
      * @return array<string,string>
      */
     private static function validate(array $data, ?int $currentId): array
@@ -256,6 +261,9 @@ final class AdminProgramsController
         }
         if ($data['title'] === '' || mb_strlen($data['title']) > 160) {
             $errors['title'] = 'Título obligatorio (máx. 160 caracteres).';
+        }
+        if ($data['presentation'] !== '' && mb_strlen($data['presentation']) > 200) {
+            $errors['presentation'] = 'Presentación máxima 200 caracteres.';
         }
         if ($data['description'] !== '' && mb_strlen($data['description']) > 2000) {
             $errors['description'] = 'Descripción máxima 2000 caracteres.';

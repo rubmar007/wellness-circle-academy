@@ -32,8 +32,8 @@ $pageTitle = 'Dashboard';
                 <?php endif; ?>
                 <span class="program-card-body">
                     <span class="program-card-title"><?= e($program['title']) ?></span>
-                    <?php if (!empty($program['description'])): ?>
-                        <span class="program-card-desc"><?= e($program['description']) ?></span>
+                    <?php if (!empty($program['presentation'])): ?>
+                        <span class="program-card-desc"><?= e($program['presentation']) ?></span>
                     <?php endif; ?>
                 </span>
             </a>

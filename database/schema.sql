@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS programs (
     id              BIGSERIAL PRIMARY KEY,
     slug            VARCHAR(80)  NOT NULL,
     title           VARCHAR(160) NOT NULL,
+    presentation    VARCHAR(200),
     description     TEXT,
     cover_image     VARCHAR(500),
     display_order   INTEGER      NOT NULL DEFAULT 0,

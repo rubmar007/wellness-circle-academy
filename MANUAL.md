@@ -2,7 +2,7 @@
 
 Documento de operación, mantenimiento y referencia técnica del sistema. Producido al cierre del MVP. Lenguaje directo, orientado a ejecución. Si algo cambia en el futuro, este manual debe actualizarse junto con el código.
 
-Última actualización: 2026-05-22 (commit base: `3bbf798`).
+Última actualización: 2026-05-25 (commit base: `6f69e66`).
 
 ---
 
@@ -74,7 +74,8 @@ Repositorio: `git@github-personal:rubmar007/wellness-circle-academy.git`
 │   ├── seed.sql             Datos de ejemplo (programa Arranque con Día 1).
 │   └── migrations/
 │       ├── 2026-05-21-add-password-resets.sql
-│       └── 2026-05-21-add-lesson-video-and-download.sql
+│       ├── 2026-05-21-add-lesson-video-and-download.sql
+│       └── 2026-05-25-add-program-presentation.sql
 ├── public/                  Document root (lo único expuesto al web).
 │   ├── index.php            Front controller + router HTTP + redirect HTTP->HTTPS en producción.
 │   ├── .htaccess            Rewrite + headers de seguridad (Apache; ignorado por php -S de Railway).
@@ -231,7 +232,8 @@ Plantilla en `.env.example`. Significado de cada una:
 | `id` | BIGSERIAL PK | |
 | `slug` | VARCHAR(80) UNIQUE | Regex `^[a-z0-9-]+$`. Aparece en URLs públicas. |
 | `title` | VARCHAR(160) | |
-| `description` | TEXT | |
+| `presentation` | VARCHAR(200) NULL | Texto corto (máx 200) que aparece SOLO en la tarjeta del dashboard como tagline bajo la portada. Independiente de `description`. |
+| `description` | TEXT | Descripción larga que aparece en la vista interna del programa (`/programas/{slug}`). |
 | `cover_image` | VARCHAR(500) | Path interno `/assets/uploads/UUID.ext`. |
 | `display_order` | INT | Menor = aparece primero en el dashboard. |
 | `is_published` | BOOLEAN | Si está en FALSE no es visible a los miembros. |
@@ -293,6 +295,7 @@ psql "$DATABASE_URL" -f database/schema.sql
 psql "$DATABASE_URL" -f database/seed.sql                              # opcional, programa Arranque + Día 1
 psql "$DATABASE_URL" -f database/migrations/2026-05-21-add-password-resets.sql
 psql "$DATABASE_URL" -f database/migrations/2026-05-21-add-lesson-video-and-download.sql
+psql "$DATABASE_URL" -f database/migrations/2026-05-25-add-program-presentation.sql
 ```
 
 Si no se tiene `psql` instalado, se puede aplicar desde PHP:
@@ -380,8 +383,9 @@ Pide nombre, email, rol y contraseña interactivamente. La contraseña no se mue
 
 ### 9.2 Crear un programa
 1. Admin → "Programas y lecciones" → "Nuevo programa".
-2. Llenar título, slug (solo `a-z 0-9 -`, ej. `arranque`), descripción, imagen de portada, orden y checkbox de publicado.
+2. Llenar título, **presentación** (texto corto ≤ 200 chars que solo aparece como tagline en la tarjeta del dashboard), slug (solo `a-z 0-9 -`, ej. `arranque`), descripción (texto largo que se ve dentro del programa), imagen de portada, orden y checkbox de publicado.
 3. El slug aparece en URLs públicas (`/programas/{slug}`); cambiarlo después rompe links que la gente tenga guardados.
+4. `presentation` y `description` son independientes: `presentation` rige las tarjetas del dashboard; `description` rige la vista interna del programa.
 
 ### 9.3 Crear una lección manualmente
 1. Admin → Programas → click "Lecciones" del programa.

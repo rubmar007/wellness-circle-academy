@@ -16,7 +16,7 @@ final class DashboardController
         Auth::requireLogin();
 
         $stmt = Connection::get()->query(
-            'SELECT id, slug, title, description, cover_image, display_order
+            'SELECT id, slug, title, presentation, cover_image, display_order
                FROM programs
               WHERE is_published = TRUE
               ORDER BY display_order ASC, title ASC'

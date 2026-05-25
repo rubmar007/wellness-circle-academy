@@ -38,6 +38,15 @@ $action    = $isCreate ? '/admin/programas' : '/admin/programas/' . (int) $progr
     </div>
 
     <div class="field">
+        <label for="presentation">Presentación</label>
+        <textarea id="presentation" name="presentation" rows="2" maxlength="200"><?= e($old['presentation'] ?? '') ?></textarea>
+        <small class="field-hint">Texto corto que aparece en la tarjeta del programa en el dashboard. Máximo 200 caracteres.</small>
+        <?php if (!empty($errors['presentation'])): ?>
+            <small class="field-error"><?= e($errors['presentation']) ?></small>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
         <label for="slug">Slug (URL)</label>
         <input
             type="text"
