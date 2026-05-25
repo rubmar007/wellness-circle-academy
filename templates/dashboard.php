@@ -18,11 +18,11 @@ $pageTitle = 'Dashboard';
         <?php foreach ($programs as $program): ?>
             <a class="program-card" href="/programas/<?= e($program['slug']) ?>">
                 <?php if (!empty($program['cover_image'])): ?>
-                    <span
+                    <img
                         class="program-card-cover"
-                        role="img"
-                        aria-label="<?= e($program['title']) ?>"
-                        style="background-image:url('<?= e($program['cover_image']) ?>')"></span>
+                        src="<?= e($program['cover_image']) ?>"
+                        alt="<?= e($program['title']) ?>"
+                        loading="lazy">
                 <?php else: ?>
                     <span class="program-card-cover program-card-cover-fallback" aria-hidden="true"></span>
                 <?php endif; ?>
