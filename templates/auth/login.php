@@ -7,6 +7,10 @@ declare(strict_types=1);
  */
 $pageTitle = 'Entrar';
 ?>
+<div class="auth-logo-wrap">
+    <img class="auth-logo" src="/assets/img/logo.png" alt="Wellness Circle Academy">
+</div>
+
 <section class="auth-card">
     <h1>Entrar</h1>
 

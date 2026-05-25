@@ -30,7 +30,7 @@ $title = isset($pageTitle) && is_string($pageTitle) && $pageTitle !== ''
     <header class="site-header">
         <div class="container header-row">
             <a class="brand" href="<?= $auth ? '/dashboard' : '/' ?>">
-                <span class="brand-mark" aria-hidden="true"></span>
+                <img class="brand-mark" src="/assets/img/logo.png" alt="" width="36" height="36">
                 <span class="brand-text"><?= e($appName) ?></span>
             </a>
 

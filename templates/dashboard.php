@@ -6,6 +6,10 @@ declare(strict_types=1);
  */
 $pageTitle = 'Dashboard';
 ?>
+<div class="dashboard-logo-wrap">
+    <img class="dashboard-logo" src="/assets/img/logo.png" alt="Wellness Circle Academy">
+</div>
+
 <section class="page-head">
     <h1>Hola, <?= e($auth['name']) ?></h1>
     <p class="muted">Elige un programa para entrar a tu rutina del día.</p>
