@@ -19,7 +19,7 @@ $title = isset($pageTitle) && is_string($pageTitle) && $pageTitle !== ''
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="color-scheme" content="light">
+    <meta name="color-scheme" content="dark">
     <meta name="robots" content="noindex, nofollow">
     <title><?= e($title) ?></title>
     <link rel="stylesheet" href="/assets/css/styles.css">

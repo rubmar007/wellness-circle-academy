@@ -2,7 +2,7 @@
 
 Documento de operación, mantenimiento y referencia técnica del sistema. Producido al cierre del MVP. Lenguaje directo, orientado a ejecución. Si algo cambia en el futuro, este manual debe actualizarse junto con el código.
 
-Última actualización: 2026-05-25 (commit base: `6f69e66`).
+Última actualización: 2026-05-25 (commit base: `9fb138a`).
 
 ---
 
@@ -870,3 +870,108 @@ openssl s_client -servername wellnessca.martavilla.com.mx \
 7. Cuando se cambia el esquema de BD, escribir migración en `database/migrations/` con fecha en el nombre. Aplicarla manualmente en Neon antes del deploy del código que la usa.
 8. Cuando se añade una nueva dependencia con extensión PHP, declararla en `require` de `composer.json` para que Railpack la compile.
 9. El CLAUDE.md es contrato de trabajo, no decoración. Releerlo cuando llegue una persona nueva al proyecto.
+
+---
+
+## 19. Look and feel
+
+Rediseño visual aplicado el 2026-05-25 sobre el commit `9fb138a`. Inspiración: artwork de invitación a Zoom del propio equipo (negro profundo con acento dorado, tipografía script para títulos elegantes, sans-serif uppercase para títulos secundarios). Aplica a TODA la app (área de miembro + área admin).
+
+### 19.1 Paleta
+
+Definida como CSS custom properties en `public/assets/css/styles.css` (`:root`).
+
+| Variable | Valor | Uso |
+|---|---|---|
+| `--color-bg` | `#0a0a0a` | Fondo principal (body) |
+| `--color-bg-elev` | `#141414` | Cards, paneles |
+| `--color-bg-elev-2` | `#1c1c1c` | Hover de cards |
+| `--color-bg-input` | `#0f0f0f` | Inputs, textareas, checklist |
+| `--color-gold` | `#d4af37` | Acento principal, borders, títulos secundarios |
+| `--color-gold-bright` | `#f0c870` | Hover, focus, highlights |
+| `--color-gold-dim` | `#8a7a3d` | Scrollbar, estados secundarios |
+| `--color-gold-soft` | `rgba(212,175,55,0.12)` | Fondos translúcidos dorados |
+| `--color-text` | `#f5f5f5` | Texto principal |
+| `--color-text-muted` | `#b8b8b8` | Texto secundario |
+| `--color-text-faint` | `#888888` | Footer, placeholders |
+| `--color-border` | `rgba(212,175,55,0.18)` | Borde sutil dorado translúcido |
+| `--color-border-strong` | `rgba(212,175,55,0.45)` | Borde dorado más visible (hover) |
+| `--color-error-fg` | `#ef9a8e` | Texto de error sobre fondo oscuro |
+| `--color-success-fg` | `#8fdba9` | Texto de éxito sobre fondo oscuro |
+
+El body usa dos gradientes radiales dorados (uno arriba-derecha, otro abajo-izquierda) sobre el negro base. `background-attachment: fixed` para que el spotlight se quede pegado al viewport al hacer scroll.
+
+Variables antiguas (`--color-navy`, `--color-sky`, `--color-cream`, etc.) están aliased a las nuevas para no romper selectores legacy.
+
+### 19.2 Tipografías
+
+Dos familias, **self-hosted** desde `/public/assets/fonts/` (no se carga nada de Google Fonts — no toca CSP, no expone IPs a Google):
+
+| Familia | Archivo | Tamaño | Uso |
+|---|---|---|---|
+| `Allura` (script) | `allura-regular.woff2` | 26 KB | Títulos elegantes: h1 de `.auth-card`, h1 de `.page-head`, h1 de `.error-page`. Aplica con `font-family: var(--font-script)`. |
+| `Montserrat` (variable) | `montserrat-vf.woff2` | 38 KB | Todo lo demás (body, botones, navegación, títulos secundarios). Variable font con eje wght 100–900. |
+
+Ambas con `font-display: swap` para que el texto renderee de inmediato con la fuente del sistema mientras carga el woff2. Subset latin (cubre español: acentos, ñ, signos de puntuación europeos).
+
+License: ambas SIL Open Font License (OFL). Pueden redistribuirse libremente con el proyecto.
+
+#### Cómo regenerar / actualizar las fuentes
+
+Si en el futuro hace falta otro peso, otro subset, o renovar a una versión nueva:
+
+```bash
+# Pide a Google Fonts el CSS y extrae las URLs woff2
+UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+curl -sS -A "$UA" "https://fonts.googleapis.com/css2?family=Allura&family=Montserrat:wght@400;500;600;700&display=swap"
+
+# Descarga las URLs latin (las del comentario "/* latin */") a public/assets/fonts/
+# Necesita User-Agent moderno para que sirva woff2.
+```
+
+### 19.3 Componentes clave
+
+- **Logo (`/assets/img/logo.png`)**: pieza dorada sobre fondo negro, ya optimizada para tema oscuro. Se sirve tal cual en `.brand-mark` (header, 44×44), `.auth-logo` (login, 200×200) y `.dashboard-logo` (dashboard, 160×160). NO se le aplica `border-radius: 50%` porque cortaría las esquinas del logo cuadrado.
+- **Botones primary**: gradiente dorado (`#d4af37` → `#b89028`), texto casi negro `#1a1206`, sombra dorada sutil. Hover: gradiente más claro + glow + `translateY(-1px)`. Border-radius 999px (pill).
+- **Botones ghost**: transparentes con borde dorado translúcido, texto dorado. Hover: fondo `--color-gold-soft`.
+- **Inputs / textareas / selects**: fondo `#0f0f0f`, borde dorado tenue, focus con `box-shadow: 0 0 0 3px rgba(212,175,55,0.18)` + borde dorado pleno. Sin outline nativo.
+- **Cards (`.program-card`, `.feature-card`, etc.)**: fondo `#141414`, borde dorado al 18%. Hover suma `border-color: rgba(212,175,55,0.45)`, sombra y `translateY(-2px)`.
+- **Lesson-link / admin-shortcut**: border-left dorado de 3px. Hover desplaza 2px a la derecha y aclara el borde dorado.
+- **Checklist box**: 24×24 con borde dorado de 2px, fondo transparente. Estado done: fondo dorado pleno.
+- **Tablas admin**: thead con fondo dorado 8%, texto dorado, font-size pequeño y uppercase. Hover de fila con tinte dorado 4%.
+- **Selección de texto** (`::selection`) y **scrollbar**: ambos dorados (thumb `#8a7a3d`, track `#0a0a0a`).
+- **Sticky header**: `rgba(10,10,10,0.85)` con `backdrop-filter: blur(12px)` para que el contenido se vea debajo difuminado.
+
+### 19.4 Tipografía aplicada por elemento
+
+| Selector | Familia | Pesos / estilos |
+|---|---|---|
+| `body` | Montserrat | 400 |
+| `h1` (genérico) | Montserrat | 600, letter-spacing 0.02em |
+| `h2` (genérico) | Montserrat | 600, uppercase, letter-spacing 0.08em |
+| `h3` (genérico) | Montserrat | 600, uppercase, letter-spacing 0.06em, color dorado |
+| `.auth-card h1` | **Allura** | 400, font-size 2.6rem mobile / 3rem desktop |
+| `.page-head h1` | **Allura** | 400, font-size 2.4rem mobile / 3rem desktop |
+| `.error-page h1` | **Allura** | 400, font-size 5rem |
+| `.brand` (header) | Montserrat | 600, uppercase, letter-spacing 0.1em, 0.85rem |
+| `.button` | Montserrat | 600, uppercase, letter-spacing 0.08em, 0.875rem |
+| `.lesson-day` | Montserrat | 600, uppercase, letter-spacing 0.14em, dorado, 0.75rem |
+| `.stat-card-label` | Montserrat | uppercase, letter-spacing 0.12em, 0.75rem |
+| `.badge` | Montserrat | 600, uppercase, letter-spacing 0.1em, 0.7rem |
+| `.admin-table thead th` | Montserrat | 600, uppercase, letter-spacing 0.1em, dorado, 0.75rem |
+
+### 19.5 Accesibilidad
+
+- Contraste texto principal `#f5f5f5` sobre fondo `#0a0a0a`: ratio ≈ 18.7:1 (supera AAA con holgura).
+- Dorado `#d4af37` sobre `#0a0a0a`: ratio ≈ 9.1:1 (supera AAA en texto grande, AA en texto pequeño).
+- Texto muted `#b8b8b8` sobre `#0a0a0a`: ratio ≈ 10.4:1 (supera AAA).
+- Focus visible: todos los inputs interactivos tienen `box-shadow: 0 0 0 3px rgba(212,175,55,0.18)` + borde dorado pleno. Botones primary usan `outline: 3px solid var(--color-gold-bright)` con offset.
+- `prefers-reduced-motion: reduce`: anula todas las transitions y desactiva los `translateY/translateX` de los hovers.
+- `meta name="color-scheme" content="dark"`: indica al navegador que use UI nativa oscura (scrollbars, form controls cuando no se sobreescriben).
+
+### 19.6 Qué NO se cambió
+
+- Plantillas PHP: ninguna se tocó estructuralmente. Todos los selectores CSS existentes se mantienen, solo cambia su look. Si una plantilla tenía `class="auth-card"`, sigue funcionando.
+- Lógica JavaScript: `copy.js` no se tocó. Sigue siendo el único JS del proyecto.
+- Esquema de BD: cero cambios.
+- CSP, headers de seguridad, autenticación, sesiones, CSRF, uploads, embeds: cero cambios.
