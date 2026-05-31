@@ -2,43 +2,63 @@
    Reusa las variables de tema de styles.css. Solo HTML + CSS, sin JS.
    Mobile-first. */
 
-/* ---------- Navegación de secciones (barra bajo el header) ---------- */
-.section-nav {
-    border-bottom: 1px solid var(--color-border);
-    background: var(--header-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    position: sticky;
-    top: 0;
-    z-index: 9;
+/* ---------- Navegación de secciones (sidebar izquierdo) ---------- */
+.app-nav-cb { position: absolute; opacity: 0; pointer-events: none; }
+.app-nav-toggle {
+    display: block;
+    margin: var(--space-3) var(--space-4) 0;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+    color: var(--color-gold);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
 }
-.section-nav-inner {
-    display: flex;
-    gap: 0.25rem;
-    overflow-x: auto;
-    padding: 0.4rem var(--space-4);
-    max-width: 920px;
+.app-shell {
+    display: block;
+    max-width: 1180px;
     margin: 0 auto;
-    scrollbar-width: thin;
+    padding: var(--space-4);
 }
-.section-nav a {
-    flex: 0 0 auto;
-    display: inline-flex;
+.app-sidebar { display: none; }
+.app-nav-cb:checked ~ .app-shell .app-sidebar { display: block; }
+.app-sidebar ul { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 0.3rem; }
+.app-sidebar a {
+    display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.7rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--radius-md);
     text-decoration: none;
     color: var(--color-text-muted);
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.45rem 0.75rem;
-    border-radius: 999px;
-    white-space: nowrap;
+    border-left: 3px solid transparent;
+    font-size: 0.92rem;
 }
-.section-nav a:hover { background: var(--color-gold-soft); color: var(--color-text); }
-.section-nav a.is-active { background: var(--color-gold-soft); color: var(--color-gold-bright); }
-.section-nav a.section-nav-wa { color: var(--color-gold); }
+.app-sidebar a:hover { background: var(--color-bg-elev); color: var(--color-text); }
+.app-sidebar a.is-active {
+    background: var(--color-gold-soft);
+    color: var(--color-gold-bright);
+    border-left-color: var(--color-gold);
+}
+.app-sidebar .nav-icon { width: 1.4rem; text-align: center; flex: 0 0 auto; }
+.app-sidebar-wa { color: var(--color-gold); }
+.app-main { min-width: 0; }
+
+@media (min-width: 900px) {
+    .app-nav-toggle { display: none; }
+    .app-shell {
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 1.75rem;
+        padding: 1.75rem var(--space-4);
+    }
+    .app-sidebar { display: block; position: sticky; top: 84px; align-self: start; }
+}
 
 /* ---------- Tarjeta y grid genéricos de sección ---------- */
 .section-card {

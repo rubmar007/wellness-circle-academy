@@ -22,17 +22,17 @@ $colorScheme = in_array($theme, ['claro', 'lifewave'], true) ? 'light' : 'dark';
 $themeBack = parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH);
 $themeBack = is_string($themeBack) && $themeBack !== '' ? $themeBack : '/';
 
-// Navegación de secciones (Req B). Activo según el primer segmento de la ruta.
+// Navegación de secciones (Req B). Sidebar a la izquierda. Activo según la ruta.
 $navPath = $themeBack;
 $sectionNav = [
-    ['href' => '/inicio',         'label' => 'Inicio',            'match' => '/inicio'],
-    ['href' => '/dashboard',      'label' => 'Tus primeros pasos','match' => '/dashboard'],
-    ['href' => '/entrenamiento',  'label' => 'Entrenamiento',     'match' => '/entrenamiento'],
-    ['href' => '/materiales',     'label' => 'Materiales',        'match' => '/materiales'],
-    ['href' => '/eventos',        'label' => 'Eventos',           'match' => '/eventos'],
-    ['href' => '/notificaciones', 'label' => 'Notificaciones',    'match' => '/notificaciones'],
-    ['href' => '/normas',         'label' => 'Normas',            'match' => '/normas'],
-    ['href' => '/perfil',         'label' => 'Perfil',            'match' => '/perfil'],
+    ['href' => '/inicio',         'label' => 'Inicio',             'icon' => '🏠', 'match' => '/inicio'],
+    ['href' => '/dashboard',      'label' => 'Tus primeros pasos', 'icon' => '🚀', 'match' => '/dashboard'],
+    ['href' => '/entrenamiento',  'label' => 'Entrenamiento',      'icon' => '🎓', 'match' => '/entrenamiento'],
+    ['href' => '/materiales',     'label' => 'Materiales',         'icon' => '📂', 'match' => '/materiales'],
+    ['href' => '/eventos',        'label' => 'Eventos',            'icon' => '📅', 'match' => '/eventos'],
+    ['href' => '/notificaciones', 'label' => 'Notificaciones',     'icon' => '🏅', 'match' => '/notificaciones'],
+    ['href' => '/normas',         'label' => 'Normas y Reglamentos','icon' => '📜', 'match' => '/normas'],
+    ['href' => '/perfil',         'label' => 'Perfil',             'icon' => '👤', 'match' => '/perfil'],
 ];
 $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHATSAPP_NUMBER', ''));
 ?>
@@ -59,7 +59,6 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
 
             <nav class="site-nav" aria-label="Principal">
                 <?php if ($auth): ?>
-                    <a href="/dashboard">Dashboard</a>
                     <?php if (($auth['role'] ?? '') === 'admin'): ?>
                         <a href="/admin">Admin</a>
                     <?php endif; ?>
@@ -73,22 +72,48 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
     </header>
 
     <?php if ($auth): ?>
-        <nav class="section-nav" aria-label="Secciones">
-            <div class="section-nav-inner">
-                <?php foreach ($sectionNav as $item): ?>
-                    <a href="<?= e($item['href']) ?>"
-                       class="<?= ($navPath === $item['match'] || str_starts_with($navPath, $item['match'] . '/')) ? 'is-active' : '' ?>"><?= e($item['label']) ?></a>
-                <?php endforeach; ?>
-                <?php if ($whatsappNumber !== ''): ?>
-                    <a class="section-nav-wa" href="https://wa.me/<?= e($whatsappNumber) ?>" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                <?php endif; ?>
-            </div>
-        </nav>
-    <?php endif; ?>
+        <input type="checkbox" id="appnav" class="app-nav-cb" hidden>
+        <label for="appnav" class="app-nav-toggle">☰ &nbsp;Secciones</label>
+        <div class="app-shell">
+            <nav class="app-sidebar" aria-label="Secciones">
+                <ul>
+                    <?php foreach ($sectionNav as $item): ?>
+                        <li>
+                            <a href="<?= e($item['href']) ?>"
+                               class="<?= ($navPath === $item['match'] || str_starts_with($navPath, $item['match'] . '/')) ? 'is-active' : '' ?>">
+                                <span class="nav-icon" aria-hidden="true"><?= $item['icon'] ?></span>
+                                <span><?= e($item['label']) ?></span>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                    <?php if (($auth['role'] ?? '') === 'admin'): ?>
+                        <li>
+                            <a href="/admin" class="<?= str_starts_with($navPath, '/admin') ? 'is-active' : '' ?>">
+                                <span class="nav-icon" aria-hidden="true">🛠️</span>
+                                <span>Administración</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                    <?php if ($whatsappNumber !== ''): ?>
+                        <li>
+                            <a class="app-sidebar-wa" href="https://wa.me/<?= e($whatsappNumber) ?>" target="_blank" rel="noopener noreferrer">
+                                <span class="nav-icon" aria-hidden="true">💬</span>
+                                <span>Contactar por WhatsApp</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
 
-    <main id="main" class="container main-area">
+            <main id="main" class="app-main">
 <?= $content ?>
-    </main>
+            </main>
+        </div>
+    <?php else: ?>
+        <main id="main" class="container main-area">
+<?= $content ?>
+        </main>
+    <?php endif; ?>
 
     <footer class="site-footer">
         <div class="container">
