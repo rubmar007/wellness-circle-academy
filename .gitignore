@@ -24,3 +24,6 @@ Thumbs.db
 
 # Composer
 composer.phar
+
+# Mockup local de Req B (solo para revisión local, NO se despliega)
+/public/mockup/
