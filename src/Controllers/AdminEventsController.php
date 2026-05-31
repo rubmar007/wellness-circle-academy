@@ -1,0 +1,291 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controllers;
+
+use App\Auth;
+use App\Csrf;
+use App\Database\Connection;
+use App\View;
+use DateTime;
+
+final class AdminEventsController
+{
+    /** Whitelist de tipos de evento (clave => etiqueta). */
+    public const TYPES = [
+        'taller'         => 'Taller',
+        'entrenamiento'  => 'Entrenamiento',
+        'oportunidad'    => 'Presentación de oportunidad',
+    ];
+
+    /** @param array<string,string> $params */
+    public function index(array $params): void
+    {
+        Auth::requireAdmin();
+
+        $events = Connection::get()->query(
+            'SELECT id, title, event_type, starts_at, join_url, is_published
+               FROM events
+              ORDER BY starts_at DESC'
+        )->fetchAll();
+
+        View::render('admin/events/index', [
+            'events' => $events,
+            'flash'  => self::popFlash(),
+        ]);
+    }
+
+    /** @param array<string,string> $params */
+    public function create(array $params): void
+    {
+        Auth::requireAdmin();
+
+        View::render('admin/events/form', [
+            'mode'   => 'create',
+            'event'  => null,
+            'errors' => [],
+            'old'    => [
+                'title'        => '',
+                'event_type'   => '',
+                'starts_at'    => '',
+                'join_url'     => '',
+                'description'  => '',
+                'is_published' => '1',
+            ],
+        ]);
+    }
+
+    /** @param array<string,string> $params */
+    public function store(array $params): void
+    {
+        Auth::requireAdmin();
+        Csrf::requireValid();
+
+        $data   = self::extractInput();
+        $errors = self::validate($data);
+
+        if ($errors !== []) {
+            View::render('admin/events/form', [
+                'mode'   => 'create',
+                'event'  => null,
+                'errors' => $errors,
+                'old'    => $data,
+            ]);
+            return;
+        }
+
+        $stmt = Connection::get()->prepare(
+            'INSERT INTO events (title, event_type, starts_at, join_url, description, is_published)
+             VALUES (:t, :ty, :s, :j, :d, :p)'
+        );
+        $stmt->execute([
+            ':t'  => $data['title'],
+            ':ty' => $data['event_type'],
+            ':s'  => $data['starts_at'],
+            ':j'  => $data['join_url'] !== '' ? $data['join_url'] : null,
+            ':d'  => $data['description'] !== '' ? $data['description'] : null,
+            ':p'  => $data['is_published'] === '1' ? 't' : 'f',
+        ]);
+
+        self::setFlash('Evento creado.');
+        View::redirect('/admin/eventos');
+    }
+
+    /** @param array<string,string> $params */
+    public function edit(array $params): void
+    {
+        Auth::requireAdmin();
+
+        $id    = self::parseId($params['id'] ?? '');
+        $event = self::findEvent($id);
+        if (!$event) {
+            self::redirect404();
+            return;
+        }
+
+        View::render('admin/events/form', [
+            'mode'   => 'edit',
+            'event'  => $event,
+            'errors' => [],
+            'old'    => [
+                'title'        => (string) $event['title'],
+                'event_type'   => (string) $event['event_type'],
+                'starts_at'    => (new DateTime((string) $event['starts_at']))->format('Y-m-d\TH:i'),
+                'join_url'     => (string) ($event['join_url'] ?? ''),
+                'description'  => (string) ($event['description'] ?? ''),
+                'is_published' => $event['is_published'] ? '1' : '',
+            ],
+        ]);
+    }
+
+    /** @param array<string,string> $params */
+    public function update(array $params): void
+    {
+        Auth::requireAdmin();
+        Csrf::requireValid();
+
+        $id    = self::parseId($params['id'] ?? '');
+        $event = self::findEvent($id);
+        if (!$event) {
+            self::redirect404();
+            return;
+        }
+
+        $data   = self::extractInput();
+        $errors = self::validate($data);
+
+        if ($errors !== []) {
+            View::render('admin/events/form', [
+                'mode'   => 'edit',
+                'event'  => $event,
+                'errors' => $errors,
+                'old'    => $data,
+            ]);
+            return;
+        }
+
+        $stmt = Connection::get()->prepare(
+            'UPDATE events
+                SET title = :t, event_type = :ty, starts_at = :s,
+                    join_url = :j, description = :d, is_published = :p
+              WHERE id = :id'
+        );
+        $stmt->execute([
+            ':t'  => $data['title'],
+            ':ty' => $data['event_type'],
+            ':s'  => $data['starts_at'],
+            ':j'  => $data['join_url'] !== '' ? $data['join_url'] : null,
+            ':d'  => $data['description'] !== '' ? $data['description'] : null,
+            ':p'  => $data['is_published'] === '1' ? 't' : 'f',
+            ':id' => $id,
+        ]);
+
+        self::setFlash('Evento actualizado.');
+        View::redirect('/admin/eventos');
+    }
+
+    /** @param array<string,string> $params */
+    public function confirmDestroy(array $params): void
+    {
+        Auth::requireAdmin();
+
+        $id    = self::parseId($params['id'] ?? '');
+        $event = self::findEvent($id);
+        if (!$event) {
+            self::redirect404();
+            return;
+        }
+
+        View::render('admin/events/delete', [
+            'event' => $event,
+        ]);
+    }
+
+    /** @param array<string,string> $params */
+    public function destroy(array $params): void
+    {
+        Auth::requireAdmin();
+        Csrf::requireValid();
+
+        $id    = self::parseId($params['id'] ?? '');
+        $event = self::findEvent($id);
+        if (!$event) {
+            self::redirect404();
+            return;
+        }
+
+        $stmt = Connection::get()->prepare('DELETE FROM events WHERE id = :id');
+        $stmt->execute([':id' => $id]);
+
+        self::setFlash('Evento eliminado.');
+        View::redirect('/admin/eventos');
+    }
+
+    // ----------------------------------------------------------------
+
+    /** @return array{title:string,event_type:string,starts_at:string,join_url:string,description:string,is_published:string} */
+    private static function extractInput(): array
+    {
+        return [
+            'title'        => trim((string) ($_POST['title'] ?? '')),
+            'event_type'   => trim((string) ($_POST['event_type'] ?? '')),
+            'starts_at'    => trim((string) ($_POST['starts_at'] ?? '')),
+            'join_url'     => trim((string) ($_POST['join_url'] ?? '')),
+            'description'  => trim((string) ($_POST['description'] ?? '')),
+            'is_published' => isset($_POST['is_published']) ? '1' : '',
+        ];
+    }
+
+    /**
+     * @param array{title:string,event_type:string,starts_at:string,join_url:string,description:string,is_published:string} $data
+     * @return array<string,string>
+     */
+    private static function validate(array $data): array
+    {
+        $errors = [];
+
+        if ($data['title'] === '' || mb_strlen($data['title']) > 200) {
+            $errors['title'] = 'Título obligatorio (máx. 200 caracteres).';
+        }
+
+        if (!array_key_exists($data['event_type'], self::TYPES)) {
+            $errors['event_type'] = 'Selecciona un tipo de evento válido.';
+        }
+
+        if (DateTime::createFromFormat('Y-m-d\TH:i', $data['starts_at']) === false) {
+            $errors['starts_at'] = 'Fecha y hora inválidas.';
+        }
+
+        if ($data['join_url'] !== '') {
+            if (mb_strlen($data['join_url']) > 500 || parse_url($data['join_url'], PHP_URL_SCHEME) !== 'https') {
+                $errors['join_url'] = 'El enlace debe empezar con https:// (máx. 500 caracteres).';
+            }
+        }
+
+        if ($data['description'] !== '' && mb_strlen($data['description']) > 4000) {
+            $errors['description'] = 'Descripción máxima 4000 caracteres.';
+        }
+
+        return $errors;
+    }
+
+    private static function parseId(string $raw): int
+    {
+        return (preg_match('/^[1-9][0-9]{0,9}$/', $raw) === 1) ? (int) $raw : 0;
+    }
+
+    /** @return array<string,mixed>|null */
+    private static function findEvent(int $id): ?array
+    {
+        if ($id <= 0) {
+            return null;
+        }
+        $stmt = Connection::get()->prepare('SELECT * FROM events WHERE id = :id');
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    private static function redirect404(): void
+    {
+        http_response_code(404);
+        require dirname(__DIR__, 2) . '/templates/errors/404.php';
+    }
+
+    private static function setFlash(string $msg, string $type = 'success'): void
+    {
+        $_SESSION['_flash'] = ['type' => $type, 'msg' => $msg];
+    }
+
+    /** @return array{type:string,msg:string}|null */
+    private static function popFlash(): ?array
+    {
+        if (!isset($_SESSION['_flash'])) {
+            return null;
+        }
+        $flash = $_SESSION['_flash'];
+        unset($_SESSION['_flash']);
+        return is_array($flash) ? $flash : null;
+    }
+}

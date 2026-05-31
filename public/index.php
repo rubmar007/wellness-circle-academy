@@ -23,19 +23,31 @@ if (PHP_SAPI === 'cli-server') {
 }
 
 use App\Auth;
+use App\Controllers\AdminAnnouncementsController;
 use App\Controllers\AdminBatchController;
 use App\Controllers\AdminController;
+use App\Controllers\AdminEventsController;
 use App\Controllers\AdminLessonsController;
+use App\Controllers\AdminMaterialsController;
+use App\Controllers\AdminPagesController;
 use App\Controllers\AdminProgramsController;
+use App\Controllers\AdminTrainingsController;
 use App\Controllers\AdminUsersController;
+use App\Controllers\AnnouncementController;
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
+use App\Controllers\EventController;
+use App\Controllers\FeedController;
 use App\Controllers\HomeController;
 use App\Controllers\LessonController;
+use App\Controllers\MaterialController;
+use App\Controllers\PageController;
 use App\Controllers\PasswordResetController;
+use App\Controllers\ProfileController;
 use App\Controllers\ProgramController;
 use App\Controllers\ProgressController;
 use App\Controllers\ThemeController;
+use App\Controllers\TrainingController;
 use App\Router;
 use App\Security;
 use App\Support\Env;
@@ -115,6 +127,20 @@ $router->get('/programas/{slug}',                [ProgramController::class,   's
 $router->get('/programas/{slug}/dia/{day}',      [LessonController::class,    'show']);
 $router->post('/progreso',                       [ProgressController::class,  'toggle']);
 
+// Secciones Req B (área de miembro)
+$router->get('/inicio',                  [FeedController::class, 'index']);
+$router->post('/inicio',                 [FeedController::class, 'store']);
+$router->post('/inicio/{id}/eliminar',   [FeedController::class, 'destroy']);
+
+$router->get('/entrenamiento',           [TrainingController::class, 'index']);
+$router->get('/materiales',              [MaterialController::class, 'index']);
+$router->get('/eventos',                 [EventController::class, 'index']);
+$router->get('/notificaciones',          [AnnouncementController::class, 'index']);
+$router->get('/normas',                  [PageController::class, 'show']);
+
+$router->get('/perfil',                  [ProfileController::class, 'show']);
+$router->post('/perfil',                 [ProfileController::class, 'update']);
+
 // Admin (los controladores verifican Auth::requireAdmin internamente)
 $router->get('/admin',     [AdminController::class, 'index']);
 
@@ -148,5 +174,45 @@ $router->post('/admin/lecciones/{id}/eliminar',               [AdminLessonsContr
 $router->get('/admin/programas/{id}/batch',             [AdminBatchController::class, 'show']);
 $router->post('/admin/programas/{id}/batch',            [AdminBatchController::class, 'process']);
 $router->get('/admin/programas/{id}/batch/plantilla',   [AdminBatchController::class, 'downloadTemplate']);
+
+// Admin · Entrenamiento
+$router->get('/admin/entrenamiento',                 [AdminTrainingsController::class, 'index']);
+$router->get('/admin/entrenamiento/nuevo',           [AdminTrainingsController::class, 'create']);
+$router->post('/admin/entrenamiento',                [AdminTrainingsController::class, 'store']);
+$router->get('/admin/entrenamiento/{id}/editar',     [AdminTrainingsController::class, 'edit']);
+$router->post('/admin/entrenamiento/{id}',           [AdminTrainingsController::class, 'update']);
+$router->get('/admin/entrenamiento/{id}/eliminar',   [AdminTrainingsController::class, 'confirmDestroy']);
+$router->post('/admin/entrenamiento/{id}/eliminar',  [AdminTrainingsController::class, 'destroy']);
+
+// Admin · Materiales
+$router->get('/admin/materiales',                 [AdminMaterialsController::class, 'index']);
+$router->get('/admin/materiales/nuevo',           [AdminMaterialsController::class, 'create']);
+$router->post('/admin/materiales',                [AdminMaterialsController::class, 'store']);
+$router->get('/admin/materiales/{id}/editar',     [AdminMaterialsController::class, 'edit']);
+$router->post('/admin/materiales/{id}',           [AdminMaterialsController::class, 'update']);
+$router->get('/admin/materiales/{id}/eliminar',   [AdminMaterialsController::class, 'confirmDestroy']);
+$router->post('/admin/materiales/{id}/eliminar',  [AdminMaterialsController::class, 'destroy']);
+
+// Admin · Eventos
+$router->get('/admin/eventos',                 [AdminEventsController::class, 'index']);
+$router->get('/admin/eventos/nuevo',           [AdminEventsController::class, 'create']);
+$router->post('/admin/eventos',                [AdminEventsController::class, 'store']);
+$router->get('/admin/eventos/{id}/editar',     [AdminEventsController::class, 'edit']);
+$router->post('/admin/eventos/{id}',           [AdminEventsController::class, 'update']);
+$router->get('/admin/eventos/{id}/eliminar',   [AdminEventsController::class, 'confirmDestroy']);
+$router->post('/admin/eventos/{id}/eliminar',  [AdminEventsController::class, 'destroy']);
+
+// Admin · Notificaciones
+$router->get('/admin/notificaciones',                 [AdminAnnouncementsController::class, 'index']);
+$router->get('/admin/notificaciones/nueva',           [AdminAnnouncementsController::class, 'create']);
+$router->post('/admin/notificaciones',                [AdminAnnouncementsController::class, 'store']);
+$router->get('/admin/notificaciones/{id}/editar',     [AdminAnnouncementsController::class, 'edit']);
+$router->post('/admin/notificaciones/{id}',           [AdminAnnouncementsController::class, 'update']);
+$router->get('/admin/notificaciones/{id}/eliminar',   [AdminAnnouncementsController::class, 'confirmDestroy']);
+$router->post('/admin/notificaciones/{id}/eliminar',  [AdminAnnouncementsController::class, 'destroy']);
+
+// Admin · Normas y Reglamentos (página única)
+$router->get('/admin/normas',  [AdminPagesController::class, 'edit']);
+$router->post('/admin/normas', [AdminPagesController::class, 'update']);
 
 $router->dispatch();

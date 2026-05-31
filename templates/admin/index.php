@@ -35,6 +35,26 @@ $pageTitle = 'Panel admin';
         <h2>Programas y lecciones</h2>
         <p>Crear y editar programas, gestionar sus lecciones, subir imágenes y publicar contenido.</p>
     </a>
+    <a class="admin-shortcut" href="/admin/entrenamiento">
+        <h2>Entrenamiento</h2>
+        <p>Videos de YouTube/Vimeo agrupados por tema (Plan de Compensación, Clientes, etc.).</p>
+    </a>
+    <a class="admin-shortcut" href="/admin/materiales">
+        <h2>Materiales</h2>
+        <p>PDFs, imágenes y enlaces de apoyo para el equipo.</p>
+    </a>
+    <a class="admin-shortcut" href="/admin/eventos">
+        <h2>Eventos</h2>
+        <p>Calendario de talleres, entrenamientos y presentaciones con enlace para entrar.</p>
+    </a>
+    <a class="admin-shortcut" href="/admin/notificaciones">
+        <h2>Notificaciones</h2>
+        <p>Reconocimientos a líderes y avisos para todo el equipo.</p>
+    </a>
+    <a class="admin-shortcut" href="/admin/normas">
+        <h2>Normas y Reglamentos</h2>
+        <p>Editar el texto de las reglas y la cultura del equipo.</p>
+    </a>
 </section>
 
 <?php if ($programs !== []): ?>

@@ -21,6 +21,20 @@ $colorScheme = in_array($theme, ['claro', 'lifewave'], true) ? 'light' : 'dark';
 // Ruta actual (sin query) para que el cambio de tema regrese a la misma página.
 $themeBack = parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH);
 $themeBack = is_string($themeBack) && $themeBack !== '' ? $themeBack : '/';
+
+// Navegación de secciones (Req B). Activo según el primer segmento de la ruta.
+$navPath = $themeBack;
+$sectionNav = [
+    ['href' => '/inicio',         'label' => 'Inicio',            'match' => '/inicio'],
+    ['href' => '/dashboard',      'label' => 'Tus primeros pasos','match' => '/dashboard'],
+    ['href' => '/entrenamiento',  'label' => 'Entrenamiento',     'match' => '/entrenamiento'],
+    ['href' => '/materiales',     'label' => 'Materiales',        'match' => '/materiales'],
+    ['href' => '/eventos',        'label' => 'Eventos',           'match' => '/eventos'],
+    ['href' => '/notificaciones', 'label' => 'Notificaciones',    'match' => '/notificaciones'],
+    ['href' => '/normas',         'label' => 'Normas',            'match' => '/normas'],
+    ['href' => '/perfil',         'label' => 'Perfil',            'match' => '/perfil'],
+];
+$whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHATSAPP_NUMBER', ''));
 ?>
 <!doctype html>
 <html lang="es" data-theme="<?= e($theme) ?>">
@@ -31,6 +45,7 @@ $themeBack = is_string($themeBack) && $themeBack !== '' ? $themeBack : '/';
     <meta name="robots" content="noindex, nofollow">
     <title><?= e($title) ?></title>
     <link rel="stylesheet" href="/assets/css/styles.css">
+    <link rel="stylesheet" href="/assets/css/sections.css">
 </head>
 <body>
     <a class="skip-link" href="#main">Saltar al contenido</a>
@@ -56,6 +71,20 @@ $themeBack = is_string($themeBack) && $themeBack !== '' ? $themeBack : '/';
             </nav>
         </div>
     </header>
+
+    <?php if ($auth): ?>
+        <nav class="section-nav" aria-label="Secciones">
+            <div class="section-nav-inner">
+                <?php foreach ($sectionNav as $item): ?>
+                    <a href="<?= e($item['href']) ?>"
+                       class="<?= ($navPath === $item['match'] || str_starts_with($navPath, $item['match'] . '/')) ? 'is-active' : '' ?>"><?= e($item['label']) ?></a>
+                <?php endforeach; ?>
+                <?php if ($whatsappNumber !== ''): ?>
+                    <a class="section-nav-wa" href="https://wa.me/<?= e($whatsappNumber) ?>" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                <?php endif; ?>
+            </div>
+        </nav>
+    <?php endif; ?>
 
     <main id="main" class="container main-area">
 <?= $content ?>

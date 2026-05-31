@@ -1,0 +1,207 @@
+/* Req B — estilos de las secciones nuevas (producción).
+   Reusa las variables de tema de styles.css. Solo HTML + CSS, sin JS.
+   Mobile-first. */
+
+/* ---------- Navegación de secciones (barra bajo el header) ---------- */
+.section-nav {
+    border-bottom: 1px solid var(--color-border);
+    background: var(--header-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 9;
+}
+.section-nav-inner {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    padding: 0.4rem var(--space-4);
+    max-width: 920px;
+    margin: 0 auto;
+    scrollbar-width: thin;
+}
+.section-nav a {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+.section-nav a:hover { background: var(--color-gold-soft); color: var(--color-text); }
+.section-nav a.is-active { background: var(--color-gold-soft); color: var(--color-gold-bright); }
+.section-nav a.section-nav-wa { color: var(--color-gold); }
+
+/* ---------- Tarjeta y grid genéricos de sección ---------- */
+.section-card {
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.2rem;
+    margin-bottom: 1rem;
+}
+.section-card h2, .section-card h3 { margin-top: 0; }
+.section-grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+.section-empty {
+    color: var(--color-text-muted);
+    border: 1px dashed var(--color-border-strong);
+    border-radius: var(--radius-md);
+    padding: var(--space-5);
+    text-align: center;
+}
+
+/* ---------- Avatar de iniciales ---------- */
+.avatar {
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dim) 100%);
+    color: var(--color-bg);
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-44 { width: 44px; height: 44px; }
+.avatar-84 { width: 84px; height: 84px; font-size: 2rem; }
+
+/* ---------- Feed (Inicio) ---------- */
+.feed-composer {
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+.feed-composer textarea {
+    width: 100%;
+    background: var(--color-bg-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    padding: 0.8rem;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 70px;
+}
+.feed-composer textarea:focus {
+    outline: none;
+    border-color: var(--color-gold);
+    box-shadow: 0 0 0 3px var(--color-gold-soft);
+}
+.feed-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: 0.7rem;
+}
+.feed-file { font-size: 0.8rem; color: var(--color-text-muted); }
+
+.post-card {
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.2rem;
+    margin-bottom: 1rem;
+}
+.post { display: flex; gap: 0.8rem; }
+.post-body { flex: 1; min-width: 0; }
+.post-meta { display: flex; gap: 0.5rem; align-items: baseline; flex-wrap: wrap; }
+.post-author { font-weight: 600; color: var(--color-text); }
+.post-time { color: var(--color-text-faint); font-size: 0.75rem; }
+.post-text { margin: 0.4rem 0 0; white-space: pre-wrap; word-wrap: break-word; }
+.post-photo {
+    margin-top: 0.7rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    background: var(--media-bg);
+}
+.post-mod { margin-top: 0.7rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+/* ---------- Eventos ---------- */
+.event-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.event-filters input { position: absolute; opacity: 0; pointer-events: none; }
+.event-filter-label {
+    border: 1px solid var(--color-border-strong); color: var(--color-gold);
+    border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.78rem; cursor: pointer;
+    user-select: none; text-transform: uppercase; letter-spacing: 0.05em;
+}
+/* Filtro CSS puro: los radios preceden a .events-list (hermanos). */
+#evf-taller:checked    ~ .event-filters label[for="evf-taller"],
+#evf-entrenamiento:checked ~ .event-filters label[for="evf-entrenamiento"],
+#evf-oportunidad:checked ~ .event-filters label[for="evf-oportunidad"],
+#evf-todos:checked     ~ .event-filters label[for="evf-todos"] {
+    background: var(--color-gold); color: var(--color-bg); border-color: var(--color-gold);
+}
+#evf-taller:checked       ~ .events-list .event-card:not(.type-taller),
+#evf-entrenamiento:checked ~ .events-list .event-card:not(.type-entrenamiento),
+#evf-oportunidad:checked  ~ .events-list .event-card:not(.type-oportunidad) { display: none; }
+.event-card { background: var(--color-bg-elev); border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg); padding: 1.1rem 1.2rem; margin-bottom: 1rem; }
+.event-row { display: flex; gap: 0.9rem; align-items: flex-start; }
+.event-date {
+    flex: 0 0 auto; text-align: center; min-width: 58px;
+    background: var(--color-bg-input); border: 1px solid var(--color-border);
+    border-radius: var(--radius-md); padding: 0.5rem 0.6rem;
+}
+.event-date .d { font-size: 1.4rem; font-weight: 700; color: var(--color-gold); display: block; line-height: 1; }
+.event-date .m { font-size: 0.7rem; text-transform: uppercase; color: var(--color-text-muted); }
+.event-title { margin: 0.3rem 0 0.2rem; color: var(--color-text); font-size: 1.05rem; }
+.event-tag {
+    display: inline-block; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 2px 9px; border-radius: 999px; background: var(--color-gold-soft);
+    color: var(--color-gold-bright); border: 1px solid var(--color-border);
+}
+
+/* ---------- Entrenamiento (acordeón por tema) ---------- */
+.topic { border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem; }
+.topic summary {
+    cursor: pointer; padding: 1rem 1.1rem; background: var(--color-bg-elev);
+    color: var(--color-text); font-weight: 600; list-style: none;
+}
+.topic summary::-webkit-details-marker { display: none; }
+.topic summary::before { content: '▸'; color: var(--color-gold); margin-right: 0.6rem; }
+.topic[open] summary::before { content: '▾'; }
+.topic-body { padding: 0.25rem 1.1rem 1rem; }
+.video-row { display: flex; gap: 0.8rem; align-items: center; padding: 0.6rem 0;
+    border-top: 1px solid var(--color-border-soft); }
+.video-frame { position: relative; width: 100%; aspect-ratio: 16/9; margin: 0.5rem 0; }
+.video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+    border-radius: var(--radius-md); }
+
+/* ---------- Materiales ---------- */
+.subtabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.material-row { display: flex; justify-content: space-between; align-items: center; gap: 0.8rem;
+    padding: 0.7rem 0; border-top: 1px solid var(--color-border-soft); }
+.material-row:first-child { border-top: 0; }
+.material-grid { display: grid; gap: 0.8rem; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.material-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: var(--radius-md);
+    border: 1px solid var(--color-border); background: var(--media-bg); }
+
+/* ---------- Notificaciones ---------- */
+.award { display: flex; gap: 0.8rem; align-items: center; }
+.award-medal { font-size: 1.8rem; flex: 0 0 auto; }
+.award-title { margin: 0; color: var(--color-text); font-size: 1.05rem; }
+
+/* ---------- Perfil ---------- */
+.profile-head { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.25rem; }
+.profile-name { margin: 0; color: var(--color-text); font-size: 1.3rem; }
+
+/* ---------- Desktop ---------- */
+@media (min-width: 760px) {
+    .section-grid-2 { grid-template-columns: 1fr 1fr; }
+}
