@@ -109,17 +109,33 @@ El mockup usa el tema real (paleta oscura + dorado, tipografías Allura/Montserr
 
 ---
 
-## 8. Ambigüedades a resolver antes de programar el feed (Fase 3)
+## 8. Decisiones del feed (resueltas con Rub, 2026-05-30)
 
-Estas decisiones cambian el diseño del feed y conviene cerrarlas con Marta:
+1. **Alcance del feed**: **global** — un solo muro para todo el equipo.
+2. **Moderación**: **solo administradores** pueden ocultar/eliminar publicaciones.
+3. **Visibilidad**: **los miembros se ven entre sí** (perfiles visibles entre miembros).
+4. *Pendiente menor*: si el MVP del feed incluye aplausos/comentarios desde el inicio o solo publicaciones. Se decide al llegar a Fase 3.
 
-1. **Alcance del feed**: ¿es un muro global de todo el equipo, o separado por sub-equipos/líder?
-2. **Moderación**: ¿quién puede ocultar/eliminar publicaciones — solo Marta, o cualquier admin?
-3. **Interacciones**: ¿el MVP del feed incluye aplausos/comentarios, o solo publicaciones en una primera versión?
-4. **Visibilidad**: ¿los miembros se ven entre sí (perfiles), o el directorio es privado?
+Implicaciones de diseño: la tabla `posts` no necesita columna de equipo (feed único global). La moderación se restringe a rol admin. Los perfiles (`users.photo_url`, nombre) son visibles para cualquier miembro autenticado.
 
 ---
 
-## 9. Nota sobre JavaScript
+## 9. Sistema de temas (4 temas)
+
+El mockup incluye un selector de **4 temas** para evaluar la dirección visual:
+
+| Tema | Descripción | Fuentes |
+|---|---|---|
+| **Claro** | Fondo claro cálido, texto oscuro, acento dorado profundo (oscurecido para contraste sobre blanco) | Allura + Montserrat |
+| **Oscuro** | El actual en producción: negro + dorado | Allura + Montserrat |
+| **Lifewave** | Colores corporativos LifeWave (turquesa/teal + azul marino + blanco). *Hex aproximados; ajustables si Marta tiene el manual de identidad.* | Allura + Montserrat |
+| **Marino** | Azul marino + toques dorados. **Fuentes frescas** (Poppins para títulos en vez de Allura, Nunito para texto) buscando algo menos acartonado | Poppins + Nunito (self-hosted) |
+
+Detalles técnicos:
+- El cambio de tema es **100% sin JavaScript**: PHP lee `?theme=` y pone `data-theme` en `<html>`; cada tema redefine las variables CSS de la paleta. En el mockup el tema se elige con la barra superior y persiste al navegar.
+- Las fuentes nuevas de Marino son **self-hosted** (regla del proyecto: nunca CDN). En el mockup viven en `/public/mockup/fonts/`.
+- **En producción**, la elección de tema se guardaría como preferencia por usuario (cookie firmada o columna en `users`), no por query string. Si se aprueba Marino, sus fuentes se mueven a `/public/assets/fonts/` y se documentan en MANUAL.md sección 19.
+
+## 10. Nota sobre JavaScript
 
 Todo lo anterior se puede construir con **HTML + CSS** (regla 6). Donde un refresco sin recargar mejore la experiencia (ej. publicar en el feed y ver el post aparecer sin recargar), se usaría **HTMX** (una sola dependencia, la lógica vive en PHP del servidor, sin escribir JS a mano). **JavaScript a mano solo si Rub lo autoriza explícitamente**, caso por caso. Ninguna validación ni seguridad depende del cliente.
