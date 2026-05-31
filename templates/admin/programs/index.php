@@ -47,9 +47,11 @@ $pageTitle = 'Programas';
                                 : '<span class="badge badge-muted">borrador</span>' ?>
                         </td>
                         <td class="ta-right">
-                            <a class="button button-ghost button-sm" href="/admin/programas/<?= e($p['id']) ?>/lecciones">Lecciones</a>
-                            <a class="button button-ghost button-sm" href="/admin/programas/<?= e($p['id']) ?>/editar">Editar</a>
-                            <a class="button button-ghost button-sm button-danger" href="/admin/programas/<?= e($p['id']) ?>/eliminar">Eliminar</a>
+                            <div class="table-actions">
+                                <a class="button button-ghost button-sm" href="/admin/programas/<?= e($p['id']) ?>/lecciones">Lecciones</a>
+                                <a class="button button-ghost button-sm" href="/admin/programas/<?= e($p['id']) ?>/editar">Editar</a>
+                                <a class="button button-ghost button-sm button-danger" href="/admin/programas/<?= e($p['id']) ?>/eliminar">Eliminar</a>
+                            </div>
                         </td>
                     </tr>
                 <?php endforeach; ?>

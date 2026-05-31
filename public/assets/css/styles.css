@@ -1010,6 +1010,13 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
 
 .ta-right { text-align: right; }
 
+.table-actions {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+}
+
 .badge {
     display: inline-block;
     padding: 3px 12px;
