@@ -42,6 +42,8 @@ final class LessonController
                     l.post_text,
                     l.story_text,
                     l.conversation_text,
+                    l.response_text,
+                    l.followup_text,
                     l.action_text,
                     l.tip_text,
                     l.image_url,

@@ -69,6 +69,8 @@ final class AdminLessonsController
                 'post_text'         => '',
                 'story_text'        => '',
                 'conversation_text' => '',
+                'response_text'     => '',
+                'followup_text'     => '',
                 'action_text'       => '',
                 'tip_text'          => '',
                 'checklist_text'    => '',
@@ -119,9 +121,11 @@ final class AdminLessonsController
 
         $stmt = Connection::get()->prepare(
             'INSERT INTO lessons (program_id, day_number, title, objective,
-                post_text, story_text, conversation_text, action_text, tip_text,
+                post_text, story_text, conversation_text, response_text, followup_text,
+                action_text, tip_text,
                 image_url, video_url, download_url, checklist_items, is_published)
-             VALUES (:pid, :day, :t, :obj, :post, :story, :conv, :act, :tip,
+             VALUES (:pid, :day, :t, :obj, :post, :story, :conv, :resp, :follow,
+                :act, :tip,
                 :img, :video, :download, :chk::jsonb, :pub)'
         );
         $stmt->execute([
@@ -132,6 +136,8 @@ final class AdminLessonsController
             ':post'     => self::nullable($data['post_text']),
             ':story'    => self::nullable($data['story_text']),
             ':conv'     => self::nullable($data['conversation_text']),
+            ':resp'     => self::nullable($data['response_text']),
+            ':follow'   => self::nullable($data['followup_text']),
             ':act'      => self::nullable($data['action_text']),
             ':tip'      => self::nullable($data['tip_text']),
             ':img'      => $imageUrl !== '' ? $imageUrl : null,
@@ -174,6 +180,8 @@ final class AdminLessonsController
                 'post_text'         => (string) $lesson['post_text'],
                 'story_text'        => (string) $lesson['story_text'],
                 'conversation_text' => (string) $lesson['conversation_text'],
+                'response_text'     => (string) ($lesson['response_text'] ?? ''),
+                'followup_text'     => (string) ($lesson['followup_text'] ?? ''),
                 'action_text'       => (string) $lesson['action_text'],
                 'tip_text'          => (string) $lesson['tip_text'],
                 'checklist_text'    => self::checklistToText($lesson['checklist_items']),
@@ -240,6 +248,8 @@ final class AdminLessonsController
                     post_text = :post,
                     story_text = :story,
                     conversation_text = :conv,
+                    response_text = :resp,
+                    followup_text = :follow,
                     action_text = :act,
                     tip_text = :tip,
                     image_url = :img,
@@ -256,6 +266,8 @@ final class AdminLessonsController
             ':post'     => self::nullable($data['post_text']),
             ':story'    => self::nullable($data['story_text']),
             ':conv'     => self::nullable($data['conversation_text']),
+            ':resp'     => self::nullable($data['response_text']),
+            ':follow'   => self::nullable($data['followup_text']),
             ':act'      => self::nullable($data['action_text']),
             ':tip'      => self::nullable($data['tip_text']),
             ':img'      => $imageUrl !== '' && $imageUrl !== null ? $imageUrl : null,
@@ -322,6 +334,7 @@ final class AdminLessonsController
      * @return array{
      *   day_number:string, title:string, objective:string,
      *   post_text:string, story_text:string, conversation_text:string,
+     *   response_text:string, followup_text:string,
      *   action_text:string, tip_text:string, checklist_text:string,
      *   is_published:string, video_url:string, download_url:string
      * }
@@ -335,6 +348,8 @@ final class AdminLessonsController
             'post_text'         => (string) ($_POST['post_text'] ?? ''),
             'story_text'        => (string) ($_POST['story_text'] ?? ''),
             'conversation_text' => (string) ($_POST['conversation_text'] ?? ''),
+            'response_text'     => (string) ($_POST['response_text'] ?? ''),
+            'followup_text'     => (string) ($_POST['followup_text'] ?? ''),
             'action_text'       => (string) ($_POST['action_text'] ?? ''),
             'tip_text'          => (string) ($_POST['tip_text'] ?? ''),
             'checklist_text'    => (string) ($_POST['checklist_text'] ?? ''),
@@ -358,7 +373,7 @@ final class AdminLessonsController
         if ($data['title'] === '' || mb_strlen($data['title']) > 200) {
             $errors['title'] = 'Título obligatorio (máx. 200 caracteres).';
         }
-        foreach (['objective', 'post_text', 'story_text', 'conversation_text', 'action_text', 'tip_text'] as $f) {
+        foreach (['objective', 'post_text', 'story_text', 'conversation_text', 'response_text', 'followup_text', 'action_text', 'tip_text'] as $f) {
             if (mb_strlen($data[$f]) > 8000) {
                 $errors[$f] = 'Texto demasiado largo (máx. 8000 caracteres).';
             }

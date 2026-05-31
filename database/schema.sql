@@ -57,6 +57,8 @@ CREATE TABLE IF NOT EXISTS lessons (
     post_text           TEXT,
     story_text          TEXT,
     conversation_text   TEXT,
+    response_text       TEXT,
+    followup_text       TEXT,
     action_text         TEXT,
     tip_text            TEXT,
     image_url           VARCHAR(500),

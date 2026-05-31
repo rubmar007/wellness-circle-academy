@@ -21,14 +21,19 @@ use RuntimeException;
  *   D: post_text         (string opcional, máx. 8000)
  *   E: story_text        (string opcional, máx. 8000)
  *   F: conversation_text (string opcional, máx. 8000)
- *   G: action_text       (string opcional, máx. 8000)
- *   H: tip_text          (string opcional, máx. 8000)
- *   I: checklist         (string opcional, ítems separados por | o salto de línea, máx. 20 ítems)
- *   J: is_published      (1/0, sí/no, true/false; vacío = no publicado)
+ *   G: response_text     (string opcional, máx. 8000)
+ *   H: followup_text     (string opcional, máx. 8000)
+ *   I: action_text       (string opcional, máx. 8000)
+ *   J: tip_text          (string opcional, máx. 8000)
+ *   K: checklist         (string opcional, ítems separados por | o salto de línea, máx. 20 ítems)
+ *   L: is_published      (1/0, sí/no, true/false; vacío = no publicado)
+ *   M: image_url         (URL Google Drive opcional)
+ *   N: video_url         (URL YouTube/Vimeo opcional)
+ *   O: download_url      (URL Google Drive opcional)
  */
 final class BatchImporter
 {
-    public const COLUMN_COUNT = 13;
+    public const COLUMN_COUNT = 15;
 
     public const HEADERS = [
         'day_number',
@@ -37,6 +42,8 @@ final class BatchImporter
         'post_text',
         'story_text',
         'conversation_text',
+        'response_text',
+        'followup_text',
         'action_text',
         'tip_text',
         'checklist',
@@ -53,6 +60,8 @@ final class BatchImporter
         'Publicación',
         'Story',
         'Conversación',
+        'Respuesta',
+        'Seguimiento',
         'Acción del día',
         'Tip',
         'Checklist (ítems separados por |)',
@@ -176,13 +185,15 @@ final class BatchImporter
             'post_text'         => $this->cleanLongText($values[3]),
             'story_text'        => $this->cleanLongText($values[4]),
             'conversation_text' => $this->cleanLongText($values[5]),
-            'action_text'       => $this->cleanLongText($values[6]),
-            'tip_text'          => $this->cleanLongText($values[7]),
-            'checklist_items'   => $this->parseChecklist($values[8]),
-            'is_published'      => $this->parseBool($values[9]),
-            'image_url'         => trim($values[10]),
-            'video_url'         => trim($values[11]),
-            'download_url'      => trim($values[12]),
+            'response_text'     => $this->cleanLongText($values[6]),
+            'followup_text'     => $this->cleanLongText($values[7]),
+            'action_text'       => $this->cleanLongText($values[8]),
+            'tip_text'          => $this->cleanLongText($values[9]),
+            'checklist_items'   => $this->parseChecklist($values[10]),
+            'is_published'      => $this->parseBool($values[11]),
+            'image_url'         => trim($values[12]),
+            'video_url'         => trim($values[13]),
+            'download_url'      => trim($values[14]),
         ];
     }
 
@@ -251,7 +262,7 @@ final class BatchImporter
             $errors[] = 'Título obligatorio (máx. 200 caracteres).';
         }
 
-        foreach (['objective', 'post_text', 'story_text', 'conversation_text', 'action_text', 'tip_text'] as $field) {
+        foreach (['objective', 'post_text', 'story_text', 'conversation_text', 'response_text', 'followup_text', 'action_text', 'tip_text'] as $field) {
             if (mb_strlen((string) $row[$field]) > 8000) {
                 $errors[] = 'Campo "' . $field . '" demasiado largo (máx. 8000 caracteres).';
             }

@@ -91,6 +91,8 @@ final class AdminBatchController
                 "Muchas veces creemos que el bienestar es solamente ejercicio o alimentación…\n\nPero también es energía, descanso, enfoque mental y sentirte bien contigo mismo.\n\nEstoy aprendiendo muchísimo sobre tecnologías de bienestar y biohacking natural y me emociona compartir este proceso.",
                 'Algo grande está cambiando en mi vida.',
                 "Amiga, últimamente he estado aprendiendo muchísimo sobre bienestar celular y energía natural.\n\nY sinceramente me ha sorprendido muchísimo cómo pequeños cambios pueden ayudarte a sentirte mejor.",
+                "Si te interesa te cuento más sin compromiso. ¿Te late que te mande un video corto?",
+                "Hola, ¿pudiste ver el video que te mandé? Me encantaría saber qué te pareció.",
                 "- Publicar el post\n- Subir 2 stories\n- Hablar con 3 personas",
                 'Cuanto más natural sea tu publicación, más conexión genera. No fuerces el tono comercial.',
                 'Ya publiqué|Ya subí stories|Ya hablé con 3 personas|Ya vi el entrenamiento',
@@ -106,6 +108,8 @@ final class AdminBatchController
                 'Texto principal que el miembro copiará para publicar en redes.',
                 'Texto corto para story.',
                 'Conversación ejemplo para mensajes directos.',
+                'Respuesta sugerida para continuar la conversación.',
+                'Mensaje de seguimiento para retomar el contacto.',
                 "- Acción 1\n- Acción 2\n- Acción 3",
                 'Tip o consejo para el día.',
                 'Item 1|Item 2|Item 3',
@@ -248,9 +252,11 @@ final class AdminBatchController
             );
             $insertStmt = $pdo->prepare(
                 'INSERT INTO lessons (program_id, day_number, title, objective,
-                    post_text, story_text, conversation_text, action_text, tip_text,
+                    post_text, story_text, conversation_text, response_text, followup_text,
+                    action_text, tip_text,
                     checklist_items, is_published, image_url, video_url, download_url)
-                 VALUES (:pid, :day, :t, :obj, :post, :story, :conv, :act, :tip,
+                 VALUES (:pid, :day, :t, :obj, :post, :story, :conv, :resp, :follow,
+                    :act, :tip,
                     :chk::jsonb, :pub, :img, :video, :download)'
             );
             $updateStmt = $pdo->prepare(
@@ -260,6 +266,8 @@ final class AdminBatchController
                         post_text = :post,
                         story_text = :story,
                         conversation_text = :conv,
+                        response_text = :resp,
+                        followup_text = :follow,
                         action_text = :act,
                         tip_text = :tip,
                         checklist_items = :chk::jsonb,
@@ -303,6 +311,8 @@ final class AdminBatchController
                     ':post'     => self::nullable($data['post_text']),
                     ':story'    => self::nullable($data['story_text']),
                     ':conv'     => self::nullable($data['conversation_text']),
+                    ':resp'     => self::nullable($data['response_text']),
+                    ':follow'   => self::nullable($data['followup_text']),
                     ':act'      => self::nullable($data['action_text']),
                     ':tip'      => self::nullable($data['tip_text']),
                     ':chk'      => json_encode($data['checklist_items'], JSON_UNESCAPED_UNICODE),

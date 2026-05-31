@@ -64,6 +64,8 @@ $renderCopyCard = function (string $title, ?string $body, string $idPrefix) use 
 <?php $renderCopyCard('Publicación principal',    $lesson['post_text'],         'post'); ?>
 <?php $renderCopyCard('Story sugerida',           $lesson['story_text'],        'story'); ?>
 <?php $renderCopyCard('Conversación ejemplo',     $lesson['conversation_text'], 'convo'); ?>
+<?php $renderCopyCard('Respuesta',               $lesson['response_text']  ?? null, 'resp'); ?>
+<?php $renderCopyCard('Seguimiento',             $lesson['followup_text']  ?? null, 'follow'); ?>
 
 <?php if (!empty($lesson['image_url'])): ?>
     <article class="image-card">

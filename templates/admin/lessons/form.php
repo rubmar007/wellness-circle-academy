@@ -92,6 +92,24 @@ $action    = $isCreate
     </div>
 
     <div class="field">
+        <label for="response_text">Respuesta</label>
+        <textarea id="response_text" name="response_text" rows="4" maxlength="8000"><?= e($old['response_text'] ?? '') ?></textarea>
+        <small class="field-hint">Respuesta sugerida para continuar la conversación.</small>
+        <?php if (!empty($errors['response_text'])): ?>
+            <small class="field-error"><?= e($errors['response_text']) ?></small>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="followup_text">Seguimiento</label>
+        <textarea id="followup_text" name="followup_text" rows="4" maxlength="8000"><?= e($old['followup_text'] ?? '') ?></textarea>
+        <small class="field-hint">Mensaje de seguimiento para retomar el contacto.</small>
+        <?php if (!empty($errors['followup_text'])): ?>
+            <small class="field-error"><?= e($errors['followup_text']) ?></small>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
         <label for="action_text">Acción del día</label>
         <textarea id="action_text" name="action_text" rows="3" maxlength="8000"><?= e($old['action_text'] ?? '') ?></textarea>
         <small class="field-hint">Una acción por línea, ej: <code>- Publicar el post</code>.</small>

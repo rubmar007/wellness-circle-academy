@@ -75,7 +75,8 @@ Repositorio: `git@github-personal:rubmar007/wellness-circle-academy.git`
 │   └── migrations/
 │       ├── 2026-05-21-add-password-resets.sql
 │       ├── 2026-05-21-add-lesson-video-and-download.sql
-│       └── 2026-05-25-add-program-presentation.sql
+│       ├── 2026-05-25-add-program-presentation.sql
+│       └── 2026-05-30-add-lesson-response-followup.sql
 ├── public/                  Document root (lo único expuesto al web).
 │   ├── index.php            Front controller + router HTTP + redirect HTTP->HTTPS en producción.
 │   ├── .htaccess            Rewrite + headers de seguridad (Apache; ignorado por php -S de Railway).
@@ -250,6 +251,8 @@ Plantilla en `.env.example`. Significado de cada una:
 | `post_text` | TEXT | Texto principal a copiar. |
 | `story_text` | TEXT | Story sugerida. |
 | `conversation_text` | TEXT | Conversación ejemplo. |
+| `response_text` | TEXT | Respuesta sugerida. Aparece en la UI después de "Conversación ejemplo" y antes de "Acción del día" (en la vista del miembro, antes de "Imagen del día"). |
+| `followup_text` | TEXT | Mensaje de seguimiento. Aparece junto a "Respuesta", después de "Conversación ejemplo". |
 | `action_text` | TEXT | Acciones del día (texto libre, normalmente lista con `- `). |
 | `tip_text` | TEXT | Tip del día. |
 | `image_url` | VARCHAR(500) | `/assets/uploads/UUID.ext`. |
@@ -296,6 +299,7 @@ psql "$DATABASE_URL" -f database/seed.sql                              # opciona
 psql "$DATABASE_URL" -f database/migrations/2026-05-21-add-password-resets.sql
 psql "$DATABASE_URL" -f database/migrations/2026-05-21-add-lesson-video-and-download.sql
 psql "$DATABASE_URL" -f database/migrations/2026-05-25-add-program-presentation.sql
+psql "$DATABASE_URL" -f database/migrations/2026-05-30-add-lesson-response-followup.sql
 ```
 
 Si no se tiene `psql` instalado, se puede aplicar desde PHP:
@@ -398,7 +402,7 @@ Pide nombre, email, rol y contraseña interactivamente. La contraseña no se mue
 Lo más eficiente cuando hay muchos días de un programa.
 
 1. Admin → Programas → "Lecciones" del programa → botón "Cargar batch (XLSX)".
-2. Click "Descargar plantilla XLSX". Trae 13 columnas con encabezados y dos filas de ejemplo (Día 1 con texto del seed, Día 2 con placeholders).
+2. Click "Descargar plantilla XLSX". Trae 15 columnas con encabezados y dos filas de ejemplo (Día 1 con texto del seed, Día 2 con placeholders). El orden de columnas es: Día, Título, Objetivo, Publicación, Story, Conversación, **Respuesta**, **Seguimiento**, Acción del día, Tip, Checklist, Publicado, URL imagen, URL video, URL descarga.
 3. Abrir el XLSX en Google Sheets (Archivo → Importar) o Excel.
 4. Editar las filas. Reglas:
    - Una fila por día. Día único por programa.
