@@ -35,6 +35,7 @@ use App\Controllers\LessonController;
 use App\Controllers\PasswordResetController;
 use App\Controllers\ProgramController;
 use App\Controllers\ProgressController;
+use App\Controllers\ThemeController;
 use App\Router;
 use App\Security;
 use App\Support\Env;
@@ -98,6 +99,9 @@ $router->get('/',          [HomeController::class, 'index']);
 $router->get('/login',     [AuthController::class, 'showLogin']);
 $router->post('/login',    [AuthController::class, 'login']);
 $router->post('/logout',   [AuthController::class, 'logout']);
+
+// Cambio de tema visual (cookie, sin JS). Disponible para cualquier visitante.
+$router->post('/tema',     [ThemeController::class, 'set']);
 
 // Recuperación de contraseña (URL "secreta", sin enlaces desde la app).
 $router->get('/ctoadmin',                [PasswordResetController::class, 'show']);

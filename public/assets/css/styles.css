@@ -27,6 +27,22 @@
                    U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Fuentes frescas usadas solo por el tema Marino (self-hosted, subset latin). */
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('/assets/fonts/poppins-600.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('/assets/fonts/nunito.woff2') format('woff2');
+}
+
 /* ---------- Variables de tema ---------- */
 
 :root {
@@ -82,6 +98,12 @@
     --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
                  "Helvetica Neue", Arial, sans-serif;
     --font-script: 'Allura', "Brush Script MT", cursive;
+
+    /* Chrome y superficies que cambian por tema (header, footer, code, media) */
+    --header-bg: rgba(10, 10, 10, 0.85);
+    --footer-bg: rgba(0, 0, 0, 0.4);
+    --code-bg:   rgba(0, 0, 0, 0.4);
+    --media-bg:  rgba(0, 0, 0, 0.3);
 
     /* Spacing */
     --space-1: 0.25rem;
@@ -183,7 +205,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
 }
 
 .site-header {
-    background: rgba(10, 10, 10, 0.85);
+    background: var(--header-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--color-border);
@@ -283,7 +305,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
     border-top: 1px solid var(--color-border);
     color: var(--color-text-faint);
     text-align: center;
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--footer-bg);
     font-size: 0.875rem;
     letter-spacing: 0.04em;
 }
@@ -567,7 +589,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
     height: 220px;
     object-fit: contain;
     object-position: center;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: var(--media-bg);
 }
 .program-card-cover-fallback {
     background:
@@ -710,7 +732,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
     height: auto;
     border-radius: var(--radius-md);
     margin: var(--space-3) 0;
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--media-bg);
 }
 
 .video-card {
@@ -871,7 +893,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
 .admin-list-title { font-weight: 600; color: var(--color-text); }
 .admin-list-meta  { color: var(--color-text-muted); font-size: 0.9rem; }
 .admin-list-meta code {
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--code-bg);
     color: var(--color-gold);
     padding: 1px 6px;
     border-radius: 4px;
@@ -1000,7 +1022,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
 .admin-table tbody tr:hover { background: rgba(212, 175, 55, 0.04); }
 
 .admin-table code {
-    background: rgba(0, 0, 0, 0.4);
+    background: var(--code-bg);
     color: var(--color-gold);
     padding: 2px 6px;
     border-radius: 4px;
@@ -1157,7 +1179,7 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border);
     margin-bottom: var(--space-1);
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--media-bg);
 }
 
 /* ---------- Botones extra ---------- */
@@ -1281,3 +1303,154 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
     border: 2px solid var(--color-bg);
 }
 *::-webkit-scrollbar-thumb:hover { background: var(--color-gold); }
+
+/* ============================================================
+   SISTEMA DE TEMAS (4 temas, sin JavaScript)
+   El tema se aplica con <html data-theme="..."> desde PHP (cookie wca_theme).
+   "oscuro" = valores de :root por defecto (no necesita bloque).
+   Cada bloque redefine las variables; todo el CSS las consume vía var().
+   ============================================================ */
+
+/* ---------- Tema CLARO ---------- */
+:root[data-theme="claro"] {
+    --color-bg:          #f4f2ec;
+    --color-bg-elev:     #ffffff;
+    --color-bg-elev-2:   #efece3;
+    --color-bg-input:    #ffffff;
+
+    --color-gold:        #9a7b1f;
+    --color-gold-bright: #c0962a;
+    --color-gold-dim:    #b9a96f;
+    --color-gold-soft:   rgba(154, 123, 31, 0.12);
+
+    --color-text:        #1c1b17;
+    --color-text-muted:  #5d5a51;
+    --color-text-faint:  #8a867b;
+
+    --color-border:        rgba(0, 0, 0, 0.12);
+    --color-border-strong: rgba(154, 123, 31, 0.55);
+    --color-border-soft:   rgba(0, 0, 0, 0.06);
+
+    --header-bg: rgba(255, 255, 255, 0.85);
+    --footer-bg: rgba(0, 0, 0, 0.03);
+    --code-bg:   rgba(0, 0, 0, 0.06);
+    --media-bg:  rgba(0, 0, 0, 0.05);
+}
+:root[data-theme="claro"] body {
+    background:
+        radial-gradient(ellipse at 80% -10%, rgba(154, 123, 31, 0.10), transparent 55%),
+        var(--color-bg);
+    background-attachment: fixed;
+}
+
+/* ---------- Tema LIFEWAVE (turquesa corporativo + navy + blanco) ---------- */
+/* Aproximación de la identidad de LifeWave (teal + azul marino). Hex ajustables
+   si Marta tiene el manual de marca oficial. */
+:root[data-theme="lifewave"] {
+    --color-bg:          #f1f6f7;
+    --color-bg-elev:     #ffffff;
+    --color-bg-elev-2:   #e8f1f2;
+    --color-bg-input:    #ffffff;
+
+    --color-gold:        #0b8f9c;
+    --color-gold-bright: #11aeba;
+    --color-gold-dim:    #7fb8bd;
+    --color-gold-soft:   rgba(11, 143, 156, 0.12);
+
+    --color-text:        #14233f;
+    --color-text-muted:  #45566f;
+    --color-text-faint:  #8893a3;
+
+    --color-border:        rgba(20, 35, 63, 0.12);
+    --color-border-strong: rgba(11, 143, 156, 0.50);
+    --color-border-soft:   rgba(20, 35, 63, 0.06);
+
+    --header-bg: rgba(255, 255, 255, 0.90);
+    --footer-bg: rgba(20, 35, 63, 0.04);
+    --code-bg:   rgba(20, 35, 63, 0.07);
+    --media-bg:  rgba(20, 35, 63, 0.05);
+}
+:root[data-theme="lifewave"] body {
+    background:
+        radial-gradient(ellipse at 80% -10%, rgba(11, 143, 156, 0.10), transparent 55%),
+        var(--color-bg);
+    background-attachment: fixed;
+}
+
+/* ---------- Tema MARINO (azul marino + dorado + fuentes frescas) ---------- */
+:root[data-theme="marino"] {
+    --color-bg:          #0c1830;
+    --color-bg-elev:     #132544;
+    --color-bg-elev-2:   #1a2f52;
+    --color-bg-input:    #0e1c38;
+
+    --color-gold:        #e3c265;
+    --color-gold-bright: #f3d98a;
+    --color-gold-dim:    #a8924f;
+    --color-gold-soft:   rgba(227, 194, 101, 0.14);
+
+    --color-text:        #eef2fa;
+    --color-text-muted:  #b3c0d6;
+    --color-text-faint:  #7e8da8;
+
+    --color-border:        rgba(227, 194, 101, 0.20);
+    --color-border-strong: rgba(227, 194, 101, 0.50);
+    --color-border-soft:   rgba(255, 255, 255, 0.07);
+
+    --header-bg: rgba(8, 18, 38, 0.85);
+    --footer-bg: rgba(0, 0, 0, 0.25);
+    --code-bg:   rgba(255, 255, 255, 0.06);
+    --media-bg:  rgba(0, 0, 0, 0.25);
+
+    /* Fuentes frescas: Poppins en títulos (en vez de Allura) y Nunito en texto. */
+    --font-sans:   'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-script: 'Poppins', "Segoe UI", sans-serif;
+}
+:root[data-theme="marino"] body {
+    background:
+        radial-gradient(ellipse at 80% -10%, rgba(227, 194, 101, 0.16), transparent 55%),
+        radial-gradient(ellipse at 10% 110%, rgba(227, 194, 101, 0.06), transparent 50%),
+        var(--color-bg);
+    background-attachment: fixed;
+}
+/* En Marino los títulos script (Poppins no es cursiva): ajusta peso/tamaño. */
+:root[data-theme="marino"] .auth-card h1,
+:root[data-theme="marino"] .page-head h1,
+:root[data-theme="marino"] .script {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+:root[data-theme="marino"] .error-page h1 { font-weight: 700; }
+
+/* ---------- Selector de temas (footer / barra) ---------- */
+.theme-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--space-3);
+}
+.theme-picker .theme-picker-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-faint);
+}
+.theme-pill {
+    background: transparent;
+    border: 1px solid var(--color-border-strong);
+    color: var(--color-gold);
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+}
+.theme-pill:hover { background: var(--color-gold-soft); }
+.theme-pill.is-active {
+    background: var(--color-gold);
+    color: var(--color-bg);
+    border-color: var(--color-gold);
+}
