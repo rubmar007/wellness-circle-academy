@@ -76,7 +76,8 @@ Repositorio: `git@github-personal:rubmar007/wellness-circle-academy.git`
 │       ├── 2026-05-21-add-password-resets.sql
 │       ├── 2026-05-21-add-lesson-video-and-download.sql
 │       ├── 2026-05-25-add-program-presentation.sql
-│       └── 2026-05-30-add-lesson-response-followup.sql
+│       ├── 2026-05-30-add-lesson-response-followup.sql
+│       └── 2026-05-31-add-sections-tables.sql
 ├── public/                  Document root (lo único expuesto al web).
 │   ├── index.php            Front controller + router HTTP + redirect HTTP->HTTPS en producción.
 │   ├── .htaccess            Rewrite + headers de seguridad (Apache; ignorado por php -S de Railway).
@@ -300,6 +301,7 @@ psql "$DATABASE_URL" -f database/migrations/2026-05-21-add-password-resets.sql
 psql "$DATABASE_URL" -f database/migrations/2026-05-21-add-lesson-video-and-download.sql
 psql "$DATABASE_URL" -f database/migrations/2026-05-25-add-program-presentation.sql
 psql "$DATABASE_URL" -f database/migrations/2026-05-30-add-lesson-response-followup.sql
+psql "$DATABASE_URL" -f database/migrations/2026-05-31-add-sections-tables.sql
 ```
 
 Si no se tiene `psql` instalado, se puede aplicar desde PHP:
@@ -979,3 +981,71 @@ curl -sS -A "$UA" "https://fonts.googleapis.com/css2?family=Allura&family=Montse
 - Lógica JavaScript: `copy.js` no se tocó. Sigue siendo el único JS del proyecto.
 - Esquema de BD: cero cambios.
 - CSP, headers de seguridad, autenticación, sesiones, CSRF, uploads, embeds: cero cambios.
+
+---
+
+## 20. Req B — Aplicación por secciones (2026-05-31)
+
+Segunda fase pedida por Marta: convertir la app en un portal por secciones. Diseño en `docs/REQ-B-DISENO.md`. Desplegado a producción el 2026-05-31.
+
+### 20.1 Secciones y rutas
+
+Navegación de secciones para usuarios autenticados (barra bajo el header, definida en `templates/layout.php`, estilos en `public/assets/css/sections.css`). Solo HTML+CSS, sin JS.
+
+| Sección | Ruta miembro | Admin | Tabla |
+|---|---|---|---|
+| Inicio (feed) | `/inicio` (GET lista, POST publica, POST `/inicio/{id}/eliminar`) | modera autor o admin | `posts` |
+| Tus primeros pasos | `/dashboard` (programas existentes) | `/admin/programas` | programs/lessons |
+| Entrenamiento | `/entrenamiento` | `/admin/entrenamiento` (CRUD) | `trainings` |
+| Materiales | `/materiales` | `/admin/materiales` (CRUD) | `materials` |
+| Eventos | `/eventos` | `/admin/eventos` (CRUD) | `events` |
+| Notificaciones | `/notificaciones` | `/admin/notificaciones` (CRUD) | `announcements` |
+| Normas y Reglamentos | `/normas` | `/admin/normas` (editar) | `pages` (slug=normas) |
+| Perfil | `/perfil` (GET/POST) | — | `users.photo_url` |
+| WhatsApp | enlace `wa.me` en la nav | — | env `WHATSAPP_NUMBER` |
+
+Controllers nuevos en `src/Controllers/`: `FeedController`, `ProfileController`, `TrainingController`, `AdminTrainingsController`, `MaterialController`, `AdminMaterialsController`, `EventController`, `AdminEventsController`, `AnnouncementController`, `AdminAnnouncementsController`, `PageController`, `AdminPagesController`. Todos siguen el patrón de `AdminProgramsController`.
+
+### 20.2 Tablas nuevas
+
+Migración `database/migrations/2026-05-31-add-sections-tables.sql` (ya aplicada en Neon):
+- `posts(id, user_id FK, body, image_url, is_hidden, created_at)` — feed global.
+- `trainings(id, category, title, video_url, display_order, is_published, created_at, updated_at)` — categorías: plan_compensacion, clientes, autoenvio, oficina_virtual, doctores.
+- `materials(id, type, title, url, image_url, display_order, is_published, created_at, updated_at)` — type: pdf, image, link.
+- `events(id, title, event_type, starts_at, join_url, description, is_published, created_at, updated_at)` — event_type: taller, entrenamiento, oportunidad.
+- `announcements(id, kind, title, body, is_published, created_at)` — kind: reconocimiento, aviso.
+- `pages(id, slug UNIQUE, title, body, updated_at)` — fila inicial slug=normas.
+- `users.photo_url VARCHAR(500)` — foto de perfil.
+
+Triggers `set_updated_at()` en trainings/materials/events/pages.
+
+### 20.3 Sistema de temas (4 temas)
+
+4 temas seleccionables sin JavaScript: Oscuro (default, sin regresión), Claro, Lifewave (turquesa corporativo, hex aproximados), Marino (azul marino + dorado, con fuentes frescas Poppins+Nunito self-hosted en `/assets/fonts/`).
+
+- `ThemeController` (`/tema`, POST con CSRF) guarda cookie `wca_theme` validada (anti open-redirect).
+- `templates/layout.php` lee la cookie y pone `data-theme` en `<html>` + `color-scheme` dinámico. Selector en el footer.
+- `styles.css` define cada tema en `:root[data-theme="..."]` redefiniendo variables. Variables de chrome (`--header-bg`, `--footer-bg`, `--code-bg`, `--media-bg`) para coherencia en temas claros.
+
+### 20.4 Decisiones del feed (confirmadas por Rub)
+
+- Feed **global** (un solo muro). Tabla `posts` sin columna de equipo.
+- Modera **solo admin** (puede eliminar cualquier post). El autor puede eliminar el suyo.
+- Miembros **se ven entre sí** (nombre + foto en cada post).
+- Versión inicial: solo publicaciones (sin comentarios/reacciones todavía).
+- Rate-limit: 20 publicaciones por hora por usuario.
+
+### 20.5 Seguridad (sin cambios al modelo)
+
+Todo el contenido de miembros reusa las defensas existentes:
+- Imágenes (feed y perfil): `Upload::image` (MIME real con finfo, whitelist JPG/PNG/WebP, renombrado UUID).
+- Texto: escapado con `e()`/`e_nl2br()` en toda salida (anti-XSS).
+- CSRF en todos los POST. Prepared statements en toda consulta. CSP estricta intacta (sin estilos inline, sin JS nuevo).
+
+### 20.6 Pendientes / acciones humanas
+
+- **Configurar `WHATSAPP_NUMBER`** en variables de entorno de Railway (solo dígitos, formato internacional, ej. `5215512345678`) para que aparezca el botón de WhatsApp. Si está vacío, el botón se oculta (comportamiento intencional).
+- Elegir el tema definitivo (o dejar que cada miembro elija). Si se aprueba Lifewave, ajustar los hex al manual de marca oficial. Las fuentes de Marino ya están en producción.
+- Cargar contenido real en cada sección desde el panel admin.
+- Decidir si el feed lleva comentarios/reacciones en una siguiente iteración.
+- Opcional: hacer que el login aterrice en `/inicio` en vez de `/dashboard` (un cambio de una línea en `AuthController`/`HomeController`).

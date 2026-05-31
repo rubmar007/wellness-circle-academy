@@ -1,6 +1,11 @@
 # Req B — Diseño de la aplicación por secciones
 
-Documento de diseño para la fase 2 de Wellness Circle Academy, basado en los requerimientos de Marta (`Req Marta/aplicacion con nuevas secciones.docx`). Pendiente de aprobación antes de tocar código de producción.
+> **Estado: DESPLEGADO a producción el 2026-05-31.** Todas las secciones están vivas
+> (Inicio/feed, Entrenamiento, Materiales, Eventos, Notificaciones, Normas, Perfil) más
+> el sistema de 4 temas. Detalle operativo en `MANUAL.md` sección 20. Este documento
+> queda como referencia del diseño.
+
+Documento de diseño para la fase 2 de Wellness Circle Academy, basado en los requerimientos de Marta (`Req Marta/aplicacion con nuevas secciones.docx`).
 
 Acompaña a este documento un **mockup local navegable** (ver sección 7) para que Marta vea la propuesta visual.
 
