@@ -14,7 +14,7 @@ final class AuthController
     public function showLogin(array $params): void
     {
         if (Auth::check()) {
-            View::redirect('/dashboard');
+            View::redirect('/inicio');
             return;
         }
 
@@ -58,7 +58,7 @@ final class AuthController
             return;
         }
 
-        View::redirect('/dashboard');
+        View::redirect('/inicio');
     }
 
     /** @param array<string,string> $params */

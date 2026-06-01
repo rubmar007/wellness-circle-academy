@@ -13,7 +13,7 @@ final class HomeController
     public function index(array $params): void
     {
         if (Auth::check()) {
-            View::redirect('/dashboard');
+            View::redirect('/inicio');
             return;
         }
         View::redirect('/login');

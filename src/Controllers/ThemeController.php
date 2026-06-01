@@ -18,7 +18,7 @@ final class ThemeController
     /** Temas válidos. Debe coincidir con los bloques de styles.css y con layout.php. */
     public const THEMES = ['oscuro', 'claro', 'lifewave', 'marino'];
     public const COOKIE = 'wca_theme';
-    public const DEFAULT = 'oscuro';
+    public const DEFAULT = 'marino';
 
     /** @param array<string,string> $params */
     public function set(array $params): void
@@ -59,11 +59,11 @@ final class ThemeController
     private static function safeBack(string $back): string
     {
         if ($back === '' || $back[0] !== '/' || str_starts_with($back, '//')) {
-            return '/dashboard';
+            return '/inicio';
         }
         // Sin saltos de línea ni control chars (anti header injection).
         if (preg_match('/[\x00-\x1F\x7F]/', $back) === 1) {
-            return '/dashboard';
+            return '/inicio';
         }
         return $back;
     }
