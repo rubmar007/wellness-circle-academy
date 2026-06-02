@@ -2,7 +2,7 @@
 
 Documento de operación, mantenimiento y referencia técnica del sistema. Producido al cierre del MVP. Lenguaje directo, orientado a ejecución. Si algo cambia en el futuro, este manual debe actualizarse junto con el código.
 
-Última actualización: 2026-05-25 (commit base: `9fb138a`).
+Última actualización: 2026-06-02 (commit base: `738d7cf`).
 
 ---
 
@@ -10,7 +10,7 @@ Documento de operación, mantenimiento y referencia técnica del sistema. Produc
 
 Plataforma web privada de duplicación para equipos de bienestar y network marketing. Los administradores cargan programas (Arranque, X39, Cellergize, Glutathione, Silent Night, Liderazgo, Redes Sociales, Testimonios, Herramientas, etc.); cada programa contiene lecciones diarias con publicación lista para copiar, story sugerida, conversación ejemplo, imagen descargable, video, checklist y link de descarga. Los miembros entran cada día, copian el contenido y ejecutan acciones desde su celular.
 
-URL pública: `https://wellnessca.martavilla.com.mx`
+URL pública: `https://academiawca.com`
 Repositorio: `git@github-personal:rubmar007/wellness-circle-academy.git`
 
 ---
@@ -48,7 +48,7 @@ Repositorio: `git@github-personal:rubmar007/wellness-circle-academy.git`
 - Railway (https://railway.com).
 - Plan: Hobby.
 - Builder: Railpack (no Nixpacks).
-- Custom domain: `wellnessca.martavilla.com.mx` con certificado Let's Encrypt automático.
+- Custom domain: `academiawca.com` con certificado Let's Encrypt automático.
 - Region del servicio: US West (California).
 - Storage persistente: Railway Volume de 5 GB montado en `/app/public/assets/uploads`.
 
@@ -186,7 +186,7 @@ Repositorio: `git@github-personal:rubmar007/wellness-circle-academy.git`
 - Plan: Hobby.
 - Builder: **Railpack** (no Nixpacks). Detecta PHP por `composer.json`.
 - Region: US West (California).
-- Public domain: `wellnessca.martavilla.com.mx` (custom domain). Certificado Let's Encrypt automático.
+- Public domain: `academiawca.com` (custom domain). Certificado Let's Encrypt automático.
 - Internal domain: `wellness-circle-academy.railway.internal` (no expuesto).
 - Volume: `wellness-circle-academy-volume`, 5 GB, montado en `/app/public/assets/uploads`.
 
@@ -455,7 +455,7 @@ Validaciones de upload (mismas en los tres caminos):
 
 ### 9.8 Recuperación de contraseña
 
-URL secreta: `https://wellnessca.martavilla.com.mx/ctoadmin`. No hay link visible desde ningún lado de la app — debe guardarse aparte.
+URL secreta: `https://academiawca.com/ctoadmin`. No hay link visible desde ningún lado de la app — debe guardarse aparte.
 
 Flujo:
 1. Visitar `/ctoadmin`, escribir email.
@@ -471,7 +471,7 @@ Reglas del token:
 - Single-use (se marca `used_at` al usarlo).
 - Rate limit: máx 3 solicitudes por hora por usuario.
 
-**Importante**: el link del email se construye desde `HTTP_HOST` del request actual, no desde `APP_URL`. Esto significa que si solicitas el reset desde `https://wellnessca.martavilla.com.mx`, el link te lleva al mismo dominio. Si en el futuro se accede al sitio desde otro dominio (multi-tenant, staging), el email se ajusta solo.
+**Importante**: el link del email se construye desde `HTTP_HOST` del request actual, no desde `APP_URL`. Esto significa que si solicitas el reset desde `https://academiawca.com`, el link te lleva al mismo dominio. Si en el futuro se accede al sitio desde otro dominio (multi-tenant, staging), el email se ajusta solo.
 
 #### Reset manual de password (último recurso si /ctoadmin falla)
 ```bash
@@ -596,7 +596,7 @@ web: php -S 0.0.0.0:$PORT -t public public/index.php
 - **Cuando el volume se monta, oculta cualquier contenido previo en esa ruta del filesystem efímero**. Por eso las imágenes subidas ANTES de crear el volume aparecen como rotas tras montarlo. Solución: re-subir o restaurar desde backup.
 
 ### 11.5 Custom domain
-- `wellnessca.martavilla.com.mx`.
+- `academiawca.com`.
 - DNS apuntando a Railway (CNAME o A según UI).
 - Certificado emitido automáticamente por Let's Encrypt cuando Railway valida que el DNS responde correctamente. Tarda 1-10 min desde la propagación del DNS.
 - HSTS de 1 año activo.
@@ -610,7 +610,7 @@ git commit --allow-empty -m "Trigger redeploy" && git push origin main
 - Idénticas a `.env` local salvo:
   - `APP_ENV=production`
   - `APP_DEBUG=false`
-  - `APP_URL=https://wellnessca.martavilla.com.mx` (en realidad opcional, ver sección 5)
+  - `APP_URL=https://academiawca.com` (en realidad opcional, ver sección 5)
 - Se editan en Railway → servicio → tab Variables → Raw Editor.
 - Cambiar una variable dispara redeploy automático.
 
@@ -640,7 +640,7 @@ git commit --allow-empty -m "Trigger redeploy" && git push origin main
 
 ### "El link del email lleva a placeholder.up.railway.app"
 - Es un email VIEJO generado cuando `APP_URL` aún era placeholder. Los emails nuevos (commit `55d8027` en adelante) usan `HTTP_HOST` y no tienen este problema.
-- Fix inmediato del email viejo: reemplazar `placeholder.up.railway.app` por `wellnessca.martavilla.com.mx` en la URL del navegador (el token sigue siendo válido si no expiró).
+- Fix inmediato del email viejo: reemplazar `placeholder.up.railway.app` por `academiawca.com` en la URL del navegador (el token sigue siendo válido si no expiró).
 - Fix permanente: pedir un nuevo reset.
 
 ### "Las imágenes subidas se borran tras un push"
@@ -653,13 +653,13 @@ git commit --allow-empty -m "Trigger redeploy" && git push origin main
 
 ### "El navegador dice Not secure"
 - Verificar primero en otro navegador (Opera, Firefox, Edge). Si en otro está bien, es local de Chrome.
-- En Chrome, limpiar HSTS cache: `chrome://net-internals/#hsts` → Delete domain → `wellnessca.martavilla.com.mx`.
+- En Chrome, limpiar HSTS cache: `chrome://net-internals/#hsts` → Delete domain → `academiawca.com`.
 - Limpiar caché del sitio: `chrome://settings/clearBrowserData` (cookies y caché, 24h).
 - Probar en incógnito; si funciona ahí, es una extensión.
 - En el servidor, verificar:
   ```bash
-  curl -sI https://wellnessca.martavilla.com.mx/login | grep -i strict-transport
-  openssl s_client -servername wellnessca.martavilla.com.mx -connect wellnessca.martavilla.com.mx:443 < /dev/null 2>&1 | grep "Verify return code"
+  curl -sI https://academiawca.com/login | grep -i strict-transport
+  openssl s_client -servername academiawca.com -connect academiawca.com:443 < /dev/null 2>&1 | grep "Verify return code"
   ```
   Debe responder con HSTS y `Verify return code: 0 (ok)`.
 
@@ -841,8 +841,8 @@ require __DIR__."/vendor/autoload.php";
 echo "OK\n";'
 
 # Verificar SSL de producción
-openssl s_client -servername wellnessca.martavilla.com.mx \
-    -connect wellnessca.martavilla.com.mx:443 < /dev/null 2>&1 \
+openssl s_client -servername academiawca.com \
+    -connect academiawca.com:443 < /dev/null 2>&1 \
     | grep -E "subject=|issuer=|Verify return code"
 ```
 
@@ -852,8 +852,8 @@ openssl s_client -servername wellnessca.martavilla.com.mx \
 
 | Concepto | Valor |
 |---|---|
-| URL pública | https://wellnessca.martavilla.com.mx |
-| URL secreta de reset | https://wellnessca.martavilla.com.mx/ctoadmin |
+| URL pública | https://academiawca.com |
+| URL secreta de reset | https://academiawca.com/ctoadmin |
 | Repo | git@github-personal:rubmar007/wellness-circle-academy.git |
 | Cuenta admin inicial | rub.martinez@gmail.com |
 | Neon proyecto | wellness-circle-academy (region us-east-1, Postgres 17) |
