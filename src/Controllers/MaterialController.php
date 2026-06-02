@@ -16,25 +16,26 @@ final class MaterialController
         Auth::requireLogin();
 
         $rows = Connection::get()->query(
-            'SELECT id, type, title, url, image_url, display_order, is_published
+            'SELECT id, type, title, url, image_url, folder, display_order, is_published
                FROM materials
               WHERE is_published = TRUE
-              ORDER BY display_order ASC, id ASC'
+              ORDER BY folder ASC NULLS FIRST, display_order ASC, id ASC'
         )->fetchAll();
 
         $pdfs   = [];
         $images = [];
         $links  = [];
         foreach ($rows as $row) {
+            $folder = $row['folder'] !== null && $row['folder'] !== '' ? $row['folder'] : '';
             switch ($row['type']) {
                 case 'pdf':
-                    $pdfs[] = $row;
+                    $pdfs[$folder][] = $row;
                     break;
                 case 'image':
-                    $images[] = $row;
+                    $images[$folder][] = $row;
                     break;
                 case 'link':
-                    $links[] = $row;
+                    $links[$folder][] = $row;
                     break;
             }
         }

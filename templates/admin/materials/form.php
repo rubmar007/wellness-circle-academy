@@ -85,6 +85,21 @@ $types     = AdminMaterialsController::TYPES;
         <?php endif; ?>
     </div>
 
+    <div class="field">
+        <label for="folder">Carpeta</label>
+        <input
+            type="text"
+            id="folder"
+            name="folder"
+            value="<?= e($old['folder'] ?? '') ?>"
+            maxlength="100"
+            placeholder="Ej: X39, Arranque, Para clientes…">
+        <small class="field-hint">Opcional. Agrupa este material bajo una carpeta en la vista de miembros.</small>
+        <?php if (!empty($errors['folder'])): ?>
+            <small class="field-error"><?= e($errors['folder']) ?></small>
+        <?php endif; ?>
+    </div>
+
     <div class="field-row">
         <div class="field">
             <label for="display_order">Orden</label>

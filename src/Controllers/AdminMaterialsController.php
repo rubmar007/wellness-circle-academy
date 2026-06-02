@@ -97,15 +97,18 @@ final class AdminMaterialsController
         $url      = $data['type'] === 'image' ? null : $data['url'];
         $imageCol = $data['type'] === 'image' ? $imageUrl : null;
 
+        $folder = $data['folder'] !== '' ? $data['folder'] : null;
+
         $stmt = Connection::get()->prepare(
-            'INSERT INTO materials (type, title, url, image_url, display_order, is_published)
-             VALUES (:ty, :ti, :u, :im, :o, :p)'
+            'INSERT INTO materials (type, title, url, image_url, folder, display_order, is_published)
+             VALUES (:ty, :ti, :u, :im, :fo, :o, :p)'
         );
         $stmt->execute([
             ':ty' => $data['type'],
             ':ti' => $data['title'],
             ':u'  => $url,
             ':im' => $imageCol,
+            ':fo' => $folder,
             ':o'  => (int) $data['display_order'],
             ':p'  => $data['is_published'] === '1' ? 't' : 'f',
         ]);
@@ -133,6 +136,7 @@ final class AdminMaterialsController
                 'type'          => $material['type'],
                 'title'         => $material['title'],
                 'url'           => (string) ($material['url'] ?? ''),
+                'folder'        => (string) ($material['folder'] ?? ''),
                 'display_order' => (string) $material['display_order'],
                 'is_published'  => $material['is_published'] ? '1' : '',
             ],
@@ -204,10 +208,12 @@ final class AdminMaterialsController
             $imageCol = null;
         }
 
+        $folder = $data['folder'] !== '' ? $data['folder'] : null;
+
         $stmt = Connection::get()->prepare(
             'UPDATE materials
                 SET type = :ty, title = :ti, url = :u, image_url = :im,
-                    display_order = :o, is_published = :p
+                    folder = :fo, display_order = :o, is_published = :p
               WHERE id = :id'
         );
         $stmt->execute([
@@ -215,6 +221,7 @@ final class AdminMaterialsController
             ':ti' => $data['title'],
             ':u'  => $url,
             ':im' => $imageCol,
+            ':fo' => $folder,
             ':o'  => (int) $data['display_order'],
             ':p'  => $data['is_published'] === '1' ? 't' : 'f',
             ':id' => $id,
@@ -269,13 +276,14 @@ final class AdminMaterialsController
 
     // ----------------------------------------------------------------
 
-    /** @return array{type:string,title:string,url:string,display_order:string,is_published:string} */
+    /** @return array{type:string,title:string,url:string,folder:string,display_order:string,is_published:string} */
     private static function extractInput(): array
     {
         return [
             'type'          => trim((string) ($_POST['type'] ?? '')),
             'title'         => trim((string) ($_POST['title'] ?? '')),
             'url'           => trim((string) ($_POST['url'] ?? '')),
+            'folder'        => trim((string) ($_POST['folder'] ?? '')),
             'display_order' => trim((string) ($_POST['display_order'] ?? '0')),
             'is_published'  => isset($_POST['is_published']) ? '1' : '',
         ];
