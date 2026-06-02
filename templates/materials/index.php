@@ -47,7 +47,11 @@ $pageTitle = 'Materiales';
         <div class="material-grid">
             <?php foreach ($images as $img): ?>
                 <?php if (!empty($img['image_url'])): ?>
-                    <img class="material-img" src="<?= e($img['image_url']) ?>" alt="<?= e($img['title']) ?>" loading="lazy">
+                    <?php $link = !empty($img['url']) ? e($img['url']) : e($img['image_url']); ?>
+                    <a class="material-card" href="<?= $link ?>" target="_blank" rel="noopener noreferrer">
+                        <img class="material-img" src="<?= e($img['image_url']) ?>" alt="<?= e($img['title']) ?>" loading="lazy">
+                        <span class="material-card-title"><?= e($img['title']) ?></span>
+                    </a>
                 <?php endif; ?>
             <?php endforeach; ?>
         </div>
