@@ -24,7 +24,7 @@ $types     = AdminEventsController::TYPES;
     <h1><?= e($pageTitle) ?></h1>
 </section>
 
-<form method="post" action="<?= e($action) ?>" class="admin-form" novalidate>
+<form method="post" action="<?= e($action) ?>" enctype="multipart/form-data" class="admin-form" novalidate>
     <input type="hidden" name="_csrf" value="<?= e($csrf) ?>">
 
     <div class="field">
@@ -88,6 +88,21 @@ $types     = AdminEventsController::TYPES;
         <textarea id="description" name="description" rows="4" maxlength="4000"><?= e($old['description'] ?? '') ?></textarea>
         <?php if (!empty($errors['description'])): ?>
             <small class="field-error"><?= e($errors['description']) ?></small>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="image">Imagen del evento</label>
+        <?php if (!$isCreate && !empty($event['image_url'])): ?>
+            <p class="form-image-current">
+                <img src="<?= e($event['image_url']) ?>" alt="" loading="lazy">
+                <span class="muted small">Actual. Sube otra para reemplazarla.</span>
+            </p>
+        <?php endif; ?>
+        <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp">
+        <small class="field-hint">Opcional. Flyer o banner del evento. JPG, PNG o WebP. Máximo 5 MB.</small>
+        <?php if (!empty($errors['image'])): ?>
+            <small class="field-error"><?= e($errors['image']) ?></small>
         <?php endif; ?>
     </div>
 

@@ -16,7 +16,7 @@ final class EventController
         Auth::requireLogin();
 
         $events = Connection::get()->query(
-            "SELECT id, title, event_type, starts_at, join_url, description
+            "SELECT id, title, event_type, starts_at, join_url, description, image_url
                FROM events
               WHERE is_published = TRUE
                 AND starts_at >= NOW() - interval '1 day'

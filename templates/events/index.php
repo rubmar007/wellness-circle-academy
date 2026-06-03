@@ -44,6 +44,9 @@ $types = AdminEventsController::TYPES;
                 $desc    = (string) ($ev['description'] ?? '');
                 ?>
                 <article class="event-card type-<?= e($type) ?>">
+                    <?php if (!empty($ev['image_url'])): ?>
+                        <img class="event-img" src="<?= e($ev['image_url']) ?>" alt="<?= e($ev['title']) ?>" loading="lazy">
+                    <?php endif; ?>
                     <div class="event-row">
                         <div class="event-date">
                             <span class="d"><?= e($dia) ?></span>

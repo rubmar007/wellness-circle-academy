@@ -7,8 +7,10 @@ namespace App\Controllers;
 use App\Auth;
 use App\Csrf;
 use App\Database\Connection;
+use App\Upload;
 use App\View;
 use DateTime;
+use RuntimeException;
 
 final class AdminEventsController
 {
@@ -62,10 +64,25 @@ final class AdminEventsController
         Auth::requireAdmin();
         Csrf::requireValid();
 
-        $data   = self::extractInput();
-        $errors = self::validate($data);
+        $data        = self::extractInput();
+        $hasFile     = self::hasFileUpload();
+        $imageUrl    = '';
+        $uploadError = null;
+
+        if ($hasFile) {
+            try {
+                $imageUrl = Upload::image($_FILES['image'] ?? null);
+            } catch (RuntimeException $e) {
+                $uploadError = $e->getMessage();
+            }
+        }
+
+        $errors = self::validate($data, $uploadError);
 
         if ($errors !== []) {
+            if ($imageUrl !== '') {
+                Upload::deleteImage($imageUrl);
+            }
             View::render('admin/events/form', [
                 'mode'   => 'create',
                 'event'  => null,
@@ -76,8 +93,8 @@ final class AdminEventsController
         }
 
         $stmt = Connection::get()->prepare(
-            'INSERT INTO events (title, event_type, starts_at, join_url, description, is_published)
-             VALUES (:t, :ty, :s, :j, :d, :p)'
+            'INSERT INTO events (title, event_type, starts_at, join_url, description, image_url, is_published)
+             VALUES (:t, :ty, :s, :j, :d, :im, :p)'
         );
         $stmt->execute([
             ':t'  => $data['title'],
@@ -85,6 +102,7 @@ final class AdminEventsController
             ':s'  => $data['starts_at'],
             ':j'  => $data['join_url'] !== '' ? $data['join_url'] : null,
             ':d'  => $data['description'] !== '' ? $data['description'] : null,
+            ':im' => $imageUrl !== '' ? $imageUrl : null,
             ':p'  => $data['is_published'] === '1' ? 't' : 'f',
         ]);
 
@@ -132,10 +150,30 @@ final class AdminEventsController
             return;
         }
 
-        $data   = self::extractInput();
-        $errors = self::validate($data);
+        $data          = self::extractInput();
+        $hasFile       = self::hasFileUpload();
+        $existingImage = (string) ($event['image_url'] ?? '');
+        $imageUrl      = $existingImage;
+        $newUpload     = '';
+        $uploadError   = null;
+
+        if ($hasFile) {
+            try {
+                $newUpload = Upload::image($_FILES['image'] ?? null);
+                if ($newUpload !== '') {
+                    $imageUrl = $newUpload;
+                }
+            } catch (RuntimeException $e) {
+                $uploadError = $e->getMessage();
+            }
+        }
+
+        $errors = self::validate($data, $uploadError);
 
         if ($errors !== []) {
+            if ($newUpload !== '') {
+                Upload::deleteImage($newUpload);
+            }
             View::render('admin/events/form', [
                 'mode'   => 'edit',
                 'event'  => $event,
@@ -145,10 +183,14 @@ final class AdminEventsController
             return;
         }
 
+        if ($newUpload !== '' && $existingImage !== '' && $existingImage !== $newUpload) {
+            Upload::deleteImage($existingImage);
+        }
+
         $stmt = Connection::get()->prepare(
             'UPDATE events
                 SET title = :t, event_type = :ty, starts_at = :s,
-                    join_url = :j, description = :d, is_published = :p
+                    join_url = :j, description = :d, image_url = :im, is_published = :p
               WHERE id = :id'
         );
         $stmt->execute([
@@ -157,6 +199,7 @@ final class AdminEventsController
             ':s'  => $data['starts_at'],
             ':j'  => $data['join_url'] !== '' ? $data['join_url'] : null,
             ':d'  => $data['description'] !== '' ? $data['description'] : null,
+            ':im' => $imageUrl !== '' ? $imageUrl : null,
             ':p'  => $data['is_published'] === '1' ? 't' : 'f',
             ':id' => $id,
         ]);
@@ -195,6 +238,10 @@ final class AdminEventsController
             return;
         }
 
+        if (!empty($event['image_url'])) {
+            Upload::deleteImage((string) $event['image_url']);
+        }
+
         $stmt = Connection::get()->prepare('DELETE FROM events WHERE id = :id');
         $stmt->execute([':id' => $id]);
 
@@ -203,6 +250,12 @@ final class AdminEventsController
     }
 
     // ----------------------------------------------------------------
+
+    private static function hasFileUpload(): bool
+    {
+        return isset($_FILES['image']) && is_array($_FILES['image'])
+            && (int) ($_FILES['image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+    }
 
     /** @return array{title:string,event_type:string,starts_at:string,join_url:string,description:string,is_published:string} */
     private static function extractInput(): array
@@ -221,7 +274,7 @@ final class AdminEventsController
      * @param array{title:string,event_type:string,starts_at:string,join_url:string,description:string,is_published:string} $data
      * @return array<string,string>
      */
-    private static function validate(array $data): array
+    private static function validate(array $data, ?string $uploadError): array
     {
         $errors = [];
 
@@ -245,6 +298,10 @@ final class AdminEventsController
 
         if ($data['description'] !== '' && mb_strlen($data['description']) > 4000) {
             $errors['description'] = 'Descripción máxima 4000 caracteres.';
+        }
+
+        if ($uploadError !== null) {
+            $errors['image'] = $uploadError;
         }
 
         return $errors;
