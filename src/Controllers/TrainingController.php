@@ -22,7 +22,7 @@ final class TrainingController
     /** @param array<string,string> $params */
     public function index(array $params): void
     {
-        Auth::requireLogin();
+        Auth::requireTeamMember();
 
         $rows = Connection::get()->query(
             'SELECT id, category, title, video_url, display_order, is_published

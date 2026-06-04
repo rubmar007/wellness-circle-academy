@@ -23,7 +23,7 @@ final class AnnouncementController
     /** @param array<string,string> $params */
     public function index(array $params): void
     {
-        Auth::requireLogin();
+        Auth::requireTeamMember();
 
         $announcements = Connection::get()->query(
             'SELECT id, kind, title, body, is_published, created_at

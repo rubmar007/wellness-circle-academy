@@ -13,7 +13,7 @@ final class MaterialController
     /** @param array<string,string> $params */
     public function index(array $params): void
     {
-        Auth::requireLogin();
+        Auth::requireTeamMember();
 
         $rows = Connection::get()->query(
             'SELECT id, type, title, url, image_url, folder, display_order, is_published
