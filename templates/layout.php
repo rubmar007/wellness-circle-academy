@@ -25,14 +25,15 @@ $themeBack = is_string($themeBack) && $themeBack !== '' ? $themeBack : '/';
 // Navegación de secciones (Req B). Sidebar a la izquierda. Activo según la ruta.
 $navPath = $themeBack;
 $sectionNav = [
-    ['href' => '/inicio',         'label' => 'Inicio',             'icon' => '🏠', 'match' => '/inicio'],
-    ['href' => '/dashboard',      'label' => 'Tus primeros pasos', 'icon' => '🚀', 'match' => '/dashboard'],
-    ['href' => '/entrenamiento',  'label' => 'Entrenamiento',      'icon' => '🎓', 'match' => '/entrenamiento'],
-    ['href' => '/materiales',     'label' => 'Materiales',         'icon' => '📂', 'match' => '/materiales'],
-    ['href' => '/eventos',        'label' => 'Eventos',            'icon' => '📅', 'match' => '/eventos'],
-    ['href' => '/notificaciones', 'label' => 'Notificaciones',     'icon' => '🏅', 'match' => '/notificaciones'],
+    ['href' => '/inicio',         'label' => 'Inicio',              'icon' => '🏠', 'match' => '/inicio'],
+    ['href' => '/dashboard',      'label' => 'Tus primeros pasos',  'icon' => '🚀', 'match' => '/dashboard'],
+    ['href' => '/soy-cliente',    'label' => 'Soy Cliente',         'icon' => '⭐', 'match' => '/soy-cliente'],
+    ['href' => '/entrenamiento',  'label' => 'Entrenamiento',       'icon' => '🎓', 'match' => '/entrenamiento'],
+    ['href' => '/materiales',     'label' => 'Materiales',          'icon' => '📂', 'match' => '/materiales'],
+    ['href' => '/eventos',        'label' => 'Eventos',             'icon' => '📅', 'match' => '/eventos'],
+    ['href' => '/notificaciones', 'label' => 'Notificaciones',      'icon' => '🏅', 'match' => '/notificaciones'],
     ['href' => '/normas',         'label' => 'Normas y Reglamentos','icon' => '📜', 'match' => '/normas'],
-    ['href' => '/perfil',         'label' => 'Perfil',             'icon' => '👤', 'match' => '/perfil'],
+    ['href' => '/perfil',         'label' => 'Perfil',              'icon' => '👤', 'match' => '/perfil'],
 ];
 $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHATSAPP_NUMBER', ''));
 ?>
@@ -77,7 +78,14 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
         <div class="app-shell">
             <nav class="app-sidebar" aria-label="Secciones">
                 <ul>
-                    <?php foreach ($sectionNav as $item): ?>
+                    <?php
+                    $isCliente    = ($auth['role'] ?? '') === 'cliente';
+                    $teamOnlyItems = ['/entrenamiento', '/materiales', '/notificaciones'];
+                    foreach ($sectionNav as $item):
+                        if ($isCliente && in_array($item['match'], $teamOnlyItems, true)) {
+                            continue;
+                        }
+                    ?>
                         <li>
                             <a href="<?= e($item['href']) ?>"
                                class="<?= ($navPath === $item['match'] || str_starts_with($navPath, $item['match'] . '/')) ? 'is-active' : '' ?>">
@@ -88,9 +96,15 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
                     <?php endforeach; ?>
                     <?php if (($auth['role'] ?? '') === 'admin'): ?>
                         <li>
-                            <a href="/admin" class="<?= str_starts_with($navPath, '/admin') ? 'is-active' : '' ?>">
+                            <a href="/admin" class="<?= str_starts_with($navPath, '/admin') && !str_starts_with($navPath, '/admin/cliente') ? 'is-active' : '' ?>">
                                 <span class="nav-icon" aria-hidden="true">🛠️</span>
                                 <span>Administración</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/admin/cliente" class="<?= str_starts_with($navPath, '/admin/cliente') ? 'is-active' : '' ?>">
+                                <span class="nav-icon" aria-hidden="true">⭐</span>
+                                <span>Contenido Cliente</span>
                             </a>
                         </li>
                     <?php endif; ?>

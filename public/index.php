@@ -32,8 +32,10 @@ use App\Controllers\AdminMaterialsController;
 use App\Controllers\AdminPagesController;
 use App\Controllers\AdminProgramsController;
 use App\Controllers\AdminTrainingsController;
+use App\Controllers\AdminClientController;
 use App\Controllers\AdminUsersController;
 use App\Controllers\AnnouncementController;
+use App\Controllers\ClientController;
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\EventController;
@@ -137,6 +139,7 @@ $router->get('/materiales',              [MaterialController::class, 'index']);
 $router->get('/eventos',                 [EventController::class, 'index']);
 $router->get('/notificaciones',          [AnnouncementController::class, 'index']);
 $router->get('/normas',                  [PageController::class, 'show']);
+$router->get('/soy-cliente',             [ClientController::class,      'show']);
 
 $router->get('/perfil',                  [ProfileController::class, 'show']);
 $router->post('/perfil',                 [ProfileController::class, 'update']);
@@ -214,5 +217,9 @@ $router->post('/admin/notificaciones/{id}/eliminar',  [AdminAnnouncementsControl
 // Admin · Normas y Reglamentos (página única)
 $router->get('/admin/normas',  [AdminPagesController::class, 'edit']);
 $router->post('/admin/normas', [AdminPagesController::class, 'update']);
+
+// Admin · Soy Cliente (página única)
+$router->get('/admin/cliente',  [AdminClientController::class, 'edit']);
+$router->post('/admin/cliente', [AdminClientController::class, 'update']);
 
 $router->dispatch();
