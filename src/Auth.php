@@ -75,6 +75,17 @@ final class Auth
         }
     }
 
+    public static function requireTeamMember(): void
+    {
+        self::requireLogin();
+        $user = self::user();
+        if ($user !== null && $user['role'] === 'cliente') {
+            http_response_code(403);
+            require dirname(__DIR__) . '/templates/errors/403.php';
+            exit;
+        }
+    }
+
     /**
      * Intenta iniciar sesión. Devuelve un array con el resultado:
      *   ['ok' => bool, 'error' => string|null]

@@ -57,8 +57,9 @@ $action    = $isCreate ? '/admin/usuarios' : '/admin/usuarios/' . (int) $user['i
     <div class="field">
         <label for="role">Rol</label>
         <select id="role" name="role" required>
-            <option value="member" <?= ($old['role'] ?? '') === 'member' ? 'selected' : '' ?>>Miembro</option>
-            <option value="admin"  <?= ($old['role'] ?? '') === 'admin'  ? 'selected' : '' ?>>Administrador</option>
+            <option value="member"  <?= ($old['role'] ?? '') === 'member'  ? 'selected' : '' ?>>Miembro</option>
+            <option value="admin"   <?= ($old['role'] ?? '') === 'admin'   ? 'selected' : '' ?>>Administrador</option>
+            <option value="cliente" <?= ($old['role'] ?? '') === 'cliente' ? 'selected' : '' ?>>Cliente</option>
         </select>
         <?php if (!empty($errors['role'])): ?>
             <small class="field-error"><?= e($errors['role']) ?></small>

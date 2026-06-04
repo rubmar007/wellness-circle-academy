@@ -193,7 +193,7 @@ final class AdminUsersController
         $role     = (string) ($_POST['role'] ?? 'member');
         $password = (string) ($_POST['password'] ?? '');
 
-        if (!in_array($role, ['admin', 'member'], true)) {
+        if (!in_array($role, ['admin', 'member', 'cliente'], true)) {
             $role = 'member';
         }
         return compact('name', 'email', 'role', 'password');
