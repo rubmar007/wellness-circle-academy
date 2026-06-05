@@ -271,7 +271,6 @@
     line-height: 1.5;
     word-break: break-word;
 }
-.copy-card-body br + br { display: none; }
 
 /* PDF embed */
 .pdf-embed {

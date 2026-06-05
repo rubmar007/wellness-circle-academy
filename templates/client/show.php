@@ -20,7 +20,14 @@ $pageTitle = 'Soy Cliente';
 <?php endif; ?>
 
 <?php
-$renderTextBlock = function (string $title, ?string $text): void {
+$fmt = static function (?string $t): string {
+    if ($t === null || trim($t) === '') {
+        return '';
+    }
+    return nl2br(e(preg_replace('/\n{2,}/', "\n", $t) ?? $t));
+};
+
+$renderTextBlock = function (string $title, ?string $text) use ($fmt): void {
     if ($text === null || trim($text) === '') {
         return;
     }
@@ -29,7 +36,7 @@ $renderTextBlock = function (string $title, ?string $text): void {
         <header class="copy-card-head">
             <h2><?= e($title) ?></h2>
         </header>
-        <div class="copy-card-body"><?= nl2br(e($text)) ?></div>
+        <div class="copy-card-body"><?= $fmt($text) ?></div>
     </article>
     <?php
 };
@@ -87,7 +94,7 @@ $renderImageBlock = function (string $title, ?string $url): void {
         <h2>¿Cómo activar autoenvío?</h2>
     </header>
     <?php if (!empty($page['activar_texto'])): ?>
-        <div class="copy-card-body"><?= nl2br(e($page['activar_texto'])) ?></div>
+        <div class="copy-card-body"><?= $fmt($page['activar_texto']) ?></div>
     <?php endif; ?>
     <?php $renderVideo($page['activar_video_url'] ?? null); ?>
 </article>
@@ -99,7 +106,7 @@ $renderImageBlock = function (string $title, ?string $url): void {
         <h2>¿Cómo desactivar autoenvío?</h2>
     </header>
     <?php if (!empty($page['desactivar_texto'])): ?>
-        <div class="copy-card-body"><?= nl2br(e($page['desactivar_texto'])) ?></div>
+        <div class="copy-card-body"><?= $fmt($page['desactivar_texto']) ?></div>
     <?php endif; ?>
     <?php $renderVideo($page['desactivar_video_url'] ?? null); ?>
 </article>
@@ -111,7 +118,7 @@ $renderImageBlock = function (string $title, ?string $url): void {
         <h2>¿Cómo convertirte en cliente preferente plus?</h2>
     </header>
     <?php if (!empty($page['preferente_texto'])): ?>
-        <div class="copy-card-body"><?= nl2br(e($page['preferente_texto'])) ?></div>
+        <div class="copy-card-body"><?= $fmt($page['preferente_texto']) ?></div>
     <?php endif; ?>
     <?php $renderVideo($page['preferente_video_url'] ?? null); ?>
 </article>
@@ -122,6 +129,6 @@ $renderImageBlock = function (string $title, ?string $url): void {
 
 <?php if (!empty($page['texto_libre']) && trim((string) $page['texto_libre']) !== ''): ?>
 <article class="copy-card">
-    <div class="copy-card-body"><?= nl2br(e($page['texto_libre'])) ?></div>
+    <div class="copy-card-body"><?= $fmt($page['texto_libre']) ?></div>
 </article>
 <?php endif; ?>
