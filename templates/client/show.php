@@ -67,6 +67,20 @@ $renderImageBlock = function (string $title, ?string $url): void {
 
 <?php $renderTextBlock('¿Cómo utilizar el producto? / Importancia de la Hidratación', $page['uso_texto'] ?? null); ?>
 
+<?php if (!empty($page['uso_pdf_url'])): ?>
+<article class="copy-card client-pdf-card">
+    <header class="copy-card-head">
+        <h2>Guia de uso</h2>
+    </header>
+    <div class="copy-card-body">
+        <a class="button button-ghost" href="<?= e($page['uso_pdf_url']) ?>" target="_blank" rel="noopener">Ver / Descargar PDF</a>
+    </div>
+    <object data="<?= e($page['uso_pdf_url']) ?>" type="application/pdf" class="pdf-embed">
+        <p>Tu navegador no puede mostrar el PDF. <a href="<?= e($page['uso_pdf_url']) ?>" target="_blank">Descargarlo aqui</a>.</p>
+    </object>
+</article>
+<?php endif; ?>
+
 <?php if (!empty($page['activar_texto']) || !empty($page['activar_video_url'])): ?>
 <article class="copy-card">
     <header class="copy-card-head">

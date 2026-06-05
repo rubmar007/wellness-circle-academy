@@ -73,6 +73,73 @@ final class Upload
     }
 
     /**
+     * Sube un PDF y devuelve la URL pública relativa lista para guardar en BD.
+     *
+     * @param array{name:string, type:string, tmp_name:string, error:int, size:int}|null $file
+     * @throws RuntimeException
+     */
+    public static function pdf(?array $file): string
+    {
+        if ($file === null || !isset($file['error']) || $file['error'] === UPLOAD_ERR_NO_FILE) {
+            return '';
+        }
+
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            throw new RuntimeException(self::errorMessage($file['error']));
+        }
+
+        if (!is_uploaded_file($file['tmp_name'])) {
+            throw new RuntimeException('Archivo de subida inválido.');
+        }
+
+        $maxBytes = Env::int('UPLOAD_MAX_BYTES', 5_242_880);
+        if ($file['size'] > $maxBytes) {
+            $mb = (int) round($maxBytes / 1024 / 1024);
+            throw new RuntimeException('El archivo supera el tamaño máximo de ' . $mb . ' MB.');
+        }
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime  = $finfo->file($file['tmp_name']);
+        if ($mime !== 'application/pdf') {
+            throw new RuntimeException('Formato no permitido. Solo PDF.');
+        }
+
+        $name = bin2hex(random_bytes(16)) . '.pdf';
+        $dir  = dirname(__DIR__) . '/public/assets/uploads';
+
+        if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
+            throw new RuntimeException('No se pudo preparar el destino de subida.');
+        }
+
+        $dest = $dir . '/' . $name;
+        if (!move_uploaded_file($file['tmp_name'], $dest)) {
+            throw new RuntimeException('No se pudo guardar el archivo.');
+        }
+
+        @chmod($dest, 0644);
+
+        return '/assets/uploads/' . $name;
+    }
+
+    public static function deletePdf(?string $publicPath): void
+    {
+        if (!is_string($publicPath) || $publicPath === '') {
+            return;
+        }
+        if (!str_starts_with($publicPath, '/assets/uploads/')) {
+            return;
+        }
+        $name = basename($publicPath);
+        if (preg_match('/^[a-f0-9]{32}\.pdf$/', $name) !== 1) {
+            return;
+        }
+        $path = dirname(__DIR__) . '/public/assets/uploads/' . $name;
+        if (is_file($path)) {
+            @unlink($path);
+        }
+    }
+
+    /**
      * Elimina una imagen subida previamente. Falla silencioso si no existe o
      * si la ruta no pertenece a la carpeta de uploads (defensa contra path
      * traversal en datos legacy de BD).

@@ -94,20 +94,6 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
                             </a>
                         </li>
                     <?php endforeach; ?>
-                    <?php if (($auth['role'] ?? '') === 'admin'): ?>
-                        <li>
-                            <a href="/admin" class="<?= str_starts_with($navPath, '/admin') && !str_starts_with($navPath, '/admin/cliente') ? 'is-active' : '' ?>">
-                                <span class="nav-icon" aria-hidden="true">🛠️</span>
-                                <span>Administración</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/admin/cliente" class="<?= str_starts_with($navPath, '/admin/cliente') ? 'is-active' : '' ?>">
-                                <span class="nav-icon" aria-hidden="true">⭐</span>
-                                <span>Contenido Cliente</span>
-                            </a>
-                        </li>
-                    <?php endif; ?>
                     <?php if ($whatsappNumber !== ''): ?>
                         <li>
                             <a class="app-sidebar-wa" href="https://wa.me/<?= e($whatsappNumber) ?>" target="_blank" rel="noopener noreferrer">

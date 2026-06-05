@@ -60,6 +60,7 @@ final class AdminClientController
             $errors['preferente_video_url'] = 'URL de YouTube o Vimeo no válida.';
         }
 
+        // --- Imágenes ---
         $imageFields = [
             'welcome_image'         => 'welcome_image_url',
             'beneficios_autoenvio'  => 'beneficios_autoenvio_url',
@@ -89,9 +90,29 @@ final class AdminClientController
             }
         }
 
+        // --- PDF ---
+        $existingPdf  = (string) ($page['uso_pdf_url'] ?? '');
+        $pdfFile      = $_FILES['uso_pdf'] ?? null;
+        $hasPdfUpload = is_array($pdfFile)
+            && (int) ($pdfFile['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
+        $newPdfPath   = null;
+        $finalPdf     = $existingPdf;
+
+        if ($hasPdfUpload) {
+            try {
+                $newPdfPath = Upload::pdf($pdfFile);
+                $finalPdf   = $newPdfPath;
+            } catch (RuntimeException $e) {
+                $errors['uso_pdf'] = $e->getMessage();
+            }
+        }
+
         if ($errors !== []) {
             foreach ($newUploads as $path) {
                 Upload::deleteImage($path);
+            }
+            if ($newPdfPath !== null) {
+                Upload::deletePdf($newPdfPath);
             }
             View::render('admin/client/edit', [
                 'page'   => $page,
@@ -101,17 +122,22 @@ final class AdminClientController
             return;
         }
 
+        // Borrar archivos anteriores reemplazados
         foreach ($imageFields as $inputName => $colName) {
             $existing = (string) ($page[$colName] ?? '');
             if (isset($newUploads[$colName]) && $existing !== '' && $existing !== $newUploads[$colName]) {
                 Upload::deleteImage($existing);
             }
         }
+        if ($newPdfPath !== null && $existingPdf !== '' && $existingPdf !== $newPdfPath) {
+            Upload::deletePdf($existingPdf);
+        }
 
         $stmt = $pdo->prepare(
             'UPDATE client_page SET
                 welcome_image_url         = :wi,
                 uso_texto                 = :ut,
+                uso_pdf_url               = :up,
                 activar_texto             = :at,
                 activar_video_url         = :av,
                 desactivar_texto          = :dt,
@@ -127,6 +153,7 @@ final class AdminClientController
         $stmt->execute([
             ':wi' => $finalImages['welcome_image_url']         !== '' ? $finalImages['welcome_image_url']         : null,
             ':ut' => $uso_texto           !== '' ? $uso_texto           : null,
+            ':up' => $finalPdf            !== '' ? $finalPdf            : null,
             ':at' => $activar_texto       !== '' ? $activar_texto       : null,
             ':av' => $activar_video_url   !== '' ? $activar_video_url   : null,
             ':dt' => $desactivar_texto    !== '' ? $desactivar_texto    : null,

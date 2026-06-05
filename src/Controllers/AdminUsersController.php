@@ -12,6 +12,8 @@ use PDO;
 
 final class AdminUsersController
 {
+    private const ROOT_ID = 1;
+
     /** @param array<string,string> $params */
     public function index(array $params): void
     {
@@ -20,6 +22,7 @@ final class AdminUsersController
         $users = Connection::get()->query(
             'SELECT id, name, email, role, is_active, created_at
                FROM users
+              WHERE id != ' . self::ROOT_ID . '
               ORDER BY created_at DESC, id DESC'
         )->fetchAll();
 
@@ -72,6 +75,10 @@ final class AdminUsersController
         Auth::requireAdmin();
 
         $id = self::parseId($params['id'] ?? '');
+        if ($id === self::ROOT_ID) {
+            self::redirect404();
+            return;
+        }
         $user = self::findUser($id);
         if (!$user) {
             self::redirect404();
@@ -97,6 +104,10 @@ final class AdminUsersController
         Csrf::requireValid();
 
         $id = self::parseId($params['id'] ?? '');
+        if ($id === self::ROOT_ID) {
+            self::redirect404();
+            return;
+        }
         $user = self::findUser($id);
         if (!$user) {
             self::redirect404();
@@ -160,6 +171,10 @@ final class AdminUsersController
         Csrf::requireValid();
 
         $id = self::parseId($params['id'] ?? '');
+        if ($id === self::ROOT_ID) {
+            self::redirect404();
+            return;
+        }
         $user = self::findUser($id);
         if (!$user) {
             self::redirect404();

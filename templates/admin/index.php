@@ -55,6 +55,10 @@ $pageTitle = 'Panel admin';
         <h2>Normas y Reglamentos</h2>
         <p>Editar el texto de las reglas y la cultura del equipo.</p>
     </a>
+    <a class="admin-shortcut" href="/admin/cliente">
+        <h2>Soy Cliente</h2>
+        <p>Editar el contenido de la sección para usuarios con rol Cliente.</p>
+    </a>
 </section>
 
 <?php if ($programs !== []): ?>

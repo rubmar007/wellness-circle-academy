@@ -71,6 +71,19 @@ $videoField = function (string $name, string $label, ?string $value) use ($error
     <h2 class="form-section-title">Como utilizar el producto / Importancia de la Hidratacion</h2>
     <?php $textField('uso_texto', 'Texto', $page['uso_texto'] ?? null); ?>
 
+    <h2 class="form-section-title">PDF — Guia de uso (opcional)</h2>
+    <div class="field">
+        <label>Archivo PDF</label>
+        <?php if (!empty($page['uso_pdf_url'])): ?>
+            <p class="field-hint">PDF actual: <a href="<?= e($page['uso_pdf_url']) ?>" target="_blank">ver / descargar</a></p>
+        <?php endif; ?>
+        <input type="file" name="uso_pdf" accept="application/pdf">
+        <small class="field-hint">Solo PDF. Max 5 MB. Deja vacío para conservar el PDF actual.</small>
+        <?php if (!empty($errors['uso_pdf'])): ?>
+            <small class="field-error"><?= e($errors['uso_pdf']) ?></small>
+        <?php endif; ?>
+    </div>
+
     <h2 class="form-section-title">Como activar autoenvio</h2>
     <?php $textField('activar_texto', 'Texto', $page['activar_texto'] ?? null); ?>
     <?php $videoField('activar_video_url', 'Video', $page['activar_video_url'] ?? null); ?>
