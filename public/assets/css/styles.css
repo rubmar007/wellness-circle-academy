@@ -439,15 +439,13 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
 
 /* ---------- Auth ---------- */
 
+/* Páginas auth legacy (por si hay otras rutas) */
 .auth-logo-wrap {
     text-align: center;
     margin: 0 auto var(--space-5);
     max-width: 420px;
-    position: relative;
-    z-index: 1;
 }
-
-.auth-logo {
+.auth-logo-wrap .auth-logo {
     display: inline-block;
     width: 200px;
     height: 200px;
@@ -456,7 +454,6 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
     background: transparent;
     object-fit: contain;
 }
-
 .auth-card {
     max-width: 440px;
     margin: 0 auto;
@@ -465,44 +462,253 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
     border-radius: var(--radius-lg);
     padding: var(--space-6) var(--space-5);
     box-shadow: var(--shadow-md);
-    position: relative;
-    z-index: 1;
 }
-
-.auth-welcome-head {
+.auth-card h1 {
     text-align: center;
     margin-bottom: var(--space-5);
+    color: var(--color-gold);
+    font-family: var(--font-script);
+    font-size: 2.6rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
 }
 
+/* ---------- Auth: login premium ---------- */
+
+/* Background override para auth */
+body:has(.auth-main-card) {
+    background:
+        radial-gradient(ellipse 55% 50% at 95% 5%,  rgba(212,175,55,0.22), transparent 55%),
+        radial-gradient(ellipse 50% 60% at -5% 65%, rgba(70,50,200,0.30), transparent 55%),
+        radial-gradient(ellipse 35% 45% at 10% 35%, rgba(90,65,225,0.20), transparent 50%),
+        radial-gradient(ellipse 30% 35% at 8%  85%, rgba(212,175,55,0.08), transparent 50%),
+        #050505;
+    background-attachment: fixed;
+}
+
+/* Centrar contenido verticalmente en auth */
+body:has(.auth-main-card) .main-area {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
+}
+
+/* Outer card */
+.auth-main-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    background: rgba(6, 6, 8, 0.96);
+    border: 1px solid rgba(212,175,55,0.40);
+    border-radius: 24px;
+    padding: 1.75rem 1.5rem 1.5rem;
+    box-shadow:
+        0 0 0 1px rgba(212,175,55,0.08),
+        0 0 50px rgba(212,175,55,0.06),
+        0 24px 80px rgba(0,0,0,0.85);
+}
+
+/* Logo inner card */
+.auth-logo-box {
+    background: #000;
+    border: 1px solid rgba(212,175,55,0.50);
+    border-radius: 20px;
+    padding: 1.4rem 1.6rem;
+    margin: 0 auto 1.4rem;
+    max-width: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: logo-glow-pulse 4s ease-in-out infinite alternate;
+}
+.auth-logo-box .auth-logo {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    display: block;
+    border-radius: 0;
+    background: transparent;
+}
+@keyframes logo-glow-pulse {
+    0%   { box-shadow: 0 0 0 1px rgba(212,175,55,0.15), 0 0 18px rgba(212,175,55,0.22), 0 0 45px rgba(212,175,55,0.06); }
+    100% { box-shadow: 0 0 0 1px rgba(212,175,55,0.30), 0 0 32px rgba(212,175,55,0.38), 0 0 75px rgba(212,175,55,0.14); }
+}
+
+/* Welcome text */
+.auth-welcome {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
 .auth-welcome-script {
     display: block;
     font-family: var(--font-script);
     color: var(--color-gold);
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 400;
     letter-spacing: 0;
     line-height: 1.1;
-    margin-bottom: 0.15rem;
+    margin-bottom: 0.1rem;
 }
-
-.auth-card h1 {
-    text-align: center;
+.auth-welcome-title {
     color: var(--color-text);
     font-family: var(--font-sans);
     font-size: 1.75rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin: 0 0 var(--space-3);
+    letter-spacing: 0.12em;
+    margin: 0 0 0.75rem;
     line-height: 1.1;
+    text-align: center;
 }
-
 .auth-tagline {
     color: var(--color-text-muted);
-    font-size: 0.92rem;
-    line-height: 1.55;
+    font-size: 0.93rem;
+    line-height: 1.6;
     margin: 0;
+    text-align: center;
 }
+
+/* Form wrapper */
+.auth-form-wrap {
+    background: rgba(8, 8, 10, 0.85);
+    border: 1px solid rgba(212,175,55,0.30);
+    border-radius: 20px;
+    padding: 1.5rem 1.25rem 1.25rem;
+}
+
+/* Fields inside auth */
+.auth-field {
+    margin-bottom: 1.1rem;
+}
+.auth-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
+}
+.auth-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.auth-input-icon {
+    position: absolute;
+    left: 1rem;
+    color: rgba(212,175,55,0.55);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1;
+}
+.auth-input-wrap input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 1px solid rgba(212,175,55,0.28);
+    border-radius: 14px;
+    font-size: 0.97rem;
+    background: #0b0b0d;
+    color: var(--color-text);
+    min-height: 56px;
+    font-family: inherit;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+.auth-input-wrap input::placeholder { color: rgba(154,154,154,0.7); }
+.auth-input-wrap input:focus {
+    outline: none;
+    border-color: rgba(212,175,55,0.6);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.12);
+}
+
+/* Submit button */
+.auth-submit-btn {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 1.1rem 1rem;
+    min-height: 60px;
+    background: linear-gradient(180deg, #F0D17A 0%, #D4AF37 60%, #B89028 100%);
+    color: #0a0800;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(212,175,55,0.40), 0 1px 4px rgba(0,0,0,0.5);
+    transition: box-shadow 180ms ease, transform 120ms ease, background 160ms ease;
+    position: relative;
+    overflow: hidden;
+}
+.auth-submit-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -130%; width: 55%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    animation: btn-shimmer 4s ease-in-out infinite;
+    pointer-events: none;
+}
+.auth-submit-btn:hover {
+    box-shadow: 0 8px 32px rgba(212,175,55,0.60), 0 2px 8px rgba(0,0,0,0.5);
+    transform: translateY(-1px);
+}
+.auth-submit-btn:focus-visible {
+    outline: 3px solid var(--color-gold-bright);
+    outline-offset: 2px;
+}
+
+/* Divider */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.1rem 0 1rem;
+}
+.auth-divider span {
+    width: 10px; height: 10px;
+    background: var(--color-gold);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    opacity: 0.7;
+}
+
+/* Support block */
+.auth-support {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+.auth-support-icon {
+    flex: 0 0 auto;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(212,175,55,0.10);
+    border: 1px solid rgba(212,175,55,0.30);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-gold);
+}
+.auth-support-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+}
+.auth-support-text strong {
+    display: block;
+    color: var(--color-text);
+    font-size: 0.88rem;
+    margin-bottom: 0.1rem;
+}
+.auth-support-text p { margin: 0; color: var(--color-text-muted); }
 
 .field { margin-bottom: var(--space-4); }
 
@@ -565,38 +771,71 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
     z-index: 0;
     pointer-events: none;
     overflow: hidden;
+    /* Starfield: puntos dorados estáticos */
+    background-image:
+        radial-gradient(1.5px 1.5px at  8% 12%, rgba(212,175,55,0.85) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 15% 38%, rgba(212,175,55,0.60) 0%, transparent 100%),
+        radial-gradient(2px   2px   at 23%  8%, rgba(212,175,55,0.65) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 30% 72%, rgba(212,175,55,0.45) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 38% 28%, rgba(212,175,55,0.55) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 45% 58%, rgba(212,175,55,0.40) 0%, transparent 100%),
+        radial-gradient(2px   2px   at 52% 14%, rgba(212,175,55,0.70) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 60% 85%, rgba(212,175,55,0.35) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 67% 42%, rgba(212,175,55,0.50) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 74% 22%, rgba(212,175,55,0.60) 0%, transparent 100%),
+        radial-gradient(2px   2px   at 81% 66%, rgba(212,175,55,0.45) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 88% 18%, rgba(212,175,55,0.65) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 94% 50%, rgba(212,175,55,0.40) 0%, transparent 100%),
+        radial-gradient(1px   1px   at  4% 55%, rgba(212,175,55,0.50) 0%, transparent 100%),
+        radial-gradient(2px   2px   at 18% 92%, rgba(212,175,55,0.35) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 44% 96%, rgba(212,175,55,0.40) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 70% 97%, rgba(212,175,55,0.30) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 87% 93%, rgba(212,175,55,0.45) 0%, transparent 100%),
+        radial-gradient(2px   2px   at 50% 50%, rgba(212,175,55,0.20) 0%, transparent 100%),
+        radial-gradient(1px   1px   at  2% 25%, rgba(212,175,55,0.55) 0%, transparent 100%);
 }
+/* Rayos dorados + orbes orbitales desde la derecha */
 .auth-particles::before {
     content: '';
     position: absolute;
-    top: -30%;
-    right: -15%;
-    width: 65vmax;
-    height: 65vmax;
-    border-radius: 50%;
-    background: radial-gradient(circle at center, rgba(212,175,55,0.16) 0%, rgba(212,175,55,0.05) 40%, transparent 70%);
-    animation: auth-orb-a 15s ease-in-out infinite alternate;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 10% 85% at 100% 22%, rgba(212,175,55,0.42) 0%, transparent 100%),
+        radial-gradient(ellipse  7% 65% at  96% 18%, rgba(212,175,55,0.28) 0%, transparent 100%),
+        radial-gradient(ellipse  5% 50% at  90% 28%, rgba(212,175,55,0.18) 0%, transparent 100%),
+        radial-gradient(ellipse  4% 40% at  85% 15%, rgba(212,175,55,0.12) 0%, transparent 100%),
+        radial-gradient(ellipse 20% 20% at  95% 38%, rgba(212,175,55,0.30) 0%, rgba(212,175,55,0.05) 50%, transparent 70%),
+        radial-gradient(circle 60px at 92% 42%, transparent 55%, rgba(212,175,55,0.22) 57%, transparent 62%),
+        radial-gradient(circle 38px at 88% 55%, transparent 55%, rgba(212,175,55,0.16) 57%, transparent 62%),
+        radial-gradient(circle 22px at 84% 64%, transparent 55%, rgba(212,175,55,0.12) 57%, transparent 62%);
+    animation: auth-ray-pulse 18s ease-in-out infinite alternate;
 }
+/* Nebulosa azul-violeta desde la izquierda */
 .auth-particles::after {
     content: '';
     position: absolute;
-    bottom: -20%;
-    left: -12%;
-    width: 48vmax;
-    height: 48vmax;
-    border-radius: 50%;
-    background: radial-gradient(circle at center, rgba(212,175,55,0.10) 0%, rgba(212,175,55,0.03) 45%, transparent 70%);
-    animation: auth-orb-b 20s ease-in-out infinite alternate;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 48% 70% at -5% 62%, rgba(65,45,215,0.40) 0%, transparent 60%),
+        radial-gradient(ellipse 35% 50% at  8% 38%, rgba(95,65,245,0.28) 0%, transparent 50%),
+        radial-gradient(ellipse 25% 35% at 18% 68%, rgba(75,95,255,0.18) 0%, transparent 45%),
+        radial-gradient(circle 5px at  6% 46%, rgba(160,190,255,0.55) 0%, transparent 100%),
+        radial-gradient(circle 3px at 11% 28%, rgba(130,160,255,0.45) 0%, transparent 100%),
+        radial-gradient(circle 4px at 16% 74%, rgba(145,175,255,0.38) 0%, transparent 100%),
+        radial-gradient(circle 2px at  3% 82%, rgba(180,200,255,0.30) 0%, transparent 100%),
+        radial-gradient(ellipse 12% 18% at  2% 55%, rgba(212,175,55,0.12) 0%, transparent 55%);
+    filter: blur(3px);
+    animation: auth-blue-drift 24s ease-in-out infinite alternate;
 }
-@keyframes auth-orb-a {
-    0%   { transform: translate(0, 0) scale(1);    opacity: 0.75; }
-    50%  { transform: translate(-4vw, 5vh) scale(1.1);  opacity: 1; }
-    100% { transform: translate(5vw, -3vh) scale(0.95); opacity: 0.65; }
+@keyframes auth-ray-pulse {
+    0%   { transform: rotate(0deg)   scale(1);    opacity: 0.82; }
+    40%  { transform: rotate(2.5deg) scale(1.04); opacity: 1; }
+    100% { transform: rotate(-1deg)  scale(0.97); opacity: 0.75; }
 }
-@keyframes auth-orb-b {
-    0%   { transform: translate(0, 0) scale(1);    opacity: 0.55; }
-    50%  { transform: translate(5vw, -4vh) scale(1.07); opacity: 0.85; }
-    100% { transform: translate(-3vw, 4vh) scale(1.03); opacity: 0.45; }
+@keyframes auth-blue-drift {
+    0%   { transform: translate(0, 0);     opacity: 0.80; }
+    50%  { transform: translate(3vw,-4vh); opacity: 1; }
+    100% { transform: translate(-2vw,5vh); opacity: 0.60; }
 }
 
 /* ---------- Dashboard / programas ---------- */
@@ -1018,8 +1257,9 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
     h1             { font-size: 1.9rem; }
     .hero h1       { font-size: 2.2rem; }
     .page-head h1  { font-size: 3rem; }
-    .auth-card h1  { font-size: 2.1rem; }
-    .auth-welcome-script { font-size: 2.2rem; }
+    .auth-card h1        { font-size: 3rem; }
+    .auth-welcome-title  { font-size: 2.1rem; }
+    .auth-welcome-script { font-size: 2.3rem; }
 }
 
 @media (min-width: 960px) {
@@ -1371,6 +1611,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
     .stat-card-link:hover { transform: none; }
     .auth-particles::before,
     .auth-particles::after,
+    .auth-logo-box,
+    .auth-submit-btn::after,
     .button-primary::after { animation: none; }
 }
 
@@ -1513,10 +1755,8 @@ p { margin: 0 0 var(--space-3); color: var(--color-text); }
     font-weight: 600;
     letter-spacing: -0.01em;
 }
-:root[data-theme="marino"] .auth-card h1 {
-    font-weight: 800;
-    letter-spacing: 0.09em;
-}
+:root[data-theme="marino"] .auth-card h1 { font-weight: 700; font-size: 2.4rem; }
+:root[data-theme="marino"] .auth-welcome-title { font-weight: 800; letter-spacing: 0.1em; }
 :root[data-theme="marino"] .error-page h1 { font-weight: 700; }
 
 /* ---------- Selector de temas (footer / barra) ---------- */
