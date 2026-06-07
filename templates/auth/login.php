@@ -7,12 +7,18 @@ declare(strict_types=1);
  */
 $pageTitle = 'Entrar';
 ?>
+<div class="auth-particles" aria-hidden="true"></div>
+
 <div class="auth-logo-wrap">
     <img class="auth-logo" src="/assets/img/logo.png" alt="Wellness Circle Academy">
 </div>
 
 <section class="auth-card">
-    <h1>Entrar</h1>
+    <div class="auth-welcome-head">
+        <span class="auth-welcome-script">Bienvenido a</span>
+        <h1>Wellness Circle<br>Academy</h1>
+        <p class="auth-tagline">Tu camino claro para crecer, liderar y duplicar tu negocio.</p>
+    </div>
 
     <?php if (!empty($errors['general'])): ?>
         <p class="alert alert-error"><?= e($errors['general']) ?></p>
@@ -32,6 +38,7 @@ $pageTitle = 'Entrar';
                 autocomplete="email"
                 autocapitalize="none"
                 spellcheck="false"
+                placeholder="Ingresa tu email"
                 maxlength="190">
             <?php if (!empty($errors['email'])): ?>
                 <small class="field-error"><?= e($errors['email']) ?></small>
@@ -46,6 +53,7 @@ $pageTitle = 'Entrar';
                 name="password"
                 required
                 autocomplete="current-password"
+                placeholder="Ingresa tu contraseña"
                 minlength="1"
                 maxlength="200">
             <?php if (!empty($errors['password'])): ?>
@@ -57,6 +65,7 @@ $pageTitle = 'Entrar';
     </form>
 
     <p class="auth-footer">
-        ¿Aún no tienes cuenta? Contacta a tu Promotor para obtener una.
+        <strong>¿Aún no tienes acceso?</strong><br>
+        Contacta a tu patrocinador para formar parte de <span class="text-gold">Wellness Circle Academy</span>.
     </p>
 </section>
