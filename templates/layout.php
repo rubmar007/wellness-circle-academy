@@ -45,8 +45,8 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
     <meta name="color-scheme" content="<?= e($colorScheme) ?>">
     <meta name="robots" content="noindex, nofollow">
     <title><?= e($title) ?></title>
-    <link rel="stylesheet" href="/assets/css/styles.css">
-    <link rel="stylesheet" href="/assets/css/sections.css">
+    <link rel="stylesheet" href="/assets/css/styles.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/styles.css') ?>">
+    <link rel="stylesheet" href="/assets/css/sections.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/sections.css') ?>">
 </head>
 <body>
     <a class="skip-link" href="#main">Saltar al contenido</a>
