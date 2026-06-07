@@ -7,12 +7,10 @@ declare(strict_types=1);
  */
 $pageTitle = 'Entrar';
 ?>
-<div class="auth-particles" aria-hidden="true"></div>
-
 <div class="auth-main-card">
 
-    <div class="auth-logo-box">
-        <img class="auth-logo" src="/assets/img/logo.png" alt="Wellness Circle Academy">
+    <div class="auth-logo-section">
+        <img src="/assets/img/logo-card.png" alt="Wellness Circle Academy" class="auth-logo-card">
     </div>
 
     <div class="auth-welcome">
