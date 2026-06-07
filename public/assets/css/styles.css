@@ -518,6 +518,7 @@ body:has(.auth-main-card) .main-area {
     height: auto;
     display: inline-block;
     border-radius: 0;
+    mix-blend-mode: screen;
 }
 
 /* Welcome text */
