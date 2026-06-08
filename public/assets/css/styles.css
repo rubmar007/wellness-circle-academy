@@ -514,10 +514,9 @@ body:has(.auth-main-card) .main-area {
 }
 .auth-logo-card {
     width: 100%;
-    max-width: 260px;
+    max-width: 340px;
     height: auto;
     display: inline-block;
-    mix-blend-mode: screen;
 }
 
 /* Welcome text */
