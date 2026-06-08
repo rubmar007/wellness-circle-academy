@@ -509,15 +509,12 @@ body:has(.auth-main-card) .main-area {
 
 /* Logo card — imagen real */
 .auth-logo-section {
-    text-align: center;
-    margin-bottom: 1.2rem;
+    margin: -1.75rem -1.5rem 1.2rem;
 }
 .auth-logo-card {
     width: 100%;
-    max-width: 100%;
     height: auto;
     display: block;
-    margin: 0 auto;
 }
 
 /* Welcome text */
