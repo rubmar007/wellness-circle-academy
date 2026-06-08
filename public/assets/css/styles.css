@@ -517,6 +517,7 @@ body:has(.auth-main-card) .main-area {
     max-width: 260px;
     height: auto;
     display: inline-block;
+    mix-blend-mode: screen;
 }
 
 /* Welcome text */
