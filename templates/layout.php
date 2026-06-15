@@ -28,10 +28,11 @@ $sectionNav = [
     ['href' => '/inicio',         'label' => 'Inicio',              'icon' => '🏠', 'match' => '/inicio'],
     ['href' => '/dashboard',      'label' => 'Tus primeros pasos',  'icon' => '🚀', 'match' => '/dashboard'],
     ['href' => '/soy-cliente',    'label' => 'Soy Cliente',         'icon' => '⭐', 'match' => '/soy-cliente'],
+    ['href' => '/noticias',        'label' => 'Noticias',            'icon' => '📰', 'match' => '/noticias'],
     ['href' => '/entrenamiento',  'label' => 'Entrenamiento',       'icon' => '🎓', 'match' => '/entrenamiento'],
     ['href' => '/materiales',     'label' => 'Materiales',          'icon' => '📂', 'match' => '/materiales'],
     ['href' => '/eventos',        'label' => 'Eventos',             'icon' => '📅', 'match' => '/eventos'],
-    ['href' => '/notificaciones', 'label' => 'Notificaciones',      'icon' => '🏅', 'match' => '/notificaciones'],
+    ['href' => '/promociones',    'label' => 'Promociones',         'icon' => '🎁', 'match' => '/promociones'],
     ['href' => '/normas',         'label' => 'Normas y Reglamentos','icon' => '📜', 'match' => '/normas'],
     ['href' => '/perfil',         'label' => 'Perfil',              'icon' => '👤', 'match' => '/perfil'],
 ];
@@ -80,7 +81,7 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
                 <ul>
                     <?php
                     $isCliente    = ($auth['role'] ?? '') === 'cliente';
-                    $teamOnlyItems = ['/entrenamiento', '/materiales', '/notificaciones'];
+                    $teamOnlyItems = ['/noticias', '/entrenamiento', '/materiales', '/promociones'];
                     foreach ($sectionNav as $item):
                         if ($isCliente && in_array($item['match'], $teamOnlyItems, true)) {
                             continue;

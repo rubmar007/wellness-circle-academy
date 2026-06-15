@@ -23,7 +23,8 @@ if (PHP_SAPI === 'cli-server') {
 }
 
 use App\Auth;
-use App\Controllers\AdminAnnouncementsController;
+use App\Controllers\AdminNoticiasController;
+use App\Controllers\AdminPromocionesController;
 use App\Controllers\AdminBatchController;
 use App\Controllers\AdminController;
 use App\Controllers\AdminEventsController;
@@ -34,7 +35,8 @@ use App\Controllers\AdminProgramsController;
 use App\Controllers\AdminTrainingsController;
 use App\Controllers\AdminClientController;
 use App\Controllers\AdminUsersController;
-use App\Controllers\AnnouncementController;
+use App\Controllers\NoticiaController;
+use App\Controllers\PromocionController;
 use App\Controllers\ClientController;
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
@@ -134,10 +136,11 @@ $router->get('/inicio',                  [FeedController::class, 'index']);
 $router->post('/inicio',                 [FeedController::class, 'store']);
 $router->post('/inicio/{id}/eliminar',   [FeedController::class, 'destroy']);
 
+$router->get('/noticias',                [NoticiaController::class, 'index']);
 $router->get('/entrenamiento',           [TrainingController::class, 'index']);
 $router->get('/materiales',              [MaterialController::class, 'index']);
 $router->get('/eventos',                 [EventController::class, 'index']);
-$router->get('/notificaciones',          [AnnouncementController::class, 'index']);
+$router->get('/promociones',             [PromocionController::class, 'index']);
 $router->get('/normas',                  [PageController::class, 'show']);
 $router->get('/soy-cliente',             [ClientController::class,      'show']);
 
@@ -205,14 +208,23 @@ $router->post('/admin/eventos/{id}',           [AdminEventsController::class, 'u
 $router->get('/admin/eventos/{id}/eliminar',   [AdminEventsController::class, 'confirmDestroy']);
 $router->post('/admin/eventos/{id}/eliminar',  [AdminEventsController::class, 'destroy']);
 
-// Admin · Notificaciones
-$router->get('/admin/notificaciones',                 [AdminAnnouncementsController::class, 'index']);
-$router->get('/admin/notificaciones/nueva',           [AdminAnnouncementsController::class, 'create']);
-$router->post('/admin/notificaciones',                [AdminAnnouncementsController::class, 'store']);
-$router->get('/admin/notificaciones/{id}/editar',     [AdminAnnouncementsController::class, 'edit']);
-$router->post('/admin/notificaciones/{id}',           [AdminAnnouncementsController::class, 'update']);
-$router->get('/admin/notificaciones/{id}/eliminar',   [AdminAnnouncementsController::class, 'confirmDestroy']);
-$router->post('/admin/notificaciones/{id}/eliminar',  [AdminAnnouncementsController::class, 'destroy']);
+// Admin · Noticias
+$router->get('/admin/noticias',                 [AdminNoticiasController::class, 'index']);
+$router->get('/admin/noticias/nueva',           [AdminNoticiasController::class, 'create']);
+$router->post('/admin/noticias',                [AdminNoticiasController::class, 'store']);
+$router->get('/admin/noticias/{id}/editar',     [AdminNoticiasController::class, 'edit']);
+$router->post('/admin/noticias/{id}',           [AdminNoticiasController::class, 'update']);
+$router->get('/admin/noticias/{id}/eliminar',   [AdminNoticiasController::class, 'confirmDestroy']);
+$router->post('/admin/noticias/{id}/eliminar',  [AdminNoticiasController::class, 'destroy']);
+
+// Admin · Promociones
+$router->get('/admin/promociones',                 [AdminPromocionesController::class, 'index']);
+$router->get('/admin/promociones/nueva',           [AdminPromocionesController::class, 'create']);
+$router->post('/admin/promociones',                [AdminPromocionesController::class, 'store']);
+$router->get('/admin/promociones/{id}/editar',     [AdminPromocionesController::class, 'edit']);
+$router->post('/admin/promociones/{id}',           [AdminPromocionesController::class, 'update']);
+$router->get('/admin/promociones/{id}/eliminar',   [AdminPromocionesController::class, 'confirmDestroy']);
+$router->post('/admin/promociones/{id}/eliminar',  [AdminPromocionesController::class, 'destroy']);
 
 // Admin · Normas y Reglamentos (página única)
 $router->get('/admin/normas',  [AdminPagesController::class, 'edit']);

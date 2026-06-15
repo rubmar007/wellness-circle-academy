@@ -1,0 +1,38 @@
+  Continúo trabajando en wellness-circle-academy.
+  Ruta: /mnt/c/Users/Rub/Documents/PersonalClaude/wellness-circle-academy
+  URL: https://wellnessca.martavilla.com.mx
+  Último commit deployado al cierre de la sesión anterior (2026-05-25): 5d2d55d
+  "Look and feel: tema oscuro con acento dorado + tipografías self-hosted Allura/Montserrat"
+
+  Antes de avanzar:
+  1. Lee MEMORY.md, CLAUDE.md y MANUAL.md (sección 19 documenta el rediseño).
+  2. Corre `git log --oneline -5` y compara con producción. Si hay commits nuevos
+     posteriores a 5d2d55d, lee el diff contra ese commit para ponerte al día.
+  3. Confirma con curl que el CSS y las fuentes self-hosted siguen sirviendo 200
+     en producción:
+       curl -sS -o /dev/null -w "%{http_code}\n" \
+         https://wellnessca.martavilla.com.mx/assets/css/styles.css
+       curl -sS -o /dev/null -w "%{http_code}\n" \
+         https://wellnessca.martavilla.com.mx/assets/fonts/allura-regular.woff2
+       curl -sS -o /dev/null -w "%{http_code}\n" \
+         https://wellnessca.martavilla.com.mx/assets/fonts/montserrat-vf.woff2
+
+  Estado al cierre:
+  - Rediseño visual deployado y validado. Paleta #0a0a0a + dorado #d4af37,
+    Allura para títulos (h1 de auth/page-head/error), Montserrat variable para
+    el resto. Fuentes en /public/assets/fonts/. layout.php con color-scheme=dark.
+    Plantillas sin cambios estructurales.
+  - Programas y lecciones ya cargados en producción (Rub confirmó).
+
+  Pendientes vivos:
+  - Llenar el campo Presentación (≤200 chars) por programa desde /admin/programas.
+    Acción humana de Rub.
+  - Tests PHPUnit + CI en GitHub Actions (mediano plazo).
+
+  Corro con --dangerously-skip-permissions. Ejecuta directo lo técnicamente
+  reversible; reserva "podrías por favor" para acciones que físicamente no
+  puedas hacer tú (logos en share SMB, decisiones humanas, JavaScript).
+  Respeta el feedback de menos preguntas y más ejecución: tras OK explícito
+  o alcance claro, avanza sin check-ins por subpasos triviales.
+
+  Hasta la próxima.
