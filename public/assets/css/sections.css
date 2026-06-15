@@ -289,11 +289,12 @@
 /* ---------- Media card (Noticias / Promociones) ---------- */
 .media-card { padding: 0; overflow: hidden; }
 .media-card-img {
-    width: 100%;
-    height: auto;
+    height: 550px;
+    width: auto;
+    max-width: 100%;
     display: block;
 }
-.media-card-img-link { display: block; }
+.media-card-img-link { display: flex; justify-content: center; }
 .media-card-img-link:hover { opacity: 0.92; }
 .media-card-body { padding: 1.1rem 1.2rem 1.2rem; }
 .media-card-title { margin: 0 0 0.5rem; font-size: 1.05rem; }
