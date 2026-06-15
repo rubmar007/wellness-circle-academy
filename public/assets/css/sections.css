@@ -292,9 +292,9 @@
     width: 100%;
     height: auto;
     display: block;
-    max-height: 340px;
-    object-fit: cover;
 }
+.media-card-img-link { display: block; }
+.media-card-img-link:hover { opacity: 0.92; }
 .media-card-body { padding: 1.1rem 1.2rem 1.2rem; }
 .media-card-title { margin: 0 0 0.5rem; font-size: 1.05rem; }
 

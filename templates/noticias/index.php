@@ -33,7 +33,9 @@ function noticiaVideoEmbed(string $url): string
         <article class="section-card media-card">
 
             <?php if (!empty($n['image_path'])): ?>
-                <img src="<?= e($n['image_path']) ?>" alt="" class="media-card-img" loading="lazy">
+                <a href="<?= e($n['image_path']) ?>" target="_blank" rel="noopener noreferrer" class="media-card-img-link">
+                    <img src="<?= e($n['image_path']) ?>" alt="" class="media-card-img" loading="lazy">
+                </a>
             <?php endif; ?>
 
             <div class="media-card-body">

@@ -36,7 +36,9 @@ function promoVideoEmbed(string $url): string
         <article class="section-card media-card">
 
             <?php if (!empty($p['image_path'])): ?>
-                <img src="<?= e($p['image_path']) ?>" alt="" class="media-card-img" loading="lazy">
+                <a href="<?= e($p['image_path']) ?>" target="_blank" rel="noopener noreferrer" class="media-card-img-link">
+                    <img src="<?= e($p['image_path']) ?>" alt="" class="media-card-img" loading="lazy">
+                </a>
             <?php endif; ?>
 
             <div class="media-card-body">
