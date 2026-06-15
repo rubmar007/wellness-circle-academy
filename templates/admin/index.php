@@ -47,9 +47,13 @@ $pageTitle = 'Panel admin';
         <h2>Eventos</h2>
         <p>Calendario de talleres, entrenamientos y presentaciones con enlace para entrar.</p>
     </a>
-    <a class="admin-shortcut" href="/admin/notificaciones">
-        <h2>Notificaciones</h2>
-        <p>Reconocimientos a líderes y avisos para todo el equipo.</p>
+    <a class="admin-shortcut" href="/admin/noticias">
+        <h2>Noticias</h2>
+        <p>Noticias e información relevante para el equipo. Soporta imagen, video y botón de enlace.</p>
+    </a>
+    <a class="admin-shortcut" href="/admin/promociones">
+        <h2>Promociones</h2>
+        <p>Ofertas, reconocimientos y avisos especiales. Soporta imagen, video y botón de enlace.</p>
     </a>
     <a class="admin-shortcut" href="/admin/normas">
         <h2>Normas y Reglamentos</h2>
