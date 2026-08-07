@@ -63,6 +63,10 @@ $pageTitle = 'Panel admin';
         <h2>Soy Cliente</h2>
         <p>Editar el contenido de la sección para usuarios con rol Cliente.</p>
     </a>
+    <a class="admin-shortcut" href="/admin/experience-kit">
+        <h2>WCA Experience Kit</h2>
+        <p>Asignar kits a clientes y ver el panel de seguimiento (parche, hidratación, ejercicio, diario).</p>
+    </a>
 </section>
 
 <?php if ($programs !== []): ?>

@@ -23,6 +23,7 @@ if (PHP_SAPI === 'cli-server') {
 }
 
 use App\Auth;
+use App\Controllers\AdminClientKitsController;
 use App\Controllers\AdminNoticiasController;
 use App\Controllers\AdminPromocionesController;
 use App\Controllers\AdminBatchController;
@@ -38,6 +39,7 @@ use App\Controllers\AdminUsersController;
 use App\Controllers\NoticiaController;
 use App\Controllers\PromocionController;
 use App\Controllers\ClientController;
+use App\Controllers\ClientKitController;
 use App\Controllers\AuthController;
 use App\Controllers\DashboardController;
 use App\Controllers\EventController;
@@ -146,6 +148,15 @@ $router->get('/normas',                  [PageController::class, 'show']);
 $router->get('/soy-cliente',             [ClientController::class,      'show']);
 $router->get('/mapa-parches',            [PatchMapController::class,    'index']);
 
+// WCA Experience Kit (solo rol cliente, verificado en el controlador)
+$router->get('/mi-kit',                  [ClientKitController::class, 'index']);
+$router->get('/mi-kit/diario',           [ClientKitController::class, 'diary']);
+$router->post('/mi-kit/diario',          [ClientKitController::class, 'saveDiary']);
+$router->post('/mi-kit/parche',          [ClientKitController::class, 'togglePatch']);
+$router->post('/mi-kit/agua',            [ClientKitController::class, 'logWater']);
+$router->post('/mi-kit/electrolitos',    [ClientKitController::class, 'toggleElectrolytes']);
+$router->post('/mi-kit/movimiento',      [ClientKitController::class, 'saveMovement']);
+
 $router->get('/perfil',                  [ProfileController::class, 'show']);
 $router->post('/perfil',                 [ProfileController::class, 'update']);
 
@@ -235,5 +246,11 @@ $router->post('/admin/normas', [AdminPagesController::class, 'update']);
 // Admin · Soy Cliente (página única)
 $router->get('/admin/cliente',  [AdminClientController::class, 'edit']);
 $router->post('/admin/cliente', [AdminClientController::class, 'update']);
+
+// Admin · WCA Experience Kit
+$router->get('/admin/experience-kit',              [AdminClientKitsController::class, 'index']);
+$router->get('/admin/experience-kit/nuevo',        [AdminClientKitsController::class, 'create']);
+$router->post('/admin/experience-kit',             [AdminClientKitsController::class, 'store']);
+$router->post('/admin/experience-kit/{id}/finalizar', [AdminClientKitsController::class, 'finish']);
 
 $router->dispatch();

@@ -28,6 +28,7 @@ $sectionNav = [
     ['href' => '/inicio',         'label' => 'Inicio',              'icon' => '🏠', 'match' => '/inicio'],
     ['href' => '/dashboard',      'label' => 'Tus primeros pasos',  'icon' => '🚀', 'match' => '/dashboard'],
     ['href' => '/soy-cliente',    'label' => 'Soy Cliente',         'icon' => '⭐', 'match' => '/soy-cliente'],
+    ['href' => '/mi-kit',         'label' => 'Mi Kit',              'icon' => '📦', 'match' => '/mi-kit'],
     ['href' => '/mapa-parches',   'label' => 'Mapa de Parches',     'icon' => '🩹', 'match' => '/mapa-parches'],
     ['href' => '/noticias',        'label' => 'Noticias',            'icon' => '📰', 'match' => '/noticias'],
     ['href' => '/entrenamiento',  'label' => 'Entrenamiento',       'icon' => '🎓', 'match' => '/entrenamiento'],
@@ -50,6 +51,7 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
     <link rel="stylesheet" href="/assets/css/styles.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/styles.css') ?>">
     <link rel="stylesheet" href="/assets/css/sections.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/sections.css') ?>">
     <link rel="stylesheet" href="/assets/css/patchmap.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/patchmap.css') ?>">
+    <link rel="stylesheet" href="/assets/css/experiencekit.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/experiencekit.css') ?>">
 </head>
 <body>
     <a class="skip-link" href="#main">Saltar al contenido</a>
@@ -83,9 +85,13 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
                 <ul>
                     <?php
                     $isCliente    = ($auth['role'] ?? '') === 'cliente';
-                    $teamOnlyItems = ['/noticias', '/entrenamiento', '/materiales', '/promociones'];
+                    $teamOnlyItems   = ['/noticias', '/entrenamiento', '/materiales', '/promociones'];
+                    $clienteOnlyItems = ['/mi-kit'];
                     foreach ($sectionNav as $item):
                         if ($isCliente && in_array($item['match'], $teamOnlyItems, true)) {
+                            continue;
+                        }
+                        if (!$isCliente && in_array($item['match'], $clienteOnlyItems, true)) {
                             continue;
                         }
                     ?>

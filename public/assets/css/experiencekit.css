@@ -1,0 +1,88 @@
+/* WCA Experience Kit — HTML + CSS puro, sin JS.
+   Reusa las variables de tema de styles.css. */
+
+/* ---------- Calendario del kit ---------- */
+.kit-calendar {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.6rem;
+}
+.kit-day {
+    position: relative;
+    background: var(--color-bg-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.7rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+.kit-day-current { border-color: var(--color-gold); background: var(--color-gold-soft); }
+.kit-day-past { opacity: 0.6; }
+.kit-day-number { font-weight: 700; font-size: 0.85rem; color: var(--color-text); }
+.kit-day-patches { display: flex; flex-direction: column; gap: 0.15rem; }
+.kit-day-patch { font-size: 0.78rem; color: var(--color-text-muted); }
+.kit-day-patch small { color: var(--color-text-faint); }
+.kit-day-tag {
+    align-self: flex-start;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--color-gold-bright);
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-gold);
+    border-radius: 999px;
+    padding: 0.1rem 0.5rem;
+}
+
+/* ---------- Checklist de hoy ---------- */
+.kit-checklist {
+    display: grid;
+    gap: 0.6rem;
+    margin-bottom: 1.1rem;
+}
+.kit-checklist-form { margin: 0; }
+.kit-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--color-bg-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-align: left;
+    min-height: 52px;
+    font-size: 1rem;
+    color: var(--color-text);
+    font-family: inherit;
+    transition: background 160ms ease, border-color 160ms ease;
+}
+.kit-toggle:hover { background: var(--color-bg-elev-2); border-color: var(--color-border-strong); }
+.kit-toggle:focus-visible { outline: none; border-color: var(--color-gold); box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18); }
+.kit-toggle-box {
+    width: 24px; height: 24px; border-radius: 6px;
+    border: 2px solid var(--color-gold);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--color-bg); background: transparent; flex-shrink: 0; font-weight: 700;
+}
+.kit-toggle-done { border-color: var(--color-gold); background: var(--color-gold-soft); }
+.kit-toggle-done .kit-toggle-box { background: var(--color-gold); }
+
+/* ---------- Hidratación ---------- */
+.kit-water {
+    background: var(--color-bg-input);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.1rem;
+    margin-bottom: 1.1rem;
+}
+.kit-water-count { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; margin-bottom: 0.7rem; }
+
+/* ---------- Movimiento ---------- */
+.kit-movement-form .field-row { margin-bottom: 0.8rem; }
+.kit-movement-form .field-checkbox { margin-bottom: 0.8rem; }
+
+/* ---------- Aviso de bienestar ---------- */
+.kit-notice p { color: var(--color-text-muted); font-size: 0.85rem; line-height: 1.6; }
