@@ -21,16 +21,17 @@ final class Security
     {
         $nonce = self::nonce();
 
-        // Content Security Policy estricta. El único script permitido es el inline
-        // o externo del propio origen cuyo nonce coincida con el de la respuesta.
-        // frame-src permite embeber videos de YouTube (sin cookies) y Vimeo.
+        // Content Security Policy estricta. El único script y <style> inline
+        // permitido es el que trae el nonce de esta respuesta; sin 'unsafe-inline'
+        // en ningún directive. frame-src permite embeber videos de YouTube (sin
+        // cookies) y Vimeo.
         $csp = [
             "default-src 'self'",
             "base-uri 'self'",
             "frame-ancestors 'none'",
             "form-action 'self'",
             "img-src 'self' data:",
-            "style-src 'self'",
+            "style-src 'self' 'nonce-{$nonce}'",
             "font-src 'self'",
             "script-src 'self' 'nonce-{$nonce}'",
             "object-src 'none'",

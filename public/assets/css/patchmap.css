@@ -1,0 +1,243 @@
+/* Mapa de colocación de parches — HTML + CSS puro (radio hack), sin JS.
+   Reusa las variables de tema de styles.css. Catálogo de parches fijo
+   (8 ids), por eso las reglas de estado están escritas explícitamente
+   por id en vez de generarse dinámicamente. */
+
+.bm-input { position: absolute; opacity: 0; pointer-events: none; }
+
+/* ---------- Toolbar (filtro de kit + toggle frente/atrás) ---------- */
+.bodymap-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.1rem;
+}
+.bm-pillrow {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+    scrollbar-width: thin;
+}
+.bm-pill {
+    flex: 0 0 auto;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-elev);
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+}
+.bm-pill:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+.bm-viewrow { max-width: 220px; }
+.bm-pill-view { flex: 1 1 0; text-align: center; }
+
+#kit-todos:checked ~ .bodymap-toolbar label[for="kit-todos"],
+#kit-performance:checked ~ .bodymap-toolbar label[for="kit-performance"],
+#kit-menopause:checked ~ .bodymap-toolbar label[for="kit-menopause"],
+#kit-menopause-premium:checked ~ .bodymap-toolbar label[for="kit-menopause-premium"],
+#kit-sleep:checked ~ .bodymap-toolbar label[for="kit-sleep"],
+#kit-heart-wellness:checked ~ .bodymap-toolbar label[for="kit-heart-wellness"],
+#kit-balance:checked ~ .bodymap-toolbar label[for="kit-balance"],
+#kit-senior:checked ~ .bodymap-toolbar label[for="kit-senior"],
+#view-front:checked ~ .bodymap-toolbar label[for="view-front"],
+#view-back:checked ~ .bodymap-toolbar label[for="view-back"] {
+    background: var(--color-gold-soft);
+    color: var(--color-gold-bright);
+    border-color: var(--color-gold);
+}
+
+/* ---------- Layout ---------- */
+.bodymap-layout {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+    grid-template-areas: "stage" "sidebar" "info";
+}
+@media (min-width: 900px) {
+    .bodymap-layout {
+        grid-template-columns: 220px 1fr 340px;
+        grid-template-areas: "sidebar stage info";
+        align-items: start;
+    }
+}
+
+/* ---------- Sidebar de parches ---------- */
+.patch-sidebar {
+    grid-area: sidebar;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+}
+@media (min-width: 900px) {
+    .patch-sidebar { flex-direction: column; overflow-x: visible; position: sticky; top: 84px; }
+}
+.patch-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 0 0 auto;
+    width: 168px;
+    padding: 0.6rem 0.7rem;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--color-border);
+    background: var(--color-bg-elev);
+    cursor: pointer;
+    user-select: none;
+}
+@media (min-width: 900px) {
+    .patch-item { width: auto; }
+}
+.patch-item-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 2.1rem; height: 2.1rem; border-radius: var(--radius-sm);
+    background: var(--color-bg-input);
+    font-size: 1.1rem; flex: 0 0 auto;
+}
+.patch-item-text { min-width: 0; display: flex; flex-direction: column; }
+.patch-item-name { font-weight: 700; font-size: 0.88rem; color: var(--color-text); }
+.patch-item-sub { font-size: 0.72rem; color: var(--color-text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+#patch-x39:checked ~ .bodymap-layout label[for="patch-x39"],
+#patch-x49:checked ~ .bodymap-layout label[for="patch-x49"],
+#patch-sp6:checked ~ .bodymap-layout label[for="patch-sp6"],
+#patch-aeon:checked ~ .bodymap-layout label[for="patch-aeon"],
+#patch-carnosine:checked ~ .bodymap-layout label[for="patch-carnosine"],
+#patch-glutation:checked ~ .bodymap-layout label[for="patch-glutation"],
+#patch-silentnights:checked ~ .bodymap-layout label[for="patch-silentnights"],
+#patch-alavida:checked ~ .bodymap-layout label[for="patch-alavida"] {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 16%, var(--color-bg-elev));
+}
+
+/* Filtro por kit: oculta en la barra lateral los parches que no aplican. */
+#kit-performance:checked ~ .bodymap-layout .patch-item:not(.k-performance),
+#kit-menopause:checked ~ .bodymap-layout .patch-item:not(.k-menopause),
+#kit-menopause-premium:checked ~ .bodymap-layout .patch-item:not(.k-menopause-premium),
+#kit-sleep:checked ~ .bodymap-layout .patch-item:not(.k-sleep),
+#kit-heart-wellness:checked ~ .bodymap-layout .patch-item:not(.k-heart-wellness),
+#kit-balance:checked ~ .bodymap-layout .patch-item:not(.k-balance),
+#kit-senior:checked ~ .bodymap-layout .patch-item:not(.k-senior) {
+    display: none;
+}
+
+/* ---------- Figura + puntos ---------- */
+.bodymap-stage {
+    grid-area: stage;
+    position: relative;
+    max-width: 420px;
+    margin: 0 auto;
+}
+.stage-view {
+    position: relative;
+    width: 100%;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: #050b14;
+}
+.stage-back { display: none; }
+#view-back:checked ~ .bodymap-layout .stage-front { display: none; }
+#view-back:checked ~ .bodymap-layout .stage-back { display: block; }
+
+.stage-img { display: block; width: 100%; height: auto; }
+
+.point {
+    display: none;
+    position: absolute;
+    width: 18px; height: 18px;
+    margin-left: -9px; margin-top: -9px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid #fff;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 70%, transparent);
+    cursor: pointer;
+}
+.point:hover, .point:focus { outline: none; transform: scale(1.3); }
+
+.point-tip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0a0f1a;
+    color: #fff;
+    border: 1px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 0.35rem 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    z-index: 5;
+    transition: opacity 0.15s ease;
+}
+.point:hover .point-tip, .point:focus .point-tip { opacity: 1; visibility: visible; }
+
+#patch-x39:checked ~ .bodymap-layout .point-x39,
+#patch-x49:checked ~ .bodymap-layout .point-x49,
+#patch-sp6:checked ~ .bodymap-layout .point-sp6,
+#patch-aeon:checked ~ .bodymap-layout .point-aeon,
+#patch-carnosine:checked ~ .bodymap-layout .point-carnosine,
+#patch-glutation:checked ~ .bodymap-layout .point-glutation,
+#patch-silentnights:checked ~ .bodymap-layout .point-silentnights,
+#patch-alavida:checked ~ .bodymap-layout .point-alavida {
+    display: block;
+}
+
+/* ---------- Info card ---------- */
+.patch-info { grid-area: info; }
+.info-panel {
+    display: none;
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid var(--accent);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.2rem;
+}
+#patch-x39:checked ~ .bodymap-layout .info-panel-x39,
+#patch-x49:checked ~ .bodymap-layout .info-panel-x49,
+#patch-sp6:checked ~ .bodymap-layout .info-panel-sp6,
+#patch-aeon:checked ~ .bodymap-layout .info-panel-aeon,
+#patch-carnosine:checked ~ .bodymap-layout .info-panel-carnosine,
+#patch-glutation:checked ~ .bodymap-layout .info-panel-glutation,
+#patch-silentnights:checked ~ .bodymap-layout .info-panel-silentnights,
+#patch-alavida:checked ~ .bodymap-layout .info-panel-alavida {
+    display: block;
+}
+.info-panel-head { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.8rem; }
+.info-panel-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 2.6rem; height: 2.6rem; border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--accent) 20%, var(--color-bg-input));
+    font-size: 1.3rem; flex: 0 0 auto;
+}
+.info-panel-head h2 { margin: 0; font-size: 1.15rem; color: var(--color-text); }
+.info-panel-tag { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); font-weight: 700; }
+.info-panel-desc {
+    font-size: 0.88rem; line-height: 1.5; color: var(--color-text-muted);
+    background: var(--color-bg-input); border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-md); padding: 0.8rem 0.9rem; margin-bottom: 0.8rem;
+}
+.info-panel-schedule { font-size: 0.84rem; color: var(--color-text-muted); margin-bottom: 0.9rem; }
+.info-panel-coords-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-faint); font-weight: 700; margin-bottom: 0.5rem; }
+.info-panel-coords { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.info-panel-coords li {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.35rem;
+    background: var(--color-bg-input); border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-sm); padding: 0.5rem 0.6rem; font-size: 0.82rem;
+}
+.info-panel-coords li strong { color: var(--color-text); }
+.info-panel-view-tag {
+    margin-left: auto; font-size: 0.65rem; text-transform: uppercase; font-weight: 700;
+    letter-spacing: 0.05em; color: var(--color-text-faint);
+    border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0.1rem 0.4rem;
+}

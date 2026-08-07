@@ -28,6 +28,7 @@ $sectionNav = [
     ['href' => '/inicio',         'label' => 'Inicio',              'icon' => '🏠', 'match' => '/inicio'],
     ['href' => '/dashboard',      'label' => 'Tus primeros pasos',  'icon' => '🚀', 'match' => '/dashboard'],
     ['href' => '/soy-cliente',    'label' => 'Soy Cliente',         'icon' => '⭐', 'match' => '/soy-cliente'],
+    ['href' => '/mapa-parches',   'label' => 'Mapa de Parches',     'icon' => '🩹', 'match' => '/mapa-parches'],
     ['href' => '/noticias',        'label' => 'Noticias',            'icon' => '📰', 'match' => '/noticias'],
     ['href' => '/entrenamiento',  'label' => 'Entrenamiento',       'icon' => '🎓', 'match' => '/entrenamiento'],
     ['href' => '/materiales',     'label' => 'Materiales',          'icon' => '📂', 'match' => '/materiales'],
@@ -48,6 +49,7 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
     <title><?= e($title) ?></title>
     <link rel="stylesheet" href="/assets/css/styles.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/styles.css') ?>">
     <link rel="stylesheet" href="/assets/css/sections.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/sections.css') ?>">
+    <link rel="stylesheet" href="/assets/css/patchmap.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/patchmap.css') ?>">
 </head>
 <body>
     <a class="skip-link" href="#main">Saltar al contenido</a>

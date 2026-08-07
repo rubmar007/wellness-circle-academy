@@ -47,6 +47,7 @@ use App\Controllers\LessonController;
 use App\Controllers\MaterialController;
 use App\Controllers\PageController;
 use App\Controllers\PasswordResetController;
+use App\Controllers\PatchMapController;
 use App\Controllers\ProfileController;
 use App\Controllers\ProgramController;
 use App\Controllers\ProgressController;
@@ -143,6 +144,7 @@ $router->get('/eventos',                 [EventController::class, 'index']);
 $router->get('/promociones',             [PromocionController::class, 'index']);
 $router->get('/normas',                  [PageController::class, 'show']);
 $router->get('/soy-cliente',             [ClientController::class,      'show']);
+$router->get('/mapa-parches',            [PatchMapController::class,    'index']);
 
 $router->get('/perfil',                  [ProfileController::class, 'show']);
 $router->post('/perfil',                 [ProfileController::class, 'update']);
