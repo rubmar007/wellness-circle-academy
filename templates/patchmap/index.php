@@ -7,6 +7,14 @@ declare(strict_types=1);
  */
 $pageTitle = 'Mapa de Parches';
 
+// Cache-busting: los avatars se sirven con cache-control:max-age=14400 (4h).
+// Sin versionar la URL, cualquier reemplazo del archivo (como este mismo
+// ajuste de tamaño) sigue mostrando la versión vieja en cache del navegador
+// o del CDN hasta que expire. Mismo patrón que ya usa layout.php con el CSS.
+$bodymapDir = $_SERVER['DOCUMENT_ROOT'] . '/assets/img/bodymap';
+$frontV = filemtime($bodymapDir . '/front.jpg');
+$backV  = filemtime($bodymapDir . '/back.jpg');
+
 $icons = [
     'x39' => '⚡',
     'x49' => '🔥',
@@ -103,7 +111,7 @@ foreach ($patches as $p) {
 
         <main class="bodymap-stage">
             <div class="stage-view stage-front">
-                <img src="/assets/img/bodymap/front.jpg" alt="Figura de frente" class="stage-img">
+                <img src="/assets/img/bodymap/front.jpg?v=<?= e((string) $frontV) ?>" alt="Figura de frente" class="stage-img">
                 <?php foreach ($allPoints as $ap): if ($ap['pt']['view'] !== 'front') { continue; } ?>
                     <span class="point point-<?= e($ap['patchId']) ?> accent-<?= e($ap['patchId']) ?> pt-<?= $ap['idx'] ?>" tabindex="0">
                         <span class="point-tip"><?= e($ap['pt']['label']) ?> — <?= e($ap['pt']['desc']) ?></span>
@@ -111,7 +119,7 @@ foreach ($patches as $p) {
                 <?php endforeach; ?>
             </div>
             <div class="stage-view stage-back">
-                <img src="/assets/img/bodymap/back.jpg" alt="Figura de espalda" class="stage-img">
+                <img src="/assets/img/bodymap/back.jpg?v=<?= e((string) $backV) ?>" alt="Figura de espalda" class="stage-img">
                 <?php foreach ($allPoints as $ap): if ($ap['pt']['view'] !== 'back') { continue; } ?>
                     <span class="point point-<?= e($ap['patchId']) ?> accent-<?= e($ap['patchId']) ?> pt-<?= $ap['idx'] ?>" tabindex="0">
                         <span class="point-tip"><?= e($ap['pt']['label']) ?> — <?= e($ap['pt']['desc']) ?></span>
