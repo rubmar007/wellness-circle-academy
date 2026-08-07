@@ -60,7 +60,7 @@
 }
 @media (min-width: 900px) {
     .bodymap-layout {
-        grid-template-columns: 220px 1fr 340px;
+        grid-template-columns: 190px minmax(380px, 560px) 280px;
         grid-template-areas: "sidebar stage info";
         align-items: start;
     }
@@ -131,8 +131,11 @@
 .bodymap-stage {
     grid-area: stage;
     position: relative;
-    max-width: 420px;
+    max-width: 520px;
     margin: 0 auto;
+}
+@media (min-width: 900px) {
+    .bodymap-stage { max-width: none; }
 }
 .stage-view {
     position: relative;
