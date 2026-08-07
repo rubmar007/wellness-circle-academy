@@ -1,33 +1,36 @@
   Continúo trabajando en wellness-circle-academy.
   Ruta: /mnt/c/Users/Rub/Documents/PersonalClaude/wellness-circle-academy
-  URL: https://wellnessca.martavilla.com.mx
-  Último commit deployado al cierre de la sesión anterior (2026-05-25): 5d2d55d
-  "Look and feel: tema oscuro con acento dorado + tipografías self-hosted Allura/Montserrat"
+  URL de producción real: https://academiawca.com
+  (nota: la URL wellnessca.martavilla.com.mx de versiones anteriores de este
+  archivo/SISTEMA.md quedó obsoleta — confirmado en docs/crawl.md)
+
+  Último commit deployado al cierre de esta sesión (2026-08-07): 9b2eb3d
+  "docs: agregar SISTEMA.md y crawl.md"
 
   Antes de avanzar:
-  1. Lee MEMORY.md, CLAUDE.md y MANUAL.md (sección 19 documenta el rediseño).
-  2. Corre `git log --oneline -5` y compara con producción. Si hay commits nuevos
-     posteriores a 5d2d55d, lee el diff contra ese commit para ponerte al día.
-  3. Confirma con curl que el CSS y las fuentes self-hosted siguen sirviendo 200
-     en producción:
-       curl -sS -o /dev/null -w "%{http_code}\n" \
-         https://wellnessca.martavilla.com.mx/assets/css/styles.css
-       curl -sS -o /dev/null -w "%{http_code}\n" \
-         https://wellnessca.martavilla.com.mx/assets/fonts/allura-regular.woff2
-       curl -sS -o /dev/null -w "%{http_code}\n" \
-         https://wellnessca.martavilla.com.mx/assets/fonts/montserrat-vf.woff2
+  1. Lee MEMORY.md, CLAUDE.md, docs/SISTEMA.md y docs/crawl.md (este último
+     documenta correcciones verificadas contra el sistema real en producción:
+     3 roles no 2, dominio real, temas visuales, Argon2id, etc.).
+  2. Corre `git log --oneline -5` y compara con producción (Railway) para
+     confirmar que no hay commits nuevos sin deployar.
+  3. Confirma estado de Railway (mcp__railway__environment_status) y Neon
+     (mcp__plugin_neon_neon__describe_project) antes de asumir nada.
 
-  Estado al cierre:
-  - Rediseño visual deployado y validado. Paleta #0a0a0a + dorado #d4af37,
-    Allura para títulos (h1 de auth/page-head/error), Montserrat variable para
-    el resto. Fuentes en /public/assets/fonts/. layout.php con color-scheme=dark.
-    Plantillas sin cambios estructurales.
-  - Programas y lecciones ya cargados en producción (Rub confirmó).
+  Estado al cierre de esta sesión:
+  - GitHub, Railway y Neon revisados: todo en sync. Rama main limpia, deploy
+    en Railway en SUCCESS, Neon activo sin incidencias.
+  - Panel admin completo y desplegado (usuarios, programas, lecciones, carga
+    batch XLSX, entrenamiento, materiales, eventos, noticias, promociones,
+    normas, página de cliente). El roadmap del MVP en README.md ya refleja
+    esto — antes decía "pendiente" y estaba desactualizado.
 
-  Pendientes vivos:
-  - Llenar el campo Presentación (≤200 chars) por programa desde /admin/programas.
-    Acción humana de Rub.
-  - Tests PHPUnit + CI en GitHub Actions (mediano plazo).
+  Pendientes vivos (confirmados hoy):
+  - Tests PHPUnit + CI en GitHub Actions: no existen (verificado, no hay
+    carpeta tests/ ni .github/workflows/). Pendiente de mediano plazo.
+  - El programa "Distribuidores" existe en BD pero vacío/borrador (0 lecciones).
+  - El programa "X20 - Hidratación Inteligente" incompleto (solo día 2 de 31).
+  - Ambos parecen trabajo en curso de Rub, no bugs — confirmar con él antes
+    de tocarlos.
 
   Corro con --dangerously-skip-permissions. Ejecuta directo lo técnicamente
   reversible; reserva "podrías por favor" para acciones que físicamente no

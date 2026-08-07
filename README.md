@@ -95,26 +95,29 @@ Defensas aplicadas en el código base:
 
 ## Deploy
 
-Pendiente de configurar Railway. Cuando exista la cuenta:
+Desplegado en Railway, deploy automático desde push a `main`. Dominio de producción: `https://academiawca.com`.
 
 - Variables de entorno en Railway: `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL`, `APP_NAME`, `APP_KEY`, `DATABASE_URL` (Neon).
 - Document root: `public/`.
-- Almacenamiento de imágenes en producción: definir entre Railway Volumes o servicio externo (Cloudinary/R2). No usar el filesystem efímero del contenedor.
+- Base de datos: proyecto Neon `wellness-circle-academy` (Postgres 17, `aws-us-east-1`).
 
 ## Roadmap del MVP
 
-Fases implementadas en el esqueleto:
+Fases implementadas:
 
 - [x] Estructura PSR-4, front controller, router minimal.
 - [x] Conexión PostgreSQL (Neon) desde `DATABASE_URL`.
-- [x] Esquema de BD: `users`, `programs`, `lessons`, `user_progress`, `login_attempts`.
-- [x] Auth: login, logout, sesión, CSRF, rate limit. **Sin registro público** — los usuarios se crean por CLI (`bin/create-user.php`) o desde el panel admin (próxima fase).
-- [x] Layout, CSS mobile-first con la paleta del documento. La primera pantalla es el login.
+- [x] Esquema de BD: `users`, `programs`, `lessons`, `user_progress`, `login_attempts`, más tablas de contenido (noticias, promociones, eventos, materiales, entrenamiento, normas, cliente).
+- [x] Auth: login, logout, sesión, CSRF, rate limit, recuperación de contraseña. **Sin registro público** — los usuarios se crean por CLI (`bin/create-user.php`) o desde el panel admin.
+- [x] Layout, CSS mobile-first con selector de 4 temas (Oscuro/Claro/Lifewave/Marino).
 - [x] Dashboard de programas y vista de día con checklist.
 - [x] Botón "Copiar texto" (único JS permitido).
 - [x] Botón "Descargar imagen" (HTML puro).
-- [ ] Panel admin completo (crear/editar programas, lecciones e usuarios, subir imágenes).
-- [ ] Despliegue en Railway.
+- [x] Panel admin completo: usuarios, programas, lecciones (+ carga batch XLSX), entrenamiento, materiales, eventos, noticias, promociones, normas, página de cliente.
+- [x] Despliegue en Railway (producción activa).
+- [ ] Tests PHPUnit + CI en GitHub Actions.
+
+Ver `docs/SISTEMA.md` y `docs/crawl.md` para el detalle completo de módulos y estado real verificado en producción.
 
 ### Crear usuarios (mientras no exista la UI de admin)
 
