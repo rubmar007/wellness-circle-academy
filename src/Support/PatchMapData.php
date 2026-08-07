@@ -46,7 +46,7 @@ final class PatchMapData
                 'color' => '#22d3ee',
                 'points' => [
                     ['label' => 'GV 14', 'desc' => 'Base del cuello', 'view' => 'back', 'x' => 50.0, 'y' => 16.3],
-                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 50.0, 'y' => 42.5],
+                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
                 ],
             ],
             [
@@ -57,7 +57,7 @@ final class PatchMapData
                 'schedule' => 'Día, 12h puesto / 12h descanso, cada día o según necesidad, uso diurno.',
                 'color' => '#fb923c',
                 'points' => [
-                    ['label' => 'CV 6', 'desc' => 'Abdomen bajo, dos dedos bajo el ombligo', 'view' => 'front', 'x' => 50.0, 'y' => 42.5],
+                    ['label' => 'CV 6', 'desc' => 'Abdomen bajo, dos dedos bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
                     ['label' => 'GV 14', 'desc' => 'Base del cuello', 'view' => 'back', 'x' => 50.0, 'y' => 16.3],
                 ],
             ],
@@ -72,7 +72,7 @@ final class PatchMapData
                     ['label' => 'SP 6 (izq)', 'desc' => '4 dedos sobre el hueso interno del tobillo', 'view' => 'front', 'x' => 56.0, 'y' => 90.5],
                     ['label' => 'ST 36 (izq)', 'desc' => 'Bajo la rodilla, por fuera', 'view' => 'front', 'x' => 63.2, 'y' => 77.3],
                     ['label' => 'KD 3 (izq)', 'desc' => 'Tobillo interno, junto al tendón', 'view' => 'front', 'x' => 54.8, 'y' => 94.1],
-                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 50.0, 'y' => 42.5],
+                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
                 ],
             ],
             [
@@ -84,7 +84,7 @@ final class PatchMapData
                 'color' => '#60a5fa',
                 'points' => [
                     ['label' => 'GV 14', 'desc' => 'Base del cuello', 'view' => 'back', 'x' => 50.0, 'y' => 16.3],
-                    ['label' => 'CV 6', 'desc' => 'Bajo el ombligo', 'view' => 'front', 'x' => 50.0, 'y' => 42.5],
+                    ['label' => 'CV 6', 'desc' => 'Bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
                     ['label' => 'LU 9 (der)', 'desc' => 'Muñeca interna', 'view' => 'front', 'x' => 28.4, 'y' => 53.3],
                     ['label' => 'SP 6 (der)', 'desc' => 'Tobillo interno', 'view' => 'front', 'x' => 46.4, 'y' => 91.7],
                     ['label' => 'LV 3 (der)', 'desc' => 'Empeine del pie', 'view' => 'front', 'x' => 42.8, 'y' => 96.5],
@@ -114,7 +114,7 @@ final class PatchMapData
                 'color' => '#2dd4bf',
                 'points' => [
                     ['label' => 'CV 22', 'desc' => 'Base de la garganta', 'view' => 'front', 'x' => 50.0, 'y' => 16.1],
-                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 50.0, 'y' => 42.5],
+                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
                     ['label' => 'LU 9 (der)', 'desc' => 'Muñeca interna', 'view' => 'front', 'x' => 28.4, 'y' => 53.3],
                     ['label' => 'SP 6 (der)', 'desc' => 'Tobillo interno', 'view' => 'front', 'x' => 46.4, 'y' => 91.7],
                     ['label' => 'LV 3 (der)', 'desc' => 'Empeine del pie', 'view' => 'front', 'x' => 42.8, 'y' => 96.5],
