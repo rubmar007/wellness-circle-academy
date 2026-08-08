@@ -95,3 +95,39 @@
 
 /* ---------- Aviso de bienestar ---------- */
 .kit-notice p { color: var(--color-text-muted); font-size: 0.85rem; line-height: 1.6; }
+
+/* ---------- Mis Experience (promotor, solo lectura) ---------- */
+.bm-pill.is-active-pill {
+    background: var(--color-gold-soft);
+    color: var(--color-gold-bright);
+    border-color: var(--color-gold);
+}
+.mx-facts { list-style: none; margin: 0.8rem 0 0; padding: 0; display: grid; gap: 0.4rem; }
+.mx-facts li {
+    background: var(--color-bg-input);
+    border: 1px solid var(--color-border-soft);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.7rem;
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+}
+.mx-facts li strong { color: var(--color-text); }
+.mx-facts-compact { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); grid-auto-flow: row; display: grid; margin-top: 0.6rem; }
+.mx-facts-compact li { font-size: 0.8rem; }
+
+.mx-day-list { display: grid; gap: 0.8rem; }
+.mx-day {
+    background: var(--color-bg-input);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.8rem 1rem;
+}
+.mx-day-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem; margin-bottom: 0.4rem; }
+
+.mx-diary-details { margin-top: 0.6rem; }
+.mx-diary-details summary {
+    cursor: pointer;
+    color: var(--color-gold);
+    font-size: 0.82rem;
+    font-weight: 600;
+}

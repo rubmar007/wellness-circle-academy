@@ -158,6 +158,18 @@ final class ExperienceKitData
         };
     }
 
+    /** @param array<string,mixed> $log fila de client_kit_logs */
+    public static function waterGoalMet(array $log, ?float $weightKg): bool
+    {
+        return (int) $log['water_count'] >= self::waterGoalGlasses($weightKg);
+    }
+
+    /** @param array<string,mixed> $log fila de client_kit_logs */
+    public static function stepsGoalMet(array $log, string $kitSlug): bool
+    {
+        return $log['steps'] !== null && (int) $log['steps'] >= self::stepsGoal($kitSlug);
+    }
+
     /**
      * Día "cumplido" para efectos de insignias: parche puesto, meta de
      * hidratación alcanzada y meta de pasos alcanzada.
@@ -166,11 +178,32 @@ final class ExperienceKitData
      */
     public static function isDayComplete(array $log, string $kitSlug, ?float $weightKg): bool
     {
-        $waterGoal = self::waterGoalGlasses($weightKg);
-        $stepsGoal = self::stepsGoal($kitSlug);
         return (bool) $log['patch_applied']
-            && (int) $log['water_count'] >= $waterGoal
-            && $log['steps'] !== null && (int) $log['steps'] >= $stepsGoal;
+            && self::waterGoalMet($log, $weightKg)
+            && self::stepsGoalMet($log, $kitSlug);
+    }
+
+    /**
+     * Estado de hidratación reusado tanto por el panel admin como por
+     * "Mis Experience" del promotor (docs/SCOPE OF WORK.md sección 10.3:
+     * no duplicar esta lógica). "Falta seguimiento" = sin registro de agua
+     * o pasaron 4 horas o más desde el último.
+     *
+     * @param array<string,mixed>|null $log fila de client_kit_logs del día actual, o null si aún no existe
+     * @return array{hoursSinceWater: int|null, needsFollowUp: bool}
+     */
+    public static function hydrationStatus(?array $log): array
+    {
+        $hoursSinceWater = null;
+        if ($log !== null && $log['water_last_at']) {
+            $last = new \DateTimeImmutable((string) $log['water_last_at']);
+            $hoursSinceWater = (int) floor((time() - $last->getTimestamp()) / 3600);
+        }
+
+        return [
+            'hoursSinceWater' => $hoursSinceWater,
+            'needsFollowUp'   => $hoursSinceWater === null || $hoursSinceWater >= 4,
+        ];
     }
 
     /**

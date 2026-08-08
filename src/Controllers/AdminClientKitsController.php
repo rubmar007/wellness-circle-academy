@@ -12,9 +12,13 @@ use App\View;
 
 /**
  * Admin · WCA Experience Kit: asignar un kit a un cliente o promotor
- * (roles cliente/member) y ver el panel de seguimiento (parche hoy, horas
- * desde la última toma de agua, si hizo ejercicio y si contestó el diario)
- * — docs/PLAN_A_1act secciones 2 y 4.5.
+ * (roles cliente/member), asignar el Promotor responsable del seguimiento,
+ * y ver el panel general (parche hoy, horas desde la última toma de agua,
+ * si hizo ejercicio y si contestó el diario) — docs/PLAN_A_1act secciones
+ * 2 y 4.5, docs/SCOPE OF WORK.md (Promotor Responsable).
+ *
+ * El peso NO se captura aquí (RULE-10 del scope): lo registra el propio
+ * participante desde /mi-kit.
  */
 final class AdminClientKitsController
 {
@@ -24,10 +28,12 @@ final class AdminClientKitsController
         Auth::requireAdmin();
 
         $kits = Connection::get()->query(
-            "SELECT ck.id, ck.kit_slug, ck.started_at, ck.weight_kg,
-                    u.id AS user_id, u.name, u.email, u.role
+            "SELECT ck.id, ck.kit_slug, ck.started_at, ck.weight_kg, ck.promoter_id,
+                    u.id AS user_id, u.name, u.email, u.role,
+                    p.name AS promoter_name
                FROM client_kits ck
                JOIN users u ON u.id = ck.user_id
+               LEFT JOIN users p ON p.id = ck.promoter_id
               WHERE ck.is_active = TRUE
               ORDER BY u.name ASC"
         )->fetchAll();
@@ -42,22 +48,18 @@ final class AdminClientKitsController
                 'SELECT * FROM client_kit_logs WHERE client_kit_id = :k AND day_number = :d LIMIT 1'
             );
             $stmt->execute([':k' => (int) $kit['id'], ':d' => $dayNumber]);
-            $log = $stmt->fetch();
+            $log = $stmt->fetch() ?: null;
 
-            $hoursSinceWater = null;
-            if ($log && $log['water_last_at']) {
-                $last = new \DateTimeImmutable((string) $log['water_last_at']);
-                $hoursSinceWater = (int) floor((time() - $last->getTimestamp()) / 3600);
-            }
+            $hydration = ExperienceKitData::hydrationStatus($log);
 
             $rows[] = [
                 'kit'              => $kit,
                 'dayNumber'        => $dayNumber,
                 'patchApplied'     => $log ? (bool) $log['patch_applied'] : false,
-                'hoursSinceWater'  => $hoursSinceWater,
-                'needsFollowUp'    => $hoursSinceWater === null || $hoursSinceWater >= 4,
+                'hoursSinceWater'  => $hydration['hoursSinceWater'],
+                'needsFollowUp'    => $hydration['needsFollowUp'],
                 'exerciseDone'     => $log ? (bool) $log['exercise_done'] : false,
-                'diaryAnswered'    => $log && $log['diary'] !== null,
+                'diaryAnswered'    => $log !== null && $log['diary'] !== null,
             ];
         }
 
@@ -73,21 +75,14 @@ final class AdminClientKitsController
     {
         Auth::requireAdmin();
 
-        $clientes = Connection::get()->query(
-            "SELECT u.id, u.name, u.email, u.role
-               FROM users u
-              WHERE u.role IN ('cliente', 'member') AND u.is_active = TRUE
-                AND u.id NOT IN (SELECT user_id FROM client_kits WHERE is_active = TRUE)
-              ORDER BY u.name ASC"
-        )->fetchAll();
-
         View::render('admin/experience-kit/form', [
             'mode'      => 'create',
             'kit'       => null,
-            'clientes'  => $clientes,
+            'clientes'  => self::eligibleParticipants(),
+            'promoters' => self::eligiblePromoters(),
             'kitLabels' => ExperienceKitData::kitLabels(),
             'errors'    => [],
-            'old'       => ['user_id' => '', 'kit_slug' => '', 'weight_kg' => '', 'started_at' => date('Y-m-d')],
+            'old'       => ['user_id' => '', 'kit_slug' => '', 'promoter_id' => '', 'started_at' => date('Y-m-d')],
         ]);
     }
 
@@ -98,10 +93,10 @@ final class AdminClientKitsController
         Csrf::requireValid();
 
         $data = [
-            'user_id'    => trim((string) ($_POST['user_id'] ?? '')),
-            'kit_slug'   => trim((string) ($_POST['kit_slug'] ?? '')),
-            'weight_kg'  => trim((string) ($_POST['weight_kg'] ?? '')),
-            'started_at' => trim((string) ($_POST['started_at'] ?? '')),
+            'user_id'     => trim((string) ($_POST['user_id'] ?? '')),
+            'kit_slug'    => trim((string) ($_POST['kit_slug'] ?? '')),
+            'promoter_id' => trim((string) ($_POST['promoter_id'] ?? '')),
+            'started_at'  => trim((string) ($_POST['started_at'] ?? '')),
         ];
 
         $errors = [];
@@ -112,13 +107,7 @@ final class AdminClientKitsController
         if (!isset(ExperienceKitData::kitLabels()[$data['kit_slug']])) {
             $errors['kit_slug'] = 'Selecciona un kit válido.';
         }
-        $weightKg = null;
-        if ($data['weight_kg'] !== '') {
-            $weightKg = filter_var($data['weight_kg'], FILTER_VALIDATE_FLOAT);
-            if ($weightKg === false || $weightKg <= 0 || $weightKg > 400) {
-                $errors['weight_kg'] = 'Peso inválido.';
-            }
-        }
+        $promoterId = self::validatePromoterId($data['promoter_id'], $errors);
         $startedAt = \DateTimeImmutable::createFromFormat('Y-m-d', $data['started_at']);
         if (!$startedAt) {
             $errors['started_at'] = 'Fecha inválida.';
@@ -142,18 +131,11 @@ final class AdminClientKitsController
         }
 
         if ($errors !== []) {
-            $clientes = Connection::get()->query(
-                "SELECT u.id, u.name, u.email, u.role
-                   FROM users u
-                  WHERE u.role IN ('cliente', 'member') AND u.is_active = TRUE
-                    AND u.id NOT IN (SELECT user_id FROM client_kits WHERE is_active = TRUE)
-                  ORDER BY u.name ASC"
-            )->fetchAll();
-
             View::render('admin/experience-kit/form', [
                 'mode'      => 'create',
                 'kit'       => null,
-                'clientes'  => $clientes,
+                'clientes'  => self::eligibleParticipants(),
+                'promoters' => self::eligiblePromoters(),
                 'kitLabels' => ExperienceKitData::kitLabels(),
                 'errors'    => $errors,
                 'old'       => $data,
@@ -162,13 +144,13 @@ final class AdminClientKitsController
         }
 
         $stmt = Connection::get()->prepare(
-            'INSERT INTO client_kits (user_id, kit_slug, weight_kg, started_at)
-             VALUES (:u, :k, :w, :s)'
+            'INSERT INTO client_kits (user_id, kit_slug, promoter_id, started_at)
+             VALUES (:u, :k, :p, :s)'
         );
         $stmt->execute([
             ':u' => $userId,
             ':k' => $data['kit_slug'],
-            ':w' => $weightKg !== null ? $weightKg : null,
+            ':p' => $promoterId,
             ':s' => $data['started_at'],
         ]);
 
@@ -191,12 +173,13 @@ final class AdminClientKitsController
             'mode'      => 'edit',
             'kit'       => $kit,
             'clientes'  => [],
+            'promoters' => self::eligiblePromoters(),
             'kitLabels' => ExperienceKitData::kitLabels(),
             'errors'    => [],
             'old'       => [
-                'kit_slug'   => (string) $kit['kit_slug'],
-                'weight_kg'  => $kit['weight_kg'] !== null ? (string) $kit['weight_kg'] : '',
-                'started_at' => (string) $kit['started_at'],
+                'kit_slug'    => (string) $kit['kit_slug'],
+                'promoter_id' => $kit['promoter_id'] !== null ? (string) $kit['promoter_id'] : '',
+                'started_at'  => (string) $kit['started_at'],
             ],
         ]);
     }
@@ -214,22 +197,16 @@ final class AdminClientKitsController
         }
 
         $data = [
-            'kit_slug'   => trim((string) ($_POST['kit_slug'] ?? '')),
-            'weight_kg'  => trim((string) ($_POST['weight_kg'] ?? '')),
-            'started_at' => trim((string) ($_POST['started_at'] ?? '')),
+            'kit_slug'    => trim((string) ($_POST['kit_slug'] ?? '')),
+            'promoter_id' => trim((string) ($_POST['promoter_id'] ?? '')),
+            'started_at'  => trim((string) ($_POST['started_at'] ?? '')),
         ];
 
         $errors = [];
         if (!isset(ExperienceKitData::kitLabels()[$data['kit_slug']])) {
             $errors['kit_slug'] = 'Selecciona un kit válido.';
         }
-        $weightKg = null;
-        if ($data['weight_kg'] !== '') {
-            $weightKg = filter_var($data['weight_kg'], FILTER_VALIDATE_FLOAT);
-            if ($weightKg === false || $weightKg <= 0 || $weightKg > 400) {
-                $errors['weight_kg'] = 'Peso inválido.';
-            }
-        }
+        $promoterId = self::validatePromoterId($data['promoter_id'], $errors);
         $startedAt = \DateTimeImmutable::createFromFormat('Y-m-d', $data['started_at']);
         if (!$startedAt) {
             $errors['started_at'] = 'Fecha inválida.';
@@ -240,6 +217,7 @@ final class AdminClientKitsController
                 'mode'      => 'edit',
                 'kit'       => $kit,
                 'clientes'  => [],
+                'promoters' => self::eligiblePromoters(),
                 'kitLabels' => ExperienceKitData::kitLabels(),
                 'errors'    => $errors,
                 'old'       => $data,
@@ -248,11 +226,11 @@ final class AdminClientKitsController
         }
 
         $stmt = Connection::get()->prepare(
-            'UPDATE client_kits SET kit_slug = :k, weight_kg = :w, started_at = :s WHERE id = :id'
+            'UPDATE client_kits SET kit_slug = :k, promoter_id = :p, started_at = :s WHERE id = :id'
         );
         $stmt->execute([
             ':k'  => $data['kit_slug'],
-            ':w'  => $weightKg !== null ? $weightKg : null,
+            ':p'  => $promoterId,
             ':s'  => $data['started_at'],
             ':id' => (int) $kit['id'],
         ]);
@@ -306,12 +284,61 @@ final class AdminClientKitsController
 
         $id = (preg_match('/^[1-9][0-9]{0,9}$/', $params['id'] ?? '') === 1) ? (int) $params['id'] : 0;
         if ($id > 0) {
+            // Solo se desactiva: la relación con el promotor se conserva
+            // para el historial (RULE-11 del scope).
             $stmt = Connection::get()->prepare('UPDATE client_kits SET is_active = FALSE WHERE id = :id');
             $stmt->execute([':id' => $id]);
             self::setFlash('Kit finalizado.');
         }
 
         View::redirect('/admin/experience-kit');
+    }
+
+    // ----------------------------------------------------------------
+
+    /** @return array<int, array<string,mixed>> */
+    private static function eligibleParticipants(): array
+    {
+        return Connection::get()->query(
+            "SELECT u.id, u.name, u.email, u.role
+               FROM users u
+              WHERE u.role IN ('cliente', 'member') AND u.is_active = TRUE
+                AND u.id NOT IN (SELECT user_id FROM client_kits WHERE is_active = TRUE)
+              ORDER BY u.name ASC"
+        )->fetchAll();
+    }
+
+    /** @return array<int, array<string,mixed>> */
+    private static function eligiblePromoters(): array
+    {
+        return Connection::get()->query(
+            "SELECT id, name, email FROM users WHERE role = 'member' AND is_active = TRUE ORDER BY name ASC"
+        )->fetchAll();
+    }
+
+    /**
+     * Valida el promoter_id recibido (opcional — "Sin asignar" es válido).
+     * Agrega a $errors si no es válido. Devuelve el id o null.
+     *
+     * @param array<string,string> $errors
+     */
+    private static function validatePromoterId(string $raw, array &$errors): ?int
+    {
+        if ($raw === '') {
+            return null;
+        }
+        $id = filter_var($raw, FILTER_VALIDATE_INT);
+        if ($id === false || $id <= 0) {
+            $errors['promoter_id'] = 'Promotor inválido.';
+            return null;
+        }
+        $stmt = Connection::get()->prepare("SELECT 1 FROM users WHERE id = :id AND role = 'member' AND is_active = TRUE");
+        $stmt->execute([':id' => $id]);
+        if (!$stmt->fetchColumn()) {
+            $errors['promoter_id'] = 'El promotor seleccionado no es válido.';
+            return null;
+        }
+        return $id;
     }
 
     /** @return array<string,mixed>|null */
@@ -323,10 +350,12 @@ final class AdminClientKitsController
         }
 
         $stmt = Connection::get()->prepare(
-            "SELECT ck.id, ck.kit_slug, ck.started_at, ck.weight_kg,
-                    u.id AS user_id, u.name, u.email, u.role
+            "SELECT ck.id, ck.kit_slug, ck.started_at, ck.weight_kg, ck.promoter_id,
+                    u.id AS user_id, u.name, u.email, u.role,
+                    p.name AS promoter_name
                FROM client_kits ck
                JOIN users u ON u.id = ck.user_id
+               LEFT JOIN users p ON p.id = ck.promoter_id
               WHERE ck.id = :id"
         );
         $stmt->execute([':id' => $id]);

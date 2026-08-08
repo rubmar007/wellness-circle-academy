@@ -4,6 +4,7 @@ declare(strict_types=1);
  * @var string                          $mode      'create' | 'edit'
  * @var array<string,mixed>|null        $kit       fila de client_kits (solo en modo edit)
  * @var array<int, array<string,mixed>> $clientes  candidatos sin kit activo (solo en modo create)
+ * @var array<int, array<string,mixed>> $promoters usuarios role=member elegibles como Promotor responsable
  * @var array<string,string>            $kitLabels
  * @var array<string,string>            $errors
  * @var array<string,string>            $old
@@ -30,7 +31,7 @@ $action    = $isCreate ? '/admin/experience-kit' : '/admin/experience-kit/' . (i
 
     <?php if ($isCreate): ?>
         <div class="field">
-            <label for="user_id">Cliente / Promotor</label>
+            <label for="user_id">Cliente / Participante</label>
             <select id="user_id" name="user_id" required>
                 <option value="">— Selecciona una persona —</option>
                 <?php foreach ($clientes as $c): ?>
@@ -45,14 +46,14 @@ $action    = $isCreate ? '/admin/experience-kit' : '/admin/experience-kit/' . (i
         </div>
     <?php else: ?>
         <div class="field">
-            <label>Cliente / Promotor</label>
+            <label>Cliente / Participante</label>
             <p><?= e($kit['name']) ?> (<?= e($kit['email']) ?>) — <?= $kit['role'] === 'cliente' ? 'Cliente' : 'Promotor' ?></p>
             <small class="field-hint">Para reasignar el kit a otra persona, elimina este kit y crea uno nuevo.</small>
         </div>
     <?php endif; ?>
 
     <div class="field">
-        <label for="kit_slug">Kit</label>
+        <label for="kit_slug">Experience Kit</label>
         <select id="kit_slug" name="kit_slug" required>
             <option value="">— Selecciona un kit —</option>
             <?php foreach ($kitLabels as $slug => $label): ?>
@@ -66,36 +67,36 @@ $action    = $isCreate ? '/admin/experience-kit' : '/admin/experience-kit/' . (i
         <?php endif; ?>
     </div>
 
-    <div class="field-row">
-        <div class="field">
-            <label for="weight_kg">Peso (kg, opcional)</label>
-            <input
-                type="number"
-                id="weight_kg"
-                name="weight_kg"
-                value="<?= e($old['weight_kg'] ?? '') ?>"
-                step="0.1"
-                min="1"
-                max="400">
-            <small class="field-hint">Se usa para calcular la meta diaria de hidratación. Sin este dato se usa una meta genérica de 8 vasos. Es opcional aquí — la persona también puede capturar o corregir su propio peso desde «Mi Kit».</small>
-            <?php if (!empty($errors['weight_kg'])): ?>
-                <small class="field-error"><?= e($errors['weight_kg']) ?></small>
-            <?php endif; ?>
-        </div>
-
-        <div class="field">
-            <label for="started_at">Día 1 del kit</label>
-            <input
-                type="date"
-                id="started_at"
-                name="started_at"
-                value="<?= e($old['started_at'] ?? date('Y-m-d')) ?>"
-                required>
-            <?php if (!empty($errors['started_at'])): ?>
-                <small class="field-error"><?= e($errors['started_at']) ?></small>
-            <?php endif; ?>
-        </div>
+    <div class="field">
+        <label for="promoter_id">Promotor / Asesor responsable</label>
+        <select id="promoter_id" name="promoter_id">
+            <option value="">— Sin asignar —</option>
+            <?php foreach ($promoters as $p): ?>
+                <option value="<?= e($p['id']) ?>" <?= ($old['promoter_id'] ?? '') === (string) $p['id'] ? 'selected' : '' ?>>
+                    <?= e($p['name']) ?> (<?= e($p['email']) ?>)
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <small class="field-hint">Quien da seguimiento de solo lectura a este Experience desde «Mis Experience». Opcional, y se puede cambiar después.</small>
+        <?php if (!empty($errors['promoter_id'])): ?>
+            <small class="field-error"><?= e($errors['promoter_id']) ?></small>
+        <?php endif; ?>
     </div>
+
+    <div class="field">
+        <label for="started_at">Día 1 del kit</label>
+        <input
+            type="date"
+            id="started_at"
+            name="started_at"
+            value="<?= e($old['started_at'] ?? date('Y-m-d')) ?>"
+            required>
+        <?php if (!empty($errors['started_at'])): ?>
+            <small class="field-error"><?= e($errors['started_at']) ?></small>
+        <?php endif; ?>
+    </div>
+
+    <p class="field-hint">El peso no se captura aquí — lo registra directamente la persona desde «Mi Kit» y su meta de hidratación se calcula con ese dato.</p>
 
     <div class="form-actions">
         <a class="button button-ghost" href="/admin/experience-kit">Cancelar</a>

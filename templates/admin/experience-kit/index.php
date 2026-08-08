@@ -28,7 +28,8 @@ $pageTitle = 'WCA Experience Kit';
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th>Cliente / Promotor</th>
+                    <th>Cliente / Participante</th>
+                    <th>Promotor responsable</th>
                     <th>Kit</th>
                     <th>Día</th>
                     <th>Parche hoy</th>
@@ -45,6 +46,11 @@ $pageTitle = 'WCA Experience Kit';
                             <?= e($kit['name']) ?>
                             <span class="badge badge-muted"><?= $kit['role'] === 'cliente' ? 'cliente' : 'promotor' ?></span><br>
                             <span class="muted small"><?= e($kit['email']) ?></span>
+                        </td>
+                        <td>
+                            <?= $kit['promoter_name'] !== null
+                                ? e($kit['promoter_name'])
+                                : '<span class="muted">Sin asignar</span>' ?>
                         </td>
                         <td><?= e($kitLabels[$kit['kit_slug']] ?? $kit['kit_slug']) ?></td>
                         <td><?= e($r['dayNumber']) ?>/7</td>

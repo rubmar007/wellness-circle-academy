@@ -47,6 +47,7 @@ use App\Controllers\FeedController;
 use App\Controllers\HomeController;
 use App\Controllers\LessonController;
 use App\Controllers\MaterialController;
+use App\Controllers\MyExperiencesController;
 use App\Controllers\PageController;
 use App\Controllers\PasswordResetController;
 use App\Controllers\PatchMapController;
@@ -157,6 +158,10 @@ $router->post('/mi-kit/agua',            [ClientKitController::class, 'logWater'
 $router->post('/mi-kit/electrolitos',    [ClientKitController::class, 'toggleElectrolytes']);
 $router->post('/mi-kit/movimiento',      [ClientKitController::class, 'saveMovement']);
 $router->post('/mi-kit/peso',            [ClientKitController::class, 'saveWeight']);
+
+// Mis Experience (solo rol member — Promotor responsable, ver MyExperiencesController)
+$router->get('/mis-experience',          [MyExperiencesController::class, 'index']);
+$router->get('/mis-experience/{id}',     [MyExperiencesController::class, 'show']);
 
 $router->get('/perfil',                  [ProfileController::class, 'show']);
 $router->post('/perfil',                 [ProfileController::class, 'update']);

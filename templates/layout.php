@@ -29,6 +29,7 @@ $sectionNav = [
     ['href' => '/dashboard',      'label' => 'Tus primeros pasos',  'icon' => '🚀', 'match' => '/dashboard'],
     ['href' => '/soy-cliente',    'label' => 'Soy Cliente',         'icon' => '⭐', 'match' => '/soy-cliente'],
     ['href' => '/mi-kit',         'label' => 'Mi Kit',              'icon' => '📦', 'match' => '/mi-kit'],
+    ['href' => '/mis-experience', 'label' => 'Mis Experience',      'icon' => '👥', 'match' => '/mis-experience'],
     ['href' => '/mapa-parches',   'label' => 'Mapa de Parches',     'icon' => '🩹', 'match' => '/mapa-parches'],
     ['href' => '/noticias',        'label' => 'Noticias',            'icon' => '📰', 'match' => '/noticias'],
     ['href' => '/entrenamiento',  'label' => 'Entrenamiento',       'icon' => '🎓', 'match' => '/entrenamiento'],
@@ -85,9 +86,14 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
                 <ul>
                     <?php
                     $isCliente    = ($auth['role'] ?? '') === 'cliente';
+                    $isMember     = ($auth['role'] ?? '') === 'member';
                     $teamOnlyItems   = ['/noticias', '/entrenamiento', '/materiales', '/promociones'];
+                    $memberOnlyItems = ['/mis-experience'];
                     foreach ($sectionNav as $item):
                         if ($isCliente && in_array($item['match'], $teamOnlyItems, true)) {
+                            continue;
+                        }
+                        if (!$isMember && in_array($item['match'], $memberOnlyItems, true)) {
                             continue;
                         }
                     ?>
