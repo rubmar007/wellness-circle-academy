@@ -30,3 +30,6 @@ composer.phar
 
 # Capturas de QA visual con Playwright (locales, no versionar)
 /.playwright-mcp/
+
+# Config personal de Claude Code (statusline, etc.) — solo este perfil
+/.claude/settings.local.json
