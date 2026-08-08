@@ -20,7 +20,7 @@ final class AdminUsersController
         Auth::requireAdmin();
 
         $users = Connection::get()->query(
-            'SELECT id, name, email, role, is_active, created_at
+            'SELECT id, name, email, lifewave_id, role, is_active, created_at
                FROM users
               WHERE id != ' . self::ROOT_ID . '
               ORDER BY created_at DESC, id DESC'
@@ -41,7 +41,7 @@ final class AdminUsersController
             'mode'   => 'create',
             'user'   => null,
             'errors' => [],
-            'old'    => ['name' => '', 'email' => '', 'role' => 'member'],
+            'old'    => ['name' => '', 'email' => '', 'lifewave_id' => '', 'role' => 'member'],
         ]);
     }
 
@@ -64,7 +64,7 @@ final class AdminUsersController
             return;
         }
 
-        Auth::createUser($data['name'], $data['email'], $data['password'], $data['role']);
+        Auth::createUser($data['name'], $data['email'], $data['password'], $data['role'], $data['lifewave_id']);
         self::setFlash('Usuario creado correctamente.');
         View::redirect('/admin/usuarios');
     }
@@ -90,9 +90,10 @@ final class AdminUsersController
             'user'   => $user,
             'errors' => [],
             'old'    => [
-                'name'  => $user['name'],
-                'email' => $user['email'],
-                'role'  => $user['role'],
+                'name'        => $user['name'],
+                'email'       => $user['email'],
+                'lifewave_id' => (string) ($user['lifewave_id'] ?? ''),
+                'role'        => $user['role'],
             ],
         ]);
     }
@@ -139,22 +140,24 @@ final class AdminUsersController
 
         if ($data['password'] !== '') {
             $stmt = $pdo->prepare(
-                'UPDATE users SET name = :n, email = :e, role = :r, password_hash = :h WHERE id = :id'
+                'UPDATE users SET name = :n, email = :e, lifewave_id = :l, role = :r, password_hash = :h WHERE id = :id'
             );
             $stmt->execute([
                 ':n'  => $data['name'],
                 ':e'  => $data['email'],
+                ':l'  => $data['lifewave_id'] !== '' ? $data['lifewave_id'] : null,
                 ':r'  => $data['role'],
                 ':h'  => Auth::hashPassword($data['password']),
                 ':id' => $id,
             ]);
         } else {
             $stmt = $pdo->prepare(
-                'UPDATE users SET name = :n, email = :e, role = :r WHERE id = :id'
+                'UPDATE users SET name = :n, email = :e, lifewave_id = :l, role = :r WHERE id = :id'
             );
             $stmt->execute([
                 ':n'  => $data['name'],
                 ':e'  => $data['email'],
+                ':l'  => $data['lifewave_id'] !== '' ? $data['lifewave_id'] : null,
                 ':r'  => $data['role'],
                 ':id' => $id,
             ]);
@@ -200,22 +203,23 @@ final class AdminUsersController
 
     // ---------------------------------------------------------------
 
-    /** @return array{name:string,email:string,role:string,password:string} */
+    /** @return array{name:string,email:string,lifewave_id:string,role:string,password:string} */
     private static function extractInput(): array
     {
-        $name     = trim((string) ($_POST['name']  ?? ''));
-        $email    = mb_strtolower(trim((string) ($_POST['email'] ?? '')));
-        $role     = (string) ($_POST['role'] ?? 'member');
-        $password = (string) ($_POST['password'] ?? '');
+        $name        = trim((string) ($_POST['name']  ?? ''));
+        $email       = mb_strtolower(trim((string) ($_POST['email'] ?? '')));
+        $lifewave_id = trim((string) ($_POST['lifewave_id'] ?? ''));
+        $role        = (string) ($_POST['role'] ?? 'member');
+        $password    = (string) ($_POST['password'] ?? '');
 
         if (!in_array($role, ['admin', 'member', 'cliente'], true)) {
             $role = 'member';
         }
-        return compact('name', 'email', 'role', 'password');
+        return compact('name', 'email', 'lifewave_id', 'role', 'password');
     }
 
     /**
-     * @param array{name:string,email:string,role:string,password:string} $data
+     * @param array{name:string,email:string,lifewave_id:string,role:string,password:string} $data
      * @return array<string,string>
      */
     private static function validate(array $data, bool $isCreate, ?int $currentId): array
@@ -231,6 +235,9 @@ final class AdminUsersController
             if (self::emailExistsExcept($data['email'], $currentId)) {
                 $errors['email'] = 'Ese email ya está registrado por otro usuario.';
             }
+        }
+        if (mb_strlen($data['lifewave_id']) > 40) {
+            $errors['lifewave_id'] = 'Máximo 40 caracteres.';
         }
         if ($isCreate || $data['password'] !== '') {
             if (mb_strlen($data['password']) < 10) {
@@ -272,7 +279,7 @@ final class AdminUsersController
         if ($id <= 0) {
             return null;
         }
-        $stmt = Connection::get()->prepare('SELECT id, name, email, role, is_active FROM users WHERE id = :id');
+        $stmt = Connection::get()->prepare('SELECT id, name, email, lifewave_id, role, is_active FROM users WHERE id = :id');
         $stmt->execute([':id' => $id]);
         $row = $stmt->fetch();
         return $row ?: null;

@@ -55,6 +55,19 @@ $action    = $isCreate ? '/admin/usuarios' : '/admin/usuarios/' . (int) $user['i
     </div>
 
     <div class="field">
+        <label for="lifewave_id">Lifewave ID <span class="field-hint-inline">(opcional)</span></label>
+        <input
+            type="text"
+            id="lifewave_id"
+            name="lifewave_id"
+            value="<?= e($old['lifewave_id'] ?? '') ?>"
+            maxlength="40">
+        <?php if (!empty($errors['lifewave_id'])): ?>
+            <small class="field-error"><?= e($errors['lifewave_id']) ?></small>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
         <label for="role">Rol</label>
         <select id="role" name="role" required>
             <option value="member"  <?= ($old['role'] ?? '') === 'member'  ? 'selected' : '' ?>>Miembro</option>

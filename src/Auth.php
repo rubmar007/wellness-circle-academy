@@ -168,19 +168,20 @@ final class Auth
         return password_hash($plain, self::passwordAlgo(), self::passwordOptions());
     }
 
-    public static function createUser(string $name, string $email, string $password, string $role = 'member'): int
+    public static function createUser(string $name, string $email, string $password, string $role = 'member', ?string $lifewaveId = null): int
     {
         $hash  = self::hashPassword($password);
         $email = mb_strtolower(trim($email));
 
         $stmt = Connection::get()->prepare(
-            'INSERT INTO users (name, email, password_hash, role) VALUES (:n, :e, :h, :r) RETURNING id'
+            'INSERT INTO users (name, email, password_hash, role, lifewave_id) VALUES (:n, :e, :h, :r, :l) RETURNING id'
         );
         $stmt->execute([
             ':n' => $name,
             ':e' => $email,
             ':h' => $hash,
             ':r' => $role,
+            ':l' => $lifewaveId !== null && $lifewaveId !== '' ? $lifewaveId : null,
         ]);
 
         return (int) $stmt->fetchColumn();

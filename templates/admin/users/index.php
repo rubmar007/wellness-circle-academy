@@ -29,6 +29,7 @@ $pageTitle = 'Usuarios';
                 <tr>
                     <th>Nombre</th>
                     <th>Email</th>
+                    <th>Lifewave ID</th>
                     <th>Rol</th>
                     <th>Estado</th>
                     <th class="ta-right">Acciones</th>
@@ -39,6 +40,7 @@ $pageTitle = 'Usuarios';
                     <tr>
                         <td><?= e($u['name']) ?></td>
                         <td><code><?= e($u['email']) ?></code></td>
+                        <td><?= $u['lifewave_id'] !== null && $u['lifewave_id'] !== '' ? '<code>' . e($u['lifewave_id']) . '</code>' : '<span class="muted">—</span>' ?></td>
                         <td>
                             <span class="badge badge-<?= $u['role'] === 'admin' ? 'gold' : 'sky' ?>">
                                 <?= e($u['role']) ?>
