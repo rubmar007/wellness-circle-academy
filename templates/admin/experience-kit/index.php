@@ -72,10 +72,12 @@ $pageTitle = 'WCA Experience Kit';
                         </td>
                         <td class="ta-right">
                             <div class="table-actions">
+                                <a class="button button-ghost button-sm" href="/admin/experience-kit/<?= e($kit['id']) ?>/editar">Editar</a>
                                 <form method="post" action="/admin/experience-kit/<?= e($kit['id']) ?>/finalizar" class="inline-form">
                                     <input type="hidden" name="_csrf" value="<?= e($csrf) ?>">
-                                    <button type="submit" class="button button-ghost button-sm button-danger">Finalizar</button>
+                                    <button type="submit" class="button button-ghost button-sm">Finalizar</button>
                                 </form>
+                                <a class="button button-ghost button-sm button-danger" href="/admin/experience-kit/<?= e($kit['id']) ?>/eliminar">Eliminar</a>
                             </div>
                         </td>
                     </tr>

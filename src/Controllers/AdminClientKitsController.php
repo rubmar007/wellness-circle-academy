@@ -82,6 +82,8 @@ final class AdminClientKitsController
         )->fetchAll();
 
         View::render('admin/experience-kit/form', [
+            'mode'      => 'create',
+            'kit'       => null,
             'clientes'  => $clientes,
             'kitLabels' => ExperienceKitData::kitLabels(),
             'errors'    => [],
@@ -149,6 +151,8 @@ final class AdminClientKitsController
             )->fetchAll();
 
             View::render('admin/experience-kit/form', [
+                'mode'      => 'create',
+                'kit'       => null,
                 'clientes'  => $clientes,
                 'kitLabels' => ExperienceKitData::kitLabels(),
                 'errors'    => $errors,
@@ -173,6 +177,128 @@ final class AdminClientKitsController
     }
 
     /** @param array<string,string> $params */
+    public function edit(array $params): void
+    {
+        Auth::requireAdmin();
+
+        $kit = self::findKit($params['id'] ?? '');
+        if ($kit === null) {
+            self::redirect404();
+            return;
+        }
+
+        View::render('admin/experience-kit/form', [
+            'mode'      => 'edit',
+            'kit'       => $kit,
+            'clientes'  => [],
+            'kitLabels' => ExperienceKitData::kitLabels(),
+            'errors'    => [],
+            'old'       => [
+                'kit_slug'   => (string) $kit['kit_slug'],
+                'weight_kg'  => $kit['weight_kg'] !== null ? (string) $kit['weight_kg'] : '',
+                'started_at' => (string) $kit['started_at'],
+            ],
+        ]);
+    }
+
+    /** @param array<string,string> $params */
+    public function update(array $params): void
+    {
+        Auth::requireAdmin();
+        Csrf::requireValid();
+
+        $kit = self::findKit($params['id'] ?? '');
+        if ($kit === null) {
+            self::redirect404();
+            return;
+        }
+
+        $data = [
+            'kit_slug'   => trim((string) ($_POST['kit_slug'] ?? '')),
+            'weight_kg'  => trim((string) ($_POST['weight_kg'] ?? '')),
+            'started_at' => trim((string) ($_POST['started_at'] ?? '')),
+        ];
+
+        $errors = [];
+        if (!isset(ExperienceKitData::kitLabels()[$data['kit_slug']])) {
+            $errors['kit_slug'] = 'Selecciona un kit válido.';
+        }
+        $weightKg = null;
+        if ($data['weight_kg'] !== '') {
+            $weightKg = filter_var($data['weight_kg'], FILTER_VALIDATE_FLOAT);
+            if ($weightKg === false || $weightKg <= 0 || $weightKg > 400) {
+                $errors['weight_kg'] = 'Peso inválido.';
+            }
+        }
+        $startedAt = \DateTimeImmutable::createFromFormat('Y-m-d', $data['started_at']);
+        if (!$startedAt) {
+            $errors['started_at'] = 'Fecha inválida.';
+        }
+
+        if ($errors !== []) {
+            View::render('admin/experience-kit/form', [
+                'mode'      => 'edit',
+                'kit'       => $kit,
+                'clientes'  => [],
+                'kitLabels' => ExperienceKitData::kitLabels(),
+                'errors'    => $errors,
+                'old'       => $data,
+            ]);
+            return;
+        }
+
+        $stmt = Connection::get()->prepare(
+            'UPDATE client_kits SET kit_slug = :k, weight_kg = :w, started_at = :s WHERE id = :id'
+        );
+        $stmt->execute([
+            ':k'  => $data['kit_slug'],
+            ':w'  => $weightKg !== null ? $weightKg : null,
+            ':s'  => $data['started_at'],
+            ':id' => (int) $kit['id'],
+        ]);
+
+        self::setFlash('Kit actualizado.');
+        View::redirect('/admin/experience-kit');
+    }
+
+    /** @param array<string,string> $params */
+    public function confirmDestroy(array $params): void
+    {
+        Auth::requireAdmin();
+
+        $kit = self::findKit($params['id'] ?? '');
+        if ($kit === null) {
+            self::redirect404();
+            return;
+        }
+
+        View::render('admin/experience-kit/delete', [
+            'kit'      => $kit,
+            'kitLabel' => ExperienceKitData::kitLabels()[$kit['kit_slug']] ?? $kit['kit_slug'],
+        ]);
+    }
+
+    /** @param array<string,string> $params */
+    public function destroy(array $params): void
+    {
+        Auth::requireAdmin();
+        Csrf::requireValid();
+
+        $kit = self::findKit($params['id'] ?? '');
+        if ($kit === null) {
+            self::redirect404();
+            return;
+        }
+
+        // client_kit_logs se borra en cascada (FK ON DELETE CASCADE).
+        $stmt = Connection::get()->prepare('DELETE FROM client_kits WHERE id = :id');
+        $stmt->execute([':id' => (int) $kit['id']]);
+
+        self::setFlash('Kit eliminado.');
+        View::redirect('/admin/experience-kit');
+    }
+
+    /** @param array<string,string> $params */
     public function finish(array $params): void
     {
         Auth::requireAdmin();
@@ -186,6 +312,32 @@ final class AdminClientKitsController
         }
 
         View::redirect('/admin/experience-kit');
+    }
+
+    /** @return array<string,mixed>|null */
+    private static function findKit(string $rawId): ?array
+    {
+        $id = (preg_match('/^[1-9][0-9]{0,9}$/', $rawId) === 1) ? (int) $rawId : 0;
+        if ($id <= 0) {
+            return null;
+        }
+
+        $stmt = Connection::get()->prepare(
+            "SELECT ck.id, ck.kit_slug, ck.started_at, ck.weight_kg,
+                    u.id AS user_id, u.name, u.email, u.role
+               FROM client_kits ck
+               JOIN users u ON u.id = ck.user_id
+              WHERE ck.id = :id"
+        );
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    private static function redirect404(): void
+    {
+        http_response_code(404);
+        require dirname(__DIR__, 2) . '/templates/errors/404.php';
     }
 
     private static function setFlash(string $msg, string $type = 'success'): void

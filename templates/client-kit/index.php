@@ -66,6 +66,20 @@ $badgeName   = $badge['badge'] !== null ? ($badgeLabels[$badge['badge']] ?? $bad
     </div>
 
     <div class="kit-water">
+        <form method="post" action="/mi-kit/peso" class="kit-weight-form">
+            <input type="hidden" name="_csrf" value="<?= e($csrf) ?>">
+            <label for="weight_kg">Tu peso (kg) — define tu meta de hidratación</label>
+            <div class="kit-weight-row">
+                <input type="number" id="weight_kg" name="weight_kg" step="0.1" min="1" max="400"
+                       value="<?= e($kit['weight_kg'] !== null ? (string) $kit['weight_kg'] : '') ?>"
+                       placeholder="Ej. 65">
+                <button type="submit" class="button button-ghost button-sm">Guardar peso</button>
+            </div>
+            <?php if ($kit['weight_kg'] === null): ?>
+                <small class="field-hint">Sin peso registrado se usa una meta genérica de 8 vasos. Ingresa tu peso para calcular tu meta real.</small>
+            <?php endif; ?>
+        </form>
+
         <p class="kit-water-count">
             💧 <?= e($log['water_count']) ?> / <?= e($waterGoal) ?> vasos de agua hoy
             <?php if ((int) $log['water_count'] >= $waterGoal): ?>

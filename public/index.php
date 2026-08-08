@@ -148,7 +148,7 @@ $router->get('/normas',                  [PageController::class, 'show']);
 $router->get('/soy-cliente',             [ClientController::class,      'show']);
 $router->get('/mapa-parches',            [PatchMapController::class,    'index']);
 
-// WCA Experience Kit (solo rol cliente, verificado en el controlador)
+// WCA Experience Kit (cliente y member/promotor, ver Auth::requireLogin en el controlador)
 $router->get('/mi-kit',                  [ClientKitController::class, 'index']);
 $router->get('/mi-kit/diario',           [ClientKitController::class, 'diary']);
 $router->post('/mi-kit/diario',          [ClientKitController::class, 'saveDiary']);
@@ -156,6 +156,7 @@ $router->post('/mi-kit/parche',          [ClientKitController::class, 'togglePat
 $router->post('/mi-kit/agua',            [ClientKitController::class, 'logWater']);
 $router->post('/mi-kit/electrolitos',    [ClientKitController::class, 'toggleElectrolytes']);
 $router->post('/mi-kit/movimiento',      [ClientKitController::class, 'saveMovement']);
+$router->post('/mi-kit/peso',            [ClientKitController::class, 'saveWeight']);
 
 $router->get('/perfil',                  [ProfileController::class, 'show']);
 $router->post('/perfil',                 [ProfileController::class, 'update']);
@@ -248,9 +249,13 @@ $router->get('/admin/cliente',  [AdminClientController::class, 'edit']);
 $router->post('/admin/cliente', [AdminClientController::class, 'update']);
 
 // Admin · WCA Experience Kit
-$router->get('/admin/experience-kit',              [AdminClientKitsController::class, 'index']);
-$router->get('/admin/experience-kit/nuevo',        [AdminClientKitsController::class, 'create']);
-$router->post('/admin/experience-kit',             [AdminClientKitsController::class, 'store']);
-$router->post('/admin/experience-kit/{id}/finalizar', [AdminClientKitsController::class, 'finish']);
+$router->get('/admin/experience-kit',                  [AdminClientKitsController::class, 'index']);
+$router->get('/admin/experience-kit/nuevo',            [AdminClientKitsController::class, 'create']);
+$router->post('/admin/experience-kit',                 [AdminClientKitsController::class, 'store']);
+$router->get('/admin/experience-kit/{id}/editar',      [AdminClientKitsController::class, 'edit']);
+$router->post('/admin/experience-kit/{id}',            [AdminClientKitsController::class, 'update']);
+$router->post('/admin/experience-kit/{id}/finalizar',  [AdminClientKitsController::class, 'finish']);
+$router->get('/admin/experience-kit/{id}/eliminar',    [AdminClientKitsController::class, 'confirmDestroy']);
+$router->post('/admin/experience-kit/{id}/eliminar',   [AdminClientKitsController::class, 'destroy']);
 
 $router->dispatch();

@@ -80,6 +80,15 @@
 }
 .kit-water-count { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; margin-bottom: 0.7rem; }
 
+.kit-weight-form {
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--color-border-soft);
+}
+.kit-weight-form label { display: block; font-size: 0.82rem; color: var(--color-text-muted); margin-bottom: 0.4rem; }
+.kit-weight-row { display: flex; gap: 0.5rem; align-items: center; }
+.kit-weight-row input { width: 110px; flex: 0 0 auto; }
+
 /* ---------- Movimiento ---------- */
 .kit-movement-form .field-row { margin-bottom: 0.8rem; }
 .kit-movement-form .field-checkbox { margin-bottom: 0.8rem; }

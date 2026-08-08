@@ -225,6 +225,32 @@ final class ClientKitController
         View::redirect('/mi-kit');
     }
 
+    /** @param array<string,string> $params */
+    public function saveWeight(array $params): void
+    {
+        Auth::requireLogin();
+        Csrf::requireValid();
+
+        $kit = self::activeKit();
+        if ($kit === null) {
+            View::redirect('/mi-kit');
+            return;
+        }
+
+        $weightKg = filter_input(INPUT_POST, 'weight_kg', FILTER_VALIDATE_FLOAT);
+        if ($weightKg === false || $weightKg === null || $weightKg <= 0 || $weightKg > 400) {
+            self::setFlash('Peso inválido. Ingresa un número entre 1 y 400 kg.', 'error');
+            View::redirect('/mi-kit');
+            return;
+        }
+
+        $stmt = Connection::get()->prepare('UPDATE client_kits SET weight_kg = :w WHERE id = :id');
+        $stmt->execute([':w' => $weightKg, ':id' => (int) $kit['id']]);
+
+        self::setFlash('Peso actualizado. Tu meta de hidratación ya se recalculó.');
+        View::redirect('/mi-kit');
+    }
+
     // ----------------------------------------------------------------
 
     /** @return array<string,mixed>|null */

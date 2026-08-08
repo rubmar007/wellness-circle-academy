@@ -1,43 +1,55 @@
 <?php
 declare(strict_types=1);
 /**
- * @var array<int, array<string,mixed>> $clientes
+ * @var string                          $mode      'create' | 'edit'
+ * @var array<string,mixed>|null        $kit       fila de client_kits (solo en modo edit)
+ * @var array<int, array<string,mixed>> $clientes  candidatos sin kit activo (solo en modo create)
  * @var array<string,string>            $kitLabels
  * @var array<string,string>            $errors
  * @var array<string,string>            $old
  * @var string $csrf
  */
-$pageTitle = 'Asignar kit';
+$isCreate  = $mode === 'create';
+$pageTitle = $isCreate ? 'Asignar kit' : 'Editar kit';
+$action    = $isCreate ? '/admin/experience-kit' : '/admin/experience-kit/' . (int) $kit['id'];
 ?>
 <section class="page-head">
     <p class="breadcrumb">
         <a href="/admin">Admin</a> &rsaquo;
         <a href="/admin/experience-kit">WCA Experience Kit</a> &rsaquo;
-        <span>Asignar kit</span>
+        <span><?= $isCreate ? 'Asignar kit' : 'Editar kit' ?></span>
     </p>
-    <h1>Asignar kit a un cliente o promotor</h1>
+    <h1><?= $isCreate ? 'Asignar kit a un cliente o promotor' : 'Editar kit de ' . e($kit['name']) ?></h1>
 </section>
 
-<?php if ($clientes === []): ?>
+<?php if ($isCreate && $clientes === []): ?>
     <p class="empty-state">No hay clientes ni promotores disponibles sin kit activo. Crea la cuenta desde <a href="/admin/usuarios/nuevo">Usuarios</a> con rol Cliente o Member, o finaliza el kit activo de quien buscas.</p>
 <?php else: ?>
-<form method="post" action="/admin/experience-kit" class="admin-form" novalidate>
+<form method="post" action="<?= e($action) ?>" class="admin-form" novalidate>
     <input type="hidden" name="_csrf" value="<?= e($csrf) ?>">
 
-    <div class="field">
-        <label for="user_id">Cliente / Promotor</label>
-        <select id="user_id" name="user_id" required>
-            <option value="">— Selecciona una persona —</option>
-            <?php foreach ($clientes as $c): ?>
-                <option value="<?= e($c['id']) ?>" <?= ($old['user_id'] ?? '') === (string) $c['id'] ? 'selected' : '' ?>>
-                    <?= e($c['name']) ?> (<?= e($c['email']) ?>) — <?= $c['role'] === 'cliente' ? 'Cliente' : 'Promotor' ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <?php if (!empty($errors['user_id'])): ?>
-            <small class="field-error"><?= e($errors['user_id']) ?></small>
-        <?php endif; ?>
-    </div>
+    <?php if ($isCreate): ?>
+        <div class="field">
+            <label for="user_id">Cliente / Promotor</label>
+            <select id="user_id" name="user_id" required>
+                <option value="">— Selecciona una persona —</option>
+                <?php foreach ($clientes as $c): ?>
+                    <option value="<?= e($c['id']) ?>" <?= ($old['user_id'] ?? '') === (string) $c['id'] ? 'selected' : '' ?>>
+                        <?= e($c['name']) ?> (<?= e($c['email']) ?>) — <?= $c['role'] === 'cliente' ? 'Cliente' : 'Promotor' ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <?php if (!empty($errors['user_id'])): ?>
+                <small class="field-error"><?= e($errors['user_id']) ?></small>
+            <?php endif; ?>
+        </div>
+    <?php else: ?>
+        <div class="field">
+            <label>Cliente / Promotor</label>
+            <p><?= e($kit['name']) ?> (<?= e($kit['email']) ?>) — <?= $kit['role'] === 'cliente' ? 'Cliente' : 'Promotor' ?></p>
+            <small class="field-hint">Para reasignar el kit a otra persona, elimina este kit y crea uno nuevo.</small>
+        </div>
+    <?php endif; ?>
 
     <div class="field">
         <label for="kit_slug">Kit</label>
@@ -65,7 +77,7 @@ $pageTitle = 'Asignar kit';
                 step="0.1"
                 min="1"
                 max="400">
-            <small class="field-hint">Se usa para calcular la meta diaria de hidratación. Sin este dato se usa una meta genérica de 8 vasos.</small>
+            <small class="field-hint">Se usa para calcular la meta diaria de hidratación. Sin este dato se usa una meta genérica de 8 vasos. Es opcional aquí — la persona también puede capturar o corregir su propio peso desde «Mi Kit».</small>
             <?php if (!empty($errors['weight_kg'])): ?>
                 <small class="field-error"><?= e($errors['weight_kg']) ?></small>
             <?php endif; ?>
@@ -87,7 +99,9 @@ $pageTitle = 'Asignar kit';
 
     <div class="form-actions">
         <a class="button button-ghost" href="/admin/experience-kit">Cancelar</a>
-        <button type="submit" class="button button-primary">Asignar kit</button>
+        <button type="submit" class="button button-primary">
+            <?= $isCreate ? 'Asignar kit' : 'Guardar cambios' ?>
+        </button>
     </div>
 </form>
 <?php endif; ?>
