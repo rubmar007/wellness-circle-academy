@@ -16,6 +16,11 @@ namespace App\Support;
  * punto en el abdomen bajo (frente) y uno en la base del cuello (espalda),
  * las mismas coordenadas que ya usa X39.
  *
+ * Ice Wave (docs/agregado.docx) se agregó con su horario únicamente — no hay
+ * fuente con coordenadas oficiales de aplicación todavía, por eso su array
+ * de "points" queda vacío (misma situación que tuvo X49 antes de conseguir
+ * la guía de LifeWave).
+ *
  * Coordenadas x/y en porcentaje (0-100) sobre el contenedor de la figura,
  * recalculadas a partir del recorte real de front.jpg / back.jpg (ver
  * scripts de recorte en el historial — cuerpo calibrado a la misma altura
@@ -149,6 +154,15 @@ final class PatchMapData
                     ['label' => 'GV 14', 'desc' => 'Base del cuello', 'view' => 'back', 'x' => 50.0, 'y' => 16.3],
                 ],
             ],
+            [
+                'id' => 'icewave',
+                'name' => 'Ice Wave',
+                'subtitle' => 'Alivio del dolor',
+                'desc' => 'Alivio del dolor seguro y natural.',
+                'schedule' => '12h puesto / 12h descanso, uso nocturno o diurno de acuerdo a necesidad.',
+                'color' => '#fb7185',
+                'points' => [],
+            ],
         ];
     }
 
@@ -166,7 +180,7 @@ final class PatchMapData
             'menopause-premium' => ['label' => 'Menopause Premium', 'patches' => ['x39', 'alavida', 'sp6']],
             'sleep' => ['label' => 'Sleep', 'patches' => ['silentnights']],
             'heart-wellness' => ['label' => 'Heart & Wellness', 'patches' => ['x39']],
-            'balance' => ['label' => 'Balance', 'patches' => ['x39', 'aeon']],
+            'balance' => ['label' => 'Balance', 'patches' => ['x39', 'aeon', 'icewave']],
             'senior' => ['label' => 'Senior', 'patches' => ['x39']],
         ];
     }

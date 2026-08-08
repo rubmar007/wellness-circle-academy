@@ -24,6 +24,7 @@ $icons = [
     'glutation' => '🧬',
     'silentnights' => '🌙',
     'alavida' => '☀️',
+    'icewave' => '🧊',
 ];
 
 /** @param array<int,string> $kitSlugs */

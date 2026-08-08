@@ -111,7 +111,8 @@
 #patch-carnosine:checked ~ .bodymap-layout label[for="patch-carnosine"],
 #patch-glutation:checked ~ .bodymap-layout label[for="patch-glutation"],
 #patch-silentnights:checked ~ .bodymap-layout label[for="patch-silentnights"],
-#patch-alavida:checked ~ .bodymap-layout label[for="patch-alavida"] {
+#patch-alavida:checked ~ .bodymap-layout label[for="patch-alavida"],
+#patch-icewave:checked ~ .bodymap-layout label[for="patch-icewave"] {
     border-color: var(--accent);
     background: color-mix(in srgb, var(--accent) 16%, var(--color-bg-elev));
 }
@@ -192,7 +193,8 @@
 #patch-carnosine:checked ~ .bodymap-layout .point-carnosine,
 #patch-glutation:checked ~ .bodymap-layout .point-glutation,
 #patch-silentnights:checked ~ .bodymap-layout .point-silentnights,
-#patch-alavida:checked ~ .bodymap-layout .point-alavida {
+#patch-alavida:checked ~ .bodymap-layout .point-alavida,
+#patch-icewave:checked ~ .bodymap-layout .point-icewave {
     display: block;
 }
 
@@ -213,7 +215,8 @@
 #patch-carnosine:checked ~ .bodymap-layout .info-panel-carnosine,
 #patch-glutation:checked ~ .bodymap-layout .info-panel-glutation,
 #patch-silentnights:checked ~ .bodymap-layout .info-panel-silentnights,
-#patch-alavida:checked ~ .bodymap-layout .info-panel-alavida {
+#patch-alavida:checked ~ .bodymap-layout .info-panel-alavida,
+#patch-icewave:checked ~ .bodymap-layout .info-panel-icewave {
     display: block;
 }
 .info-panel-head { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.8rem; }

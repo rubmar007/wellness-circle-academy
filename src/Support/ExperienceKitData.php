@@ -10,6 +10,13 @@ namespace App\Support;
  * campos del diario/encuesta por kit — todo verificado contra el documento
  * original, sección 5.1 (calendario), 5.3 (campos del diario) y la tabla de
  * metas de pasos/insignias de la sección 4.4/4.6.
+ *
+ * Actualización docs/agregado.docx: el kit Balance ahora también usa Ice
+ * Wave 24h (junto con X39 + Aeon 24h) los días 1, 3 y 5. Ese mismo documento
+ * menciona kits "Pain Relief", "Vitality" y "Longevity" y un campo de
+ * diario "Nivel de dolor", pero no trae el calendario día a día de esos
+ * kits — no se agregaron aquí porque calendar() sin ese dato rompería
+ * /mi-kit al seleccionarlos. Pendiente de que Rub confirme esos calendarios.
  */
 final class ExperienceKitData
 {
@@ -26,6 +33,7 @@ final class ExperienceKitData
         $alavida = ['slug' => 'alavida', 'name' => 'Alavida', 'hours' => '12h (noche)'];
         $silentnights = ['slug' => 'silentnights', 'name' => 'Silent Nights', 'hours' => 'noche'];
         $aeon24 = ['slug' => 'aeon', 'name' => 'Aeon', 'hours' => '24h'];
+        $icewave24 = ['slug' => 'icewave', 'name' => 'Ice Wave', 'hours' => '24h'];
 
         return [
             'performance' => [
@@ -50,7 +58,12 @@ final class ExperienceKitData
             ],
             'balance' => [
                 'label' => 'Balance',
-                'days' => [[$x39, $aeon24], [$x39], [$x39, $aeon24], [$x39], [$x39, $aeon24], [$x39], [$x39]],
+                'days' => [
+                    [$x39, $aeon24, $icewave24], [$x39],
+                    [$x39, $aeon24, $icewave24], [$x39],
+                    [$x39, $aeon24, $icewave24], [$x39],
+                    [$x39],
+                ],
             ],
             'senior' => [
                 'label' => 'Senior',
