@@ -86,12 +86,8 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
                     <?php
                     $isCliente    = ($auth['role'] ?? '') === 'cliente';
                     $teamOnlyItems   = ['/noticias', '/entrenamiento', '/materiales', '/promociones'];
-                    $clienteOnlyItems = ['/mi-kit'];
                     foreach ($sectionNav as $item):
                         if ($isCliente && in_array($item['match'], $teamOnlyItems, true)) {
-                            continue;
-                        }
-                        if (!$isCliente && in_array($item['match'], $clienteOnlyItems, true)) {
                             continue;
                         }
                     ?>

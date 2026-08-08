@@ -11,9 +11,10 @@ use App\Support\ExperienceKitData;
 use App\View;
 
 /**
- * Admin · WCA Experience Kit: asignar un kit a un cliente y ver el panel
- * de seguimiento (parche hoy, horas desde la última toma de agua, si hizo
- * ejercicio y si contestó el diario) — docs/PLAN_A_1act sección 4.5.
+ * Admin · WCA Experience Kit: asignar un kit a un cliente o promotor
+ * (roles cliente/member) y ver el panel de seguimiento (parche hoy, horas
+ * desde la última toma de agua, si hizo ejercicio y si contestó el diario)
+ * — docs/PLAN_A_1act secciones 2 y 4.5.
  */
 final class AdminClientKitsController
 {
@@ -24,7 +25,7 @@ final class AdminClientKitsController
 
         $kits = Connection::get()->query(
             "SELECT ck.id, ck.kit_slug, ck.started_at, ck.weight_kg,
-                    u.id AS user_id, u.name, u.email
+                    u.id AS user_id, u.name, u.email, u.role
                FROM client_kits ck
                JOIN users u ON u.id = ck.user_id
               WHERE ck.is_active = TRUE
@@ -73,9 +74,9 @@ final class AdminClientKitsController
         Auth::requireAdmin();
 
         $clientes = Connection::get()->query(
-            "SELECT u.id, u.name, u.email
+            "SELECT u.id, u.name, u.email, u.role
                FROM users u
-              WHERE u.role = 'cliente' AND u.is_active = TRUE
+              WHERE u.role IN ('cliente', 'member') AND u.is_active = TRUE
                 AND u.id NOT IN (SELECT user_id FROM client_kits WHERE is_active = TRUE)
               ORDER BY u.name ASC"
         )->fetchAll();
@@ -104,7 +105,7 @@ final class AdminClientKitsController
         $errors = [];
         $userId = filter_var($data['user_id'], FILTER_VALIDATE_INT);
         if ($userId === false || $userId <= 0) {
-            $errors['user_id'] = 'Selecciona un cliente.';
+            $errors['user_id'] = 'Selecciona un cliente o promotor.';
         }
         if (!isset(ExperienceKitData::kitLabels()[$data['kit_slug']])) {
             $errors['kit_slug'] = 'Selecciona un kit válido.';
@@ -125,24 +126,24 @@ final class AdminClientKitsController
             $stmt = Connection::get()->prepare("SELECT role FROM users WHERE id = :id");
             $stmt->execute([':id' => $userId]);
             $role = $stmt->fetchColumn();
-            if ($role !== 'cliente') {
-                $errors['user_id'] = 'El usuario seleccionado no tiene rol cliente.';
+            if (!in_array($role, ['cliente', 'member'], true)) {
+                $errors['user_id'] = 'El usuario seleccionado debe tener rol cliente o member (promotor).';
             } else {
                 $stmt = Connection::get()->prepare(
                     'SELECT 1 FROM client_kits WHERE user_id = :id AND is_active = TRUE'
                 );
                 $stmt->execute([':id' => $userId]);
                 if ($stmt->fetchColumn()) {
-                    $errors['user_id'] = 'Este cliente ya tiene un kit activo. Finalízalo antes de asignar uno nuevo.';
+                    $errors['user_id'] = 'Este usuario ya tiene un kit activo. Finalízalo antes de asignar uno nuevo.';
                 }
             }
         }
 
         if ($errors !== []) {
             $clientes = Connection::get()->query(
-                "SELECT u.id, u.name, u.email
+                "SELECT u.id, u.name, u.email, u.role
                    FROM users u
-                  WHERE u.role = 'cliente' AND u.is_active = TRUE
+                  WHERE u.role IN ('cliente', 'member') AND u.is_active = TRUE
                     AND u.id NOT IN (SELECT user_id FROM client_kits WHERE is_active = TRUE)
                   ORDER BY u.name ASC"
             )->fetchAll();

@@ -14,14 +14,14 @@ use PDO;
 /**
  * WCA Experience Kit — área del cliente: calendario, checklist diario
  * (parche, hidratación, electrolitos, movimiento) y diario/encuesta.
- * Solo visible para role=cliente (Auth::requireCliente).
+ * Visible para cliente y member (promotor/distribuidor) — Auth::requireLogin.
  */
 final class ClientKitController
 {
     /** @param array<string,string> $params */
     public function index(array $params): void
     {
-        Auth::requireCliente();
+        Auth::requireLogin();
 
         $kit = self::activeKit();
         if ($kit === null) {
@@ -51,7 +51,7 @@ final class ClientKitController
     /** @param array<string,string> $params */
     public function diary(array $params): void
     {
-        Auth::requireCliente();
+        Auth::requireLogin();
 
         $kit = self::activeKit();
         if ($kit === null) {
@@ -78,7 +78,7 @@ final class ClientKitController
     /** @param array<string,string> $params */
     public function saveDiary(array $params): void
     {
-        Auth::requireCliente();
+        Auth::requireLogin();
         Csrf::requireValid();
 
         $kit = self::activeKit();
@@ -130,7 +130,7 @@ final class ClientKitController
     /** @param array<string,string> $params */
     public function togglePatch(array $params): void
     {
-        Auth::requireCliente();
+        Auth::requireLogin();
         Csrf::requireValid();
 
         $kit = self::activeKit();
@@ -152,7 +152,7 @@ final class ClientKitController
     /** @param array<string,string> $params */
     public function toggleElectrolytes(array $params): void
     {
-        Auth::requireCliente();
+        Auth::requireLogin();
         Csrf::requireValid();
 
         $kit = self::activeKit();
@@ -174,7 +174,7 @@ final class ClientKitController
     /** @param array<string,string> $params */
     public function logWater(array $params): void
     {
-        Auth::requireCliente();
+        Auth::requireLogin();
         Csrf::requireValid();
 
         $kit = self::activeKit();
@@ -197,7 +197,7 @@ final class ClientKitController
     /** @param array<string,string> $params */
     public function saveMovement(array $params): void
     {
-        Auth::requireCliente();
+        Auth::requireLogin();
         Csrf::requireValid();
 
         $kit = self::activeKit();

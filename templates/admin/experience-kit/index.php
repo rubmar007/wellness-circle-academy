@@ -28,7 +28,7 @@ $pageTitle = 'WCA Experience Kit';
         <table class="admin-table">
             <thead>
                 <tr>
-                    <th>Cliente</th>
+                    <th>Cliente / Promotor</th>
                     <th>Kit</th>
                     <th>Día</th>
                     <th>Parche hoy</th>
@@ -42,7 +42,8 @@ $pageTitle = 'WCA Experience Kit';
                 <?php foreach ($rows as $r): $kit = $r['kit']; ?>
                     <tr>
                         <td>
-                            <?= e($kit['name']) ?><br>
+                            <?= e($kit['name']) ?>
+                            <span class="badge badge-muted"><?= $kit['role'] === 'cliente' ? 'cliente' : 'promotor' ?></span><br>
                             <span class="muted small"><?= e($kit['email']) ?></span>
                         </td>
                         <td><?= e($kitLabels[$kit['kit_slug']] ?? $kit['kit_slug']) ?></td>

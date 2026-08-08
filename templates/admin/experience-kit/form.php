@@ -15,22 +15,22 @@ $pageTitle = 'Asignar kit';
         <a href="/admin/experience-kit">WCA Experience Kit</a> &rsaquo;
         <span>Asignar kit</span>
     </p>
-    <h1>Asignar kit a un cliente</h1>
+    <h1>Asignar kit a un cliente o promotor</h1>
 </section>
 
 <?php if ($clientes === []): ?>
-    <p class="empty-state">No hay clientes disponibles sin kit activo. Crea la cuenta desde <a href="/admin/usuarios/nuevo">Usuarios</a> con rol Cliente, o finaliza el kit activo del cliente que buscas.</p>
+    <p class="empty-state">No hay clientes ni promotores disponibles sin kit activo. Crea la cuenta desde <a href="/admin/usuarios/nuevo">Usuarios</a> con rol Cliente o Member, o finaliza el kit activo de quien buscas.</p>
 <?php else: ?>
 <form method="post" action="/admin/experience-kit" class="admin-form" novalidate>
     <input type="hidden" name="_csrf" value="<?= e($csrf) ?>">
 
     <div class="field">
-        <label for="user_id">Cliente</label>
+        <label for="user_id">Cliente / Promotor</label>
         <select id="user_id" name="user_id" required>
-            <option value="">— Selecciona un cliente —</option>
+            <option value="">— Selecciona una persona —</option>
             <?php foreach ($clientes as $c): ?>
                 <option value="<?= e($c['id']) ?>" <?= ($old['user_id'] ?? '') === (string) $c['id'] ? 'selected' : '' ?>>
-                    <?= e($c['name']) ?> (<?= e($c['email']) ?>)
+                    <?= e($c['name']) ?> (<?= e($c['email']) ?>) — <?= $c['role'] === 'cliente' ? 'Cliente' : 'Promotor' ?>
                 </option>
             <?php endforeach; ?>
         </select>
