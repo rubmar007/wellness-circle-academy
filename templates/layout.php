@@ -49,10 +49,23 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
     <meta name="color-scheme" content="<?= e($colorScheme) ?>">
     <meta name="robots" content="noindex, nofollow">
     <title><?= e($title) ?></title>
+
+    <!-- PWA: instalable en Android/iOS. Push notifications ver public/assets/js/push.js -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="apple-touch-icon" href="/assets/img/icons/apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WCA">
+    <meta name="csrf-token" content="<?= e($csrf) ?>">
+    <meta name="vapid-public-key" content="<?= e(\App\Support\Env::get('VAPID_PUBLIC_KEY', '')) ?>">
+
     <link rel="stylesheet" href="/assets/css/styles.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/styles.css') ?>">
     <link rel="stylesheet" href="/assets/css/sections.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/sections.css') ?>">
     <link rel="stylesheet" href="/assets/css/patchmap.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/patchmap.css') ?>">
     <link rel="stylesheet" href="/assets/css/experiencekit.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/experiencekit.css') ?>">
+    <link rel="stylesheet" href="/assets/css/notifications.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/notifications.css') ?>">
 </head>
 <body>
     <a class="skip-link" href="#main">Saltar al contenido</a>
@@ -129,6 +142,12 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
     <footer class="site-footer">
         <div class="container">
             <small>&copy; <?= date('Y') ?> <?= e($appName) ?>. Plataforma privada.</small>
+            <?php if ($auth): ?>
+                <div class="pwa-actions">
+                    <button type="button" id="btn-enable-push" class="button button-ghost button-sm" hidden>🔔 Activar notificaciones</button>
+                    <button type="button" id="btn-install-app" class="button button-ghost button-sm" hidden>⬇️ Instalar app</button>
+                </div>
+            <?php endif; ?>
             <div class="theme-picker">
                 <span class="theme-picker-label">Tema:</span>
                 <?php foreach ($themeLabels as $slug => $label): ?>
@@ -144,5 +163,6 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
     </footer>
 
     <script nonce="<?= e($nonce) ?>" src="/assets/js/copy.js"></script>
+    <script nonce="<?= e($nonce) ?>" src="/assets/js/push.js"></script>
 </body>
 </html>

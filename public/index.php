@@ -31,6 +31,7 @@ use App\Controllers\AdminController;
 use App\Controllers\AdminEventsController;
 use App\Controllers\AdminLessonsController;
 use App\Controllers\AdminMaterialsController;
+use App\Controllers\AdminNotificationsController;
 use App\Controllers\AdminPagesController;
 use App\Controllers\AdminProgramsController;
 use App\Controllers\AdminTrainingsController;
@@ -54,6 +55,7 @@ use App\Controllers\PatchMapController;
 use App\Controllers\ProfileController;
 use App\Controllers\ProgramController;
 use App\Controllers\ProgressController;
+use App\Controllers\PushSubscriptionController;
 use App\Controllers\ThemeController;
 use App\Controllers\TrainingController;
 use App\Router;
@@ -166,6 +168,10 @@ $router->get('/mis-experience/{id}',     [MyExperiencesController::class, 'show'
 $router->get('/perfil',                  [ProfileController::class, 'show']);
 $router->post('/perfil',                 [ProfileController::class, 'update']);
 
+// Web Push: guardar/borrar la suscripción del navegador (llamado desde JS)
+$router->post('/push/suscribir',    [PushSubscriptionController::class, 'store']);
+$router->post('/push/desuscribir',  [PushSubscriptionController::class, 'destroy']);
+
 // Admin (los controladores verifican Auth::requireAdmin internamente)
 $router->get('/admin',     [AdminController::class, 'index']);
 
@@ -262,5 +268,14 @@ $router->post('/admin/experience-kit/{id}',            [AdminClientKitsControlle
 $router->post('/admin/experience-kit/{id}/finalizar',  [AdminClientKitsController::class, 'finish']);
 $router->get('/admin/experience-kit/{id}/eliminar',    [AdminClientKitsController::class, 'confirmDestroy']);
 $router->post('/admin/experience-kit/{id}/eliminar',   [AdminClientKitsController::class, 'destroy']);
+
+// Admin · Notificaciones (push)
+$router->get('/admin/notificaciones',                 [AdminNotificationsController::class, 'index']);
+$router->get('/admin/notificaciones/nueva',           [AdminNotificationsController::class, 'create']);
+$router->post('/admin/notificaciones',                [AdminNotificationsController::class, 'store']);
+$router->get('/admin/notificaciones/{id}/editar',     [AdminNotificationsController::class, 'edit']);
+$router->post('/admin/notificaciones/{id}',           [AdminNotificationsController::class, 'update']);
+$router->get('/admin/notificaciones/{id}/eliminar',   [AdminNotificationsController::class, 'confirmDestroy']);
+$router->post('/admin/notificaciones/{id}/eliminar',  [AdminNotificationsController::class, 'destroy']);
 
 $router->dispatch();

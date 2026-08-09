@@ -1,0 +1,55 @@
+/* Admin · Notificaciones — selector de audiencia y toggle de recurrencia
+   con el mismo "radio hack" CSS que /mapa-parches (input oculto + label
+   ~ checked). Cero JavaScript. */
+
+.notif-radio { position: absolute; opacity: 0; pointer-events: none; }
+
+.notif-pillrow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.notif-pill {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-elev);
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+}
+.notif-pill:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+
+#aud-all:checked  ~ .field .notif-pillrow label[for="aud-all"],
+#aud-role:checked ~ .field .notif-pillrow label[for="aud-role"],
+#aud-kit:checked  ~ .field .notif-pillrow label[for="aud-kit"],
+#aud-user:checked ~ .field .notif-pillrow label[for="aud-user"],
+#is_recurring:checked ~ .field label.notif-pill[for="is_recurring"] {
+    background: var(--color-gold-soft);
+    color: var(--color-gold-bright);
+    border-color: var(--color-gold);
+}
+
+.notif-form .aud-field-role,
+.notif-form .aud-field-kit,
+.notif-form .aud-field-user,
+.notif-form .recurrence-field {
+    display: none;
+}
+
+#aud-role:checked ~ .aud-field-role { display: block; }
+#aud-kit:checked  ~ .aud-field-kit  { display: block; }
+#aud-user:checked ~ .aud-field-user { display: block; }
+#is_recurring:checked ~ .recurrence-field { display: block; }
+
+/* Botones de PWA en el footer (activar push / instalar app). */
+.pwa-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+}

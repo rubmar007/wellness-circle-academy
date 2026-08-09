@@ -67,6 +67,10 @@ $pageTitle = 'Panel admin';
         <h2>WCA Experience Kit</h2>
         <p>Asignar kits a clientes y ver el panel de seguimiento (parche, hidratación, ejercicio, diario).</p>
     </a>
+    <a class="admin-shortcut" href="/admin/notificaciones">
+        <h2>Notificaciones</h2>
+        <p>Programar, editar y eliminar push notifications — a todos, por rol, por kit activo o a una persona.</p>
+    </a>
 </section>
 
 <?php if ($programs !== []): ?>
