@@ -182,6 +182,9 @@ final class PatchMapData
             'heart-wellness' => ['label' => 'Heart & Wellness', 'patches' => ['x39']],
             'balance' => ['label' => 'Balance', 'patches' => ['x39', 'aeon', 'icewave']],
             'senior' => ['label' => 'Senior', 'patches' => ['x39']],
+            'pain-relief' => ['label' => 'Pain Relief', 'patches' => ['x39', 'aeon', 'icewave']],
+            'vitality' => ['label' => 'Vitality', 'patches' => ['x39']],
+            'longevity' => ['label' => 'Longevity', 'patches' => ['x39']],
         ];
     }
 }

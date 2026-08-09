@@ -44,6 +44,9 @@
 #kit-heart-wellness:checked ~ .bodymap-toolbar label[for="kit-heart-wellness"],
 #kit-balance:checked ~ .bodymap-toolbar label[for="kit-balance"],
 #kit-senior:checked ~ .bodymap-toolbar label[for="kit-senior"],
+#kit-pain-relief:checked ~ .bodymap-toolbar label[for="kit-pain-relief"],
+#kit-vitality:checked ~ .bodymap-toolbar label[for="kit-vitality"],
+#kit-longevity:checked ~ .bodymap-toolbar label[for="kit-longevity"],
 #view-front:checked ~ .bodymap-toolbar label[for="view-front"],
 #view-back:checked ~ .bodymap-toolbar label[for="view-back"] {
     background: var(--color-gold-soft);
@@ -124,7 +127,10 @@
 #kit-sleep:checked ~ .bodymap-layout .patch-item:not(.k-sleep),
 #kit-heart-wellness:checked ~ .bodymap-layout .patch-item:not(.k-heart-wellness),
 #kit-balance:checked ~ .bodymap-layout .patch-item:not(.k-balance),
-#kit-senior:checked ~ .bodymap-layout .patch-item:not(.k-senior) {
+#kit-senior:checked ~ .bodymap-layout .patch-item:not(.k-senior),
+#kit-pain-relief:checked ~ .bodymap-layout .patch-item:not(.k-pain-relief),
+#kit-vitality:checked ~ .bodymap-layout .patch-item:not(.k-vitality),
+#kit-longevity:checked ~ .bodymap-layout .patch-item:not(.k-longevity) {
     display: none;
 }
 

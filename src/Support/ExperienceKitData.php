@@ -12,11 +12,13 @@ namespace App\Support;
  * metas de pasos/insignias de la sección 4.4/4.6.
  *
  * Actualización docs/agregado.docx: el kit Balance ahora también usa Ice
- * Wave 24h (junto con X39 + Aeon 24h) los días 1, 3 y 5. Ese mismo documento
- * menciona kits "Pain Relief", "Vitality" y "Longevity" y un campo de
- * diario "Nivel de dolor", pero no trae el calendario día a día de esos
- * kits — no se agregaron aquí porque calendar() sin ese dato rompería
- * /mi-kit al seleccionarlos. Pendiente de que Rub confirme esos calendarios.
+ * Wave 24h (junto con X39 + Aeon 24h) los días 1, 3 y 5.
+ *
+ * Actualización docs/agregado2.docx: calendario confirmado de los 3 kits
+ * que faltaban (Pain Relief, Vitality, Longevity) y sus campos de diario.
+ * Pain Relief usa el mismo patrón que Balance (X39+Aeon24h+IceWave24h en
+ * días 1/3/5, X39 solo el resto) más el campo extra "Nivel de dolor".
+ * Vitality y Longevity son X39 los 7 días, sin campos de diario extra.
  */
 final class ExperienceKitData
 {
@@ -67,6 +69,23 @@ final class ExperienceKitData
             ],
             'senior' => [
                 'label' => 'Senior',
+                'days' => array_fill(0, 7, [$x39]),
+            ],
+            'pain-relief' => [
+                'label' => 'Pain Relief',
+                'days' => [
+                    [$x39, $aeon24, $icewave24], [$x39],
+                    [$x39, $aeon24, $icewave24], [$x39],
+                    [$x39, $aeon24, $icewave24], [$x39],
+                    [$x39],
+                ],
+            ],
+            'vitality' => [
+                'label' => 'Vitality',
+                'days' => array_fill(0, 7, [$x39]),
+            ],
+            'longevity' => [
+                'label' => 'Longevity',
                 'days' => array_fill(0, 7, [$x39]),
             ],
         ];
@@ -152,6 +171,12 @@ final class ExperienceKitData
             'balance' => [
                 'stress_level'    => ['label' => 'Nivel de estrés', 'type' => 'scale10'],
                 'anxiety_level'   => ['label' => 'Nivel de ansiedad', 'type' => 'scale10'],
+                'emotional_state' => ['label' => 'Estado emocional', 'type' => 'scale10'],
+            ],
+            'pain-relief' => [
+                'stress_level'    => ['label' => 'Nivel de estrés', 'type' => 'scale10'],
+                'anxiety_level'   => ['label' => 'Nivel de ansiedad', 'type' => 'scale10'],
+                'pain_level'      => ['label' => 'Nivel de dolor', 'type' => 'scale10'],
                 'emotional_state' => ['label' => 'Estado emocional', 'type' => 'scale10'],
             ],
             default => [],
