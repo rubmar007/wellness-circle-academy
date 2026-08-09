@@ -10,6 +10,7 @@ nixPkgs = [
     'php83Extensions.fileinfo',
     'php83Extensions.curl',
     'php83Extensions.openssl',
+    'php83Extensions.bcmath',
     'php83Packages.composer',
 ]
 
