@@ -44,7 +44,7 @@ $pageTitle = 'WCA Experience Kit';
                     <tr>
                         <td>
                             <?= e($kit['name']) ?>
-                            <span class="badge badge-muted"><?= $kit['role'] === 'cliente' ? 'cliente' : 'promotor' ?></span><br>
+                            <span class="badge badge-muted"><?= match ($kit['role']) { 'cliente' => 'cliente', 'admin' => 'admin', default => 'promotor' } ?></span><br>
                             <span class="muted small"><?= e($kit['email']) ?></span>
                         </td>
                         <td>

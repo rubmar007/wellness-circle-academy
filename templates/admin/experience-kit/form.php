@@ -13,6 +13,11 @@ declare(strict_types=1);
 $isCreate  = $mode === 'create';
 $pageTitle = $isCreate ? 'Asignar kit' : 'Editar kit';
 $action    = $isCreate ? '/admin/experience-kit' : '/admin/experience-kit/' . (int) $kit['id'];
+$roleLabel = static fn (string $role): string => match ($role) {
+    'cliente' => 'Cliente',
+    'admin'   => 'Admin',
+    default   => 'Promotor',
+};
 ?>
 <section class="page-head">
     <p class="breadcrumb">
@@ -36,7 +41,7 @@ $action    = $isCreate ? '/admin/experience-kit' : '/admin/experience-kit/' . (i
                 <option value="">— Selecciona una persona —</option>
                 <?php foreach ($clientes as $c): ?>
                     <option value="<?= e($c['id']) ?>" <?= ($old['user_id'] ?? '') === (string) $c['id'] ? 'selected' : '' ?>>
-                        <?= e($c['name']) ?> (<?= e($c['email']) ?>) — <?= $c['role'] === 'cliente' ? 'Cliente' : 'Promotor' ?>
+                        <?= e($c['name']) ?> (<?= e($c['email']) ?>) — <?= $roleLabel($c['role']) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -47,7 +52,7 @@ $action    = $isCreate ? '/admin/experience-kit' : '/admin/experience-kit/' . (i
     <?php else: ?>
         <div class="field">
             <label>Cliente / Participante</label>
-            <p><?= e($kit['name']) ?> (<?= e($kit['email']) ?>) — <?= $kit['role'] === 'cliente' ? 'Cliente' : 'Promotor' ?></p>
+            <p><?= e($kit['name']) ?> (<?= e($kit['email']) ?>) — <?= $roleLabel($kit['role']) ?></p>
             <small class="field-hint">Para reasignar el kit a otra persona, elimina este kit y crea uno nuevo.</small>
         </div>
     <?php endif; ?>

@@ -117,8 +117,8 @@ final class AdminClientKitsController
             $stmt = Connection::get()->prepare("SELECT role FROM users WHERE id = :id");
             $stmt->execute([':id' => $userId]);
             $role = $stmt->fetchColumn();
-            if (!in_array($role, ['cliente', 'member'], true)) {
-                $errors['user_id'] = 'El usuario seleccionado debe tener rol cliente o member (promotor).';
+            if (!in_array($role, ['cliente', 'member', 'admin'], true)) {
+                $errors['user_id'] = 'El usuario seleccionado debe tener rol cliente, member (promotor) o admin.';
             } else {
                 $stmt = Connection::get()->prepare(
                     'SELECT 1 FROM client_kits WHERE user_id = :id AND is_active = TRUE'
@@ -296,13 +296,18 @@ final class AdminClientKitsController
 
     // ----------------------------------------------------------------
 
-    /** @return array<int, array<string,mixed>> */
+    /**
+     * Elegibles como Cliente/Participante: cliente, member, y también admin
+     * (Marta también puede autoasignarse un kit — confirmado por Rub).
+     *
+     * @return array<int, array<string,mixed>>
+     */
     private static function eligibleParticipants(): array
     {
         return Connection::get()->query(
             "SELECT u.id, u.name, u.email, u.role
                FROM users u
-              WHERE u.role IN ('cliente', 'member') AND u.is_active = TRUE
+              WHERE u.role IN ('cliente', 'member', 'admin') AND u.is_active = TRUE
                 AND u.id NOT IN (SELECT user_id FROM client_kits WHERE is_active = TRUE)
               ORDER BY u.name ASC"
         )->fetchAll();
