@@ -486,8 +486,8 @@ body:has(.auth-main-card) .main-area {
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding-top: 1rem;
-    padding-bottom: 1.5rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.3rem;
 }
 
 /* Outer card */
@@ -495,58 +495,63 @@ body:has(.auth-main-card) .main-area {
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 520px;
+    max-width: 360px;
     margin: 0 auto;
     background: rgba(6, 6, 8, 0.96);
     border: 1px solid rgba(212,175,55,0.40);
     border-radius: 24px;
-    padding: 1.75rem 1.5rem 1.5rem;
+    padding: 1.1rem 1.1rem 0.9rem;
     box-shadow:
         0 0 0 1px rgba(212,175,55,0.08),
         0 0 50px rgba(212,175,55,0.06),
         0 24px 80px rgba(0,0,0,0.85);
 }
 
-/* Logo card — imagen real */
+/* Logo card — imagen real, tamaño fijo para que la tarjeta completa quepa
+   en una sola pantalla incluso en laptops de 768px de alto. */
 .auth-logo-section {
-    margin: -1.75rem -1.5rem 1.2rem;
+    display: flex;
+    justify-content: center;
+    margin: -0.25rem 0 0.4rem;
 }
 .auth-logo-card {
-    width: 100%;
-    height: auto;
+    width: auto;
+    height: 128px;
+    max-width: 100%;
     display: block;
+    object-fit: contain;
 }
 
 /* Welcome text */
 .auth-welcome {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
 }
 .auth-welcome-script {
     display: block;
-    font-family: var(--font-script);
-    color: var(--color-gold);
-    font-size: 2rem;
+    font-family: var(--font-sans);
+    color: var(--color-text-muted);
+    font-size: 1rem;
     font-weight: 400;
-    letter-spacing: 0;
-    line-height: 1.1;
-    margin-bottom: 0.1rem;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 0.2rem;
 }
 .auth-welcome-title {
     color: var(--color-text);
     font-family: var(--font-sans);
-    font-size: 1.75rem;
+    font-size: 1.3rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    margin: 0 0 0.75rem;
-    line-height: 1.1;
+    letter-spacing: 0.1em;
+    margin: 0 0 0.35rem;
+    line-height: 1.15;
     text-align: center;
 }
 .auth-tagline {
     color: var(--color-text-muted);
-    font-size: 0.93rem;
-    line-height: 1.6;
+    font-size: 0.82rem;
+    line-height: 1.4;
     margin: 0;
     text-align: center;
 }
@@ -556,21 +561,21 @@ body:has(.auth-main-card) .main-area {
     background: rgba(8, 8, 10, 0.85);
     border: 1px solid rgba(212,175,55,0.30);
     border-radius: 20px;
-    padding: 1.5rem 1.25rem 1.25rem;
+    padding: 0.8rem 0.9rem 0.7rem;
 }
 
 /* Fields inside auth */
 .auth-field {
-    margin-bottom: 1.1rem;
+    margin-bottom: 0.55rem;
 }
 .auth-field label {
     display: block;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.3rem;
     color: var(--color-text);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    font-size: 0.78rem;
+    font-size: 0.74rem;
 }
 .auth-input-wrap {
     position: relative;
@@ -588,13 +593,13 @@ body:has(.auth-main-card) .main-area {
 }
 .auth-input-wrap input {
     width: 100%;
-    padding: 1rem 1rem 1rem 3rem;
+    padding: 0.7rem 1rem 0.7rem 3rem;
     border: 1px solid rgba(212,175,55,0.28);
     border-radius: 14px;
     font-size: 0.97rem;
     background: #0b0b0d;
     color: var(--color-text);
-    min-height: 56px;
+    min-height: 42px;
     font-family: inherit;
     transition: border-color 160ms ease, box-shadow 160ms ease;
 }
@@ -609,9 +614,9 @@ body:has(.auth-main-card) .main-area {
 .auth-submit-btn {
     display: block;
     width: 100%;
-    margin-top: 0.5rem;
-    padding: 1.1rem 1rem;
-    min-height: 62px;
+    margin-top: 0.2rem;
+    padding: 0.65rem 1rem;
+    min-height: 44px;
     background:
         radial-gradient(ellipse 55% 45% at 50% 25%, rgba(255,240,160,0.38) 0%, transparent 100%),
         linear-gradient(180deg,
@@ -684,7 +689,7 @@ body:has(.auth-main-card) .main-area {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 1.1rem 0 1rem;
+    margin: 0.5rem 0;
 }
 .auth-divider span {
     width: 10px; height: 10px;
@@ -697,11 +702,11 @@ body:has(.auth-main-card) .main-area {
 .auth-support {
     display: flex;
     align-items: center;
-    gap: 0.9rem;
+    gap: 0.6rem;
 }
 .auth-support-icon {
     flex: 0 0 auto;
-    width: 44px; height: 44px;
+    width: 32px; height: 32px;
     border-radius: 50%;
     background: rgba(212,175,55,0.10);
     border: 1px solid rgba(212,175,55,0.30);
@@ -1294,8 +1299,8 @@ body:has(.auth-main-card) .main-area {
     .page-head h1  { font-size: 3rem; }
     .page-head h1.greeting-title { font-size: 2rem; }
     .auth-card h1        { font-size: 3rem; }
-    .auth-welcome-title  { font-size: 2.1rem; }
-    .auth-welcome-script { font-size: 2.3rem; }
+    .auth-welcome-title  { font-size: 1.5rem; }
+    .auth-welcome-script { font-size: 1.05rem; }
 }
 
 @media (min-width: 960px) {
