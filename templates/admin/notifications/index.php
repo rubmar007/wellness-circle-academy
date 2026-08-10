@@ -18,6 +18,14 @@ $audienceLabel = static function (array $n) use ($kitLabels, $roleLabels): strin
         default => '—',
     };
 };
+
+// La BD guarda todo en UTC (TIMESTAMPTZ) — se muestra en hora de CDMX.
+$cdmx = static function (?string $raw): ?string {
+    if ($raw === null) {
+        return null;
+    }
+    return (new DateTimeImmutable($raw))->setTimezone(new DateTimeZone('America/Mexico_City'))->format('Y-m-d H:i');
+};
 ?>
 <section class="page-head">
     <p class="breadcrumb"><a href="/admin">Admin</a> &rsaquo; <span>Notificaciones</span></p>
@@ -41,7 +49,7 @@ $audienceLabel = static function (array $n) use ($kitLabels, $roleLabels): strin
                 <tr>
                     <th>Título</th>
                     <th>Audiencia</th>
-                    <th>Programada (UTC)</th>
+                    <th>Programada (CDMX)</th>
                     <th>Recurrencia</th>
                     <th>Estado</th>
                     <th>Último envío</th>
@@ -53,7 +61,7 @@ $audienceLabel = static function (array $n) use ($kitLabels, $roleLabels): strin
                     <tr>
                         <td><?= e($n['title']) ?></td>
                         <td><?= e($audienceLabel($n)) ?></td>
-                        <td><?= e($n['scheduled_at']) ?></td>
+                        <td><?= e($cdmx($n['scheduled_at'])) ?></td>
                         <td>
                             <?= $n['is_recurring']
                                 ? '<span class="badge badge-muted">' . ($n['recurrence_freq'] === 'weekly' ? 'semanal' : 'diaria') . '</span>'
@@ -70,7 +78,7 @@ $audienceLabel = static function (array $n) use ($kitLabels, $roleLabels): strin
                         </td>
                         <td>
                             <?php if ($n['last_sent_at'] !== null): ?>
-                                <?= e($n['last_sent_at']) ?><br>
+                                <?= e($cdmx($n['last_sent_at'])) ?><br>
                                 <span class="muted small"><?= e($n['last_sent_count']) ?> ok / <?= e($n['last_failed_count']) ?> fallidos</span>
                             <?php else: ?>
                                 <span class="muted">—</span>

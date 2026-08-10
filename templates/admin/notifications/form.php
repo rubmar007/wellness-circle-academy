@@ -104,9 +104,9 @@ $aud       = $old['audience_type'] ?? 'all';
     </div>
 
     <div class="field">
-        <label for="scheduled_at">Fecha y hora de envío (UTC)</label>
+        <label for="scheduled_at">Fecha y hora de envío (CDMX)</label>
         <input type="datetime-local" id="scheduled_at" name="scheduled_at" value="<?= e($old['scheduled_at'] ?? '') ?>" required>
-        <small class="field-hint">El servidor corre en horario UTC. Hora actual UTC ahora mismo: <?= e((new DateTimeImmutable('now'))->format('Y-m-d H:i')) ?>.</small>
+        <small class="field-hint">Hora de Ciudad de México. Ahora mismo son las <?= e((new DateTimeImmutable('now', new DateTimeZone('America/Mexico_City')))->format('Y-m-d H:i')) ?> en CDMX.</small>
         <?php if (!empty($errors['scheduled_at'])): ?><small class="field-error"><?= e($errors['scheduled_at']) ?></small><?php endif; ?>
     </div>
 

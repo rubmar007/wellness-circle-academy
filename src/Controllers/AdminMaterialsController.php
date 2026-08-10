@@ -51,6 +51,7 @@ final class AdminMaterialsController
                 'type'          => 'pdf',
                 'title'         => '',
                 'url'           => '',
+                'description'   => '',
                 'display_order' => '0',
                 'is_published'  => '1',
             ],
@@ -97,11 +98,12 @@ final class AdminMaterialsController
         $url      = $data['type'] === 'image' ? null : $data['url'];
         $imageCol = $data['type'] === 'image' ? $imageUrl : null;
 
-        $folder = $data['folder'] !== '' ? $data['folder'] : null;
+        $folder      = $data['folder'] !== '' ? $data['folder'] : null;
+        $description = $data['description'] !== '' ? $data['description'] : null;
 
         $stmt = Connection::get()->prepare(
-            'INSERT INTO materials (type, title, url, image_url, folder, display_order, is_published)
-             VALUES (:ty, :ti, :u, :im, :fo, :o, :p)'
+            'INSERT INTO materials (type, title, url, image_url, folder, description, display_order, is_published)
+             VALUES (:ty, :ti, :u, :im, :fo, :de, :o, :p)'
         );
         $stmt->execute([
             ':ty' => $data['type'],
@@ -109,6 +111,7 @@ final class AdminMaterialsController
             ':u'  => $url,
             ':im' => $imageCol,
             ':fo' => $folder,
+            ':de' => $description,
             ':o'  => (int) $data['display_order'],
             ':p'  => $data['is_published'] === '1' ? 't' : 'f',
         ]);
@@ -137,6 +140,7 @@ final class AdminMaterialsController
                 'title'         => $material['title'],
                 'url'           => (string) ($material['url'] ?? ''),
                 'folder'        => (string) ($material['folder'] ?? ''),
+                'description'   => (string) ($material['description'] ?? ''),
                 'display_order' => (string) $material['display_order'],
                 'is_published'  => $material['is_published'] ? '1' : '',
             ],
@@ -208,12 +212,13 @@ final class AdminMaterialsController
             $imageCol = null;
         }
 
-        $folder = $data['folder'] !== '' ? $data['folder'] : null;
+        $folder      = $data['folder'] !== '' ? $data['folder'] : null;
+        $description = $data['description'] !== '' ? $data['description'] : null;
 
         $stmt = Connection::get()->prepare(
             'UPDATE materials
                 SET type = :ty, title = :ti, url = :u, image_url = :im,
-                    folder = :fo, display_order = :o, is_published = :p
+                    folder = :fo, description = :de, display_order = :o, is_published = :p
               WHERE id = :id'
         );
         $stmt->execute([
@@ -222,6 +227,7 @@ final class AdminMaterialsController
             ':u'  => $url,
             ':im' => $imageCol,
             ':fo' => $folder,
+            ':de' => $description,
             ':o'  => (int) $data['display_order'],
             ':p'  => $data['is_published'] === '1' ? 't' : 'f',
             ':id' => $id,
@@ -276,7 +282,7 @@ final class AdminMaterialsController
 
     // ----------------------------------------------------------------
 
-    /** @return array{type:string,title:string,url:string,folder:string,display_order:string,is_published:string} */
+    /** @return array{type:string,title:string,url:string,folder:string,description:string,display_order:string,is_published:string} */
     private static function extractInput(): array
     {
         return [
@@ -284,13 +290,14 @@ final class AdminMaterialsController
             'title'         => trim((string) ($_POST['title'] ?? '')),
             'url'           => trim((string) ($_POST['url'] ?? '')),
             'folder'        => trim((string) ($_POST['folder'] ?? '')),
+            'description'   => trim((string) ($_POST['description'] ?? '')),
             'display_order' => trim((string) ($_POST['display_order'] ?? '0')),
             'is_published'  => isset($_POST['is_published']) ? '1' : '',
         ];
     }
 
     /**
-     * @param array{type:string,title:string,url:string,display_order:string,is_published:string} $data
+     * @param array{type:string,title:string,url:string,folder:string,description:string,display_order:string,is_published:string} $data
      * @param string      $imageUrl    Ruta efectiva de la imagen (subida o existente conservada).
      * @param string|null $uploadError Mensaje de error si la subida lanzó RuntimeException.
      * @return array<string,string>
@@ -309,6 +316,10 @@ final class AdminMaterialsController
 
         if (preg_match('/^-?[0-9]{1,5}$/', $data['display_order']) !== 1) {
             $errors['display_order'] = 'El orden debe ser un número entero.';
+        }
+
+        if (mb_strlen($data['description']) > 120) {
+            $errors['description'] = 'La descripción debe medir máximo 120 caracteres.';
         }
 
         // Validación específica por tipo (solo si el tipo es válido).

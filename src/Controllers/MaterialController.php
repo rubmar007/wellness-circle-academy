@@ -16,7 +16,7 @@ final class MaterialController
         Auth::requireTeamMember();
 
         $rows = Connection::get()->query(
-            'SELECT id, type, title, url, image_url, folder, display_order, is_published
+            'SELECT id, type, title, url, image_url, folder, description, display_order, is_published
                FROM materials
               WHERE is_published = TRUE
               ORDER BY folder ASC NULLS FIRST, display_order ASC, id ASC'

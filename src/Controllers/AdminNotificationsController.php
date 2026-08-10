@@ -21,6 +21,9 @@ final class AdminNotificationsController
 {
     private const ROLES = ['admin' => 'Admin', 'member' => 'Promotor (member)', 'cliente' => 'Cliente'];
 
+    /** Zona horaria en la que el admin captura/ve la fecha de envío. Se guarda en UTC en la BD. */
+    private const DISPLAY_TZ = 'America/Mexico_City';
+
     /** @param array<string,string> $params */
     public function index(array $params): void
     {
@@ -117,7 +120,8 @@ final class AdminNotificationsController
             return;
         }
 
-        $sched = new \DateTimeImmutable((string) $notif['scheduled_at']);
+        $sched = (new \DateTimeImmutable((string) $notif['scheduled_at']))
+            ->setTimezone(new \DateTimeZone(self::DISPLAY_TZ));
 
         View::render('admin/notifications/form', [
             'mode'       => 'edit',
@@ -302,13 +306,15 @@ final class AdminNotificationsController
             }
         }
 
-        $sched = \DateTimeImmutable::createFromFormat('Y-m-d\TH:i', $data['scheduled_at']);
+        $sched = \DateTimeImmutable::createFromFormat('Y-m-d\TH:i', $data['scheduled_at'], new \DateTimeZone(self::DISPLAY_TZ));
         if ($sched === false) {
             $errors['scheduled_at'] = 'Fecha y hora inválidas.';
         } elseif (!$isEdit && $sched < new \DateTimeImmutable('now')) {
             $errors['scheduled_at'] = 'La fecha/hora debe ser en el futuro.';
         }
-        $clean['scheduled_at'] = $sched !== false ? $sched : new \DateTimeImmutable('now');
+        // Se captura en hora CDMX pero se guarda en UTC (columna TIMESTAMPTZ).
+        $clean['scheduled_at'] = ($sched !== false ? $sched : new \DateTimeImmutable('now'))
+            ->setTimezone(new \DateTimeZone('UTC'));
 
         $clean['is_recurring'] = $data['is_recurring'] === '1';
         $clean['recurrence_freq'] = null;

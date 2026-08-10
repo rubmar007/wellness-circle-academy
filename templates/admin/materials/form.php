@@ -86,6 +86,19 @@ $types     = AdminMaterialsController::TYPES;
     </div>
 
     <div class="field">
+        <label for="description">Descripción breve</label>
+        <textarea
+            id="description"
+            name="description"
+            rows="2"
+            maxlength="120"><?= e($old['description'] ?? '') ?></textarea>
+        <small class="field-hint">Máximo 120 caracteres. Solo se muestra (con botón de copiar) debajo de materiales tipo Imagen en la vista de Materiales.</small>
+        <?php if (!empty($errors['description'])): ?>
+            <small class="field-error"><?= e($errors['description']) ?></small>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
         <label for="folder">Carpeta</label>
         <input
             type="text"

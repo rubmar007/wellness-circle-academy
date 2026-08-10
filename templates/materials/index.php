@@ -64,11 +64,30 @@ $hasLinks  = $links  !== [];
                     <div class="material-grid">
                         <?php foreach ($items as $img): ?>
                             <?php if (empty($img['image_url'])): continue; endif; ?>
-                            <?php $link = !empty($img['url']) ? e($img['url']) : e($img['image_url']); ?>
-                            <a class="material-card" href="<?= $link ?>" target="_blank" rel="noopener noreferrer">
-                                <img class="material-img" src="<?= e($img['image_url']) ?>" alt="<?= e($img['title']) ?>" loading="lazy">
+                            <?php
+                            $link = !empty($img['url']) ? e($img['url']) : e($img['image_url']);
+                            $descId = 'material-desc-' . (int) $img['id'];
+                            ?>
+                            <div class="material-card">
+                                <a class="material-card-media" href="<?= $link ?>" target="_blank" rel="noopener noreferrer">
+                                    <img class="material-img" src="<?= e($img['image_url']) ?>" alt="<?= e($img['title']) ?>" loading="lazy">
+                                </a>
                                 <span class="material-card-title"><?= e($img['title']) ?></span>
-                            </a>
+                                <?php if (!empty($img['description'])): ?>
+                                    <div class="material-card-desc-row">
+                                        <p class="material-card-desc" id="<?= e($descId) ?>"><?= e($img['description']) ?></p>
+                                        <button
+                                            type="button"
+                                            class="button button-ghost button-sm copy-button material-card-copy"
+                                            data-copy-target="#<?= e($descId) ?>"
+                                            data-copy-label-original="Copiar"
+                                            data-copy-label-done="Copiado"
+                                            aria-label="Copiar descripción">
+                                            Copiar
+                                        </button>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                         <?php endforeach; ?>
                     </div>
                 <?php endforeach; ?>
