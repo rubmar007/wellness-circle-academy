@@ -18,7 +18,7 @@ final class ThemeController
     /** Temas válidos. Debe coincidir con los bloques de styles.css y con layout.php. */
     public const THEMES = ['oscuro', 'claro', 'lifewave', 'marino'];
     public const COOKIE = 'wca_theme';
-    public const DEFAULT = 'oscuro';
+    public const DEFAULT = 'lifewave';
 
     /** @param array<string,string> $params */
     public function set(array $params): void
