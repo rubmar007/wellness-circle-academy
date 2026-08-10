@@ -11,7 +11,7 @@ $pageTitle = 'Dashboard';
 </div>
 
 <section class="page-head">
-    <h1>Hola, <?= e($auth['name']) ?></h1>
+    <h1 class="greeting-title"><span class="greeting-lead">Hola,</span> <span class="greeting-name"><?= e($auth['name']) ?></span></h1>
     <p class="muted">Elige un programa para entrar a tu rutina del día.</p>
 </section>
 

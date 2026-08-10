@@ -33,7 +33,7 @@ $initial = static function (string $name): string {
 </div>
 
 <section class="page-head">
-    <h1>Hola, <?= e($auth['name'] ?? 'Miembro') ?></h1>
+    <h1 class="greeting-title"><span class="greeting-lead">Hola,</span> <span class="greeting-name"><?= e($auth['name'] ?? 'Miembro') ?></span></h1>
     <p class="muted">El muro del equipo. Comparte tu avance, tu historia o un logro del día.</p>
 </section>
 

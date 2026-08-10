@@ -882,6 +882,26 @@ body:has(.auth-main-card) .main-area {
     line-height: 1.1;
 }
 
+/* Saludo del dashboard/inicio ("Hola, Nombre"): contenido dinámico con
+   nombres reales (a veces largos) — la cursiva de marca se reserva para
+   momentos ceremoniales, no para esto. Sans + dorado solo en el nombre. */
+.page-head h1.greeting-title {
+    font-family: var(--font-sans);
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    line-height: 1.3;
+    color: var(--color-text);
+}
+.greeting-title .greeting-lead {
+    font-weight: 400;
+    color: var(--color-text-muted);
+}
+.greeting-title .greeting-name {
+    color: var(--color-gold);
+}
+
 .breadcrumb {
     color: var(--color-text-muted);
     font-size: 0.85rem;
@@ -1272,6 +1292,7 @@ body:has(.auth-main-card) .main-area {
     h1             { font-size: 1.9rem; }
     .hero h1       { font-size: 2.2rem; }
     .page-head h1  { font-size: 3rem; }
+    .page-head h1.greeting-title { font-size: 2rem; }
     .auth-card h1        { font-size: 3rem; }
     .auth-welcome-title  { font-size: 2.1rem; }
     .auth-welcome-script { font-size: 2.3rem; }
