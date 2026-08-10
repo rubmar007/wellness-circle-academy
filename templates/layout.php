@@ -8,13 +8,16 @@ declare(strict_types=1);
  * @var string       $csrf      Token CSRF de la sesión.
  * @var string       $nonce     Nonce CSP del request.
  * @var string       $appName   Nombre visible de la marca.
- * @var string|null  $pageTitle Título de la página (opcional).
+ * @var string|null  $pageTitle   Título de la página (opcional).
+ * @var string|null  $forceTheme  Si se pasa, ignora la cookie de tema (ej. login: siempre oscuro).
  */
 $title = isset($pageTitle) && is_string($pageTitle) && $pageTitle !== ''
     ? $pageTitle . ' — ' . $appName
     : $appName;
 
-$theme = \App\Controllers\ThemeController::current();
+$theme = (isset($forceTheme) && is_string($forceTheme) && in_array($forceTheme, \App\Controllers\ThemeController::THEMES, true))
+    ? $forceTheme
+    : \App\Controllers\ThemeController::current();
 $themeLabels = ['oscuro' => 'Oscuro', 'claro' => 'Claro', 'lifewave' => 'Lifewave', 'marino' => 'Marino'];
 $colorScheme = in_array($theme, ['claro', 'lifewave'], true) ? 'light' : 'dark';
 
@@ -150,17 +153,19 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
                     <button type="button" id="btn-install-app" class="button button-ghost button-sm" hidden>⬇️ Instalar app</button>
                 </div>
             <?php endif; ?>
-            <div class="theme-picker">
-                <span class="theme-picker-label">Tema:</span>
-                <?php foreach ($themeLabels as $slug => $label): ?>
-                    <form method="post" action="/tema" class="inline-form">
-                        <input type="hidden" name="_csrf" value="<?= e($csrf) ?>">
-                        <input type="hidden" name="theme" value="<?= e($slug) ?>">
-                        <input type="hidden" name="back" value="<?= e($themeBack) ?>">
-                        <button type="submit" class="theme-pill <?= $theme === $slug ? 'is-active' : '' ?>"><?= e($label) ?></button>
-                    </form>
-                <?php endforeach; ?>
-            </div>
+            <?php if (!isset($forceTheme)): ?>
+                <div class="theme-picker">
+                    <span class="theme-picker-label">Tema:</span>
+                    <?php foreach ($themeLabels as $slug => $label): ?>
+                        <form method="post" action="/tema" class="inline-form">
+                            <input type="hidden" name="_csrf" value="<?= e($csrf) ?>">
+                            <input type="hidden" name="theme" value="<?= e($slug) ?>">
+                            <input type="hidden" name="back" value="<?= e($themeBack) ?>">
+                            <button type="submit" class="theme-pill <?= $theme === $slug ? 'is-active' : '' ?>"><?= e($label) ?></button>
+                        </form>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
         </div>
     </footer>
 

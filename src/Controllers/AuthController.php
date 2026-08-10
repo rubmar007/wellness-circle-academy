@@ -19,8 +19,9 @@ final class AuthController
         }
 
         View::render('auth/login', [
-            'errors' => [],
-            'old'    => ['email' => ''],
+            'errors'      => [],
+            'old'         => ['email' => ''],
+            'forceTheme'  => 'oscuro',
         ]);
     }
 
@@ -42,8 +43,9 @@ final class AuthController
 
         if ($errors !== []) {
             View::render('auth/login', [
-                'errors' => $errors,
-                'old'    => ['email' => $email],
+                'errors'      => $errors,
+                'old'         => ['email' => $email],
+                'forceTheme'  => 'oscuro',
             ]);
             return;
         }
@@ -52,8 +54,9 @@ final class AuthController
 
         if (!$result['ok']) {
             View::render('auth/login', [
-                'errors' => ['general' => $result['error']],
-                'old'    => ['email' => $email],
+                'errors'      => ['general' => $result['error']],
+                'old'         => ['email' => $email],
+                'forceTheme'  => 'oscuro',
             ]);
             return;
         }
