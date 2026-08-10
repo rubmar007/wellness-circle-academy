@@ -60,6 +60,7 @@ use App\Controllers\ThemeController;
 use App\Controllers\TrainingController;
 use App\Router;
 use App\Security;
+use App\Session\DatabaseSessionHandler;
 use App\Support\Env;
 
 $basePath = dirname(__DIR__);
@@ -96,8 +97,18 @@ if (!$debug) {
 
 $isHttps = Security::isHttps();
 
+// Sesiones guardadas en Neon (no en archivos del contenedor de Railway,
+// que es disco efímero y se borra en cada deploy/reinicio — ver
+// src/Session/DatabaseSessionHandler.php). Cookie de 30 días en vez de
+// "hasta cerrar el navegador": en móvil/PWA el sistema operativo mata la
+// app en segundo plano seguido, y una cookie de sesión pura (lifetime=0)
+// se pierde con eso, desconectando a la gente sin que haya cerrado nada.
+$sessionLifetimeSeconds = 60 * 60 * 24 * 30;
+
+session_set_save_handler(new DatabaseSessionHandler(), true);
+
 session_set_cookie_params([
-    'lifetime' => 0,
+    'lifetime' => $sessionLifetimeSeconds,
     'path'     => '/',
     'domain'   => '',
     'secure'   => $isHttps,
@@ -110,6 +121,7 @@ session_start([
     'use_only_cookies' => 1,
     'sid_length'       => 48,
     'sid_bits_per_character' => 6,
+    'gc_maxlifetime'   => $sessionLifetimeSeconds,
 ]);
 
 Security::applyHeaders($isHttps);
