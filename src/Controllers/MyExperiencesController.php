@@ -176,12 +176,17 @@ final class MyExperiencesController
 
     // ----------------------------------------------------------------
 
-    /** Exige sesión + role=member. Devuelve el id del promotor autenticado. */
+    /**
+     * Exige sesión + role=member o admin. Devuelve el id del promotor
+     * autenticado. Admin también puede ser "Promotor responsable" — Rub
+     * confirmó que Marta, además de dueña/admin de la app, es promotora
+     * y tiene su propia red de promotores y clientes.
+     */
     private static function requirePromoter(): int
     {
         Auth::requireLogin();
         $user = Auth::user();
-        if ($user === null || $user['role'] !== 'member') {
+        if ($user === null || !in_array($user['role'], ['member', 'admin'], true)) {
             http_response_code(403);
             require dirname(__DIR__, 2) . '/templates/errors/403.php';
             exit;

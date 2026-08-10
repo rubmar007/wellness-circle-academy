@@ -100,13 +100,15 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
                     <?php
                     $isCliente    = ($auth['role'] ?? '') === 'cliente';
                     $isMember     = ($auth['role'] ?? '') === 'member';
+                    $isAdmin      = ($auth['role'] ?? '') === 'admin';
                     $teamOnlyItems   = ['/noticias', '/entrenamiento', '/materiales', '/promociones'];
+                    // Admin también puede ser Promotor responsable (ver MyExperiencesController).
                     $memberOnlyItems = ['/mis-experience'];
                     foreach ($sectionNav as $item):
                         if ($isCliente && in_array($item['match'], $teamOnlyItems, true)) {
                             continue;
                         }
-                        if (!$isMember && in_array($item['match'], $memberOnlyItems, true)) {
+                        if (!$isMember && !$isAdmin && in_array($item['match'], $memberOnlyItems, true)) {
                             continue;
                         }
                     ?>

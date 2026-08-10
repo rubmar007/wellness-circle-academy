@@ -308,11 +308,17 @@ final class AdminClientKitsController
         )->fetchAll();
     }
 
-    /** @return array<int, array<string,mixed>> */
+    /**
+     * Elegibles como Promotor responsable: role=member, y también
+     * role=admin (Marta es dueña/admin de la app y además promotora con
+     * su propia red de promotores y clientes — confirmado por Rub).
+     *
+     * @return array<int, array<string,mixed>>
+     */
     private static function eligiblePromoters(): array
     {
         return Connection::get()->query(
-            "SELECT id, name, email FROM users WHERE role = 'member' AND is_active = TRUE ORDER BY name ASC"
+            "SELECT id, name, email FROM users WHERE role IN ('member', 'admin') AND is_active = TRUE ORDER BY name ASC"
         )->fetchAll();
     }
 
@@ -332,7 +338,7 @@ final class AdminClientKitsController
             $errors['promoter_id'] = 'Promotor inválido.';
             return null;
         }
-        $stmt = Connection::get()->prepare("SELECT 1 FROM users WHERE id = :id AND role = 'member' AND is_active = TRUE");
+        $stmt = Connection::get()->prepare("SELECT 1 FROM users WHERE id = :id AND role IN ('member', 'admin') AND is_active = TRUE");
         $stmt->execute([':id' => $id]);
         if (!$stmt->fetchColumn()) {
             $errors['promoter_id'] = 'El promotor seleccionado no es válido.';
