@@ -90,9 +90,9 @@ $types     = AdminMaterialsController::TYPES;
         <textarea
             id="description"
             name="description"
-            rows="2"
-            maxlength="120"><?= e($old['description'] ?? '') ?></textarea>
-        <small class="field-hint">Máximo 120 caracteres. Solo se muestra (con botón de copiar) debajo de materiales tipo Imagen en la vista de Materiales.</small>
+            rows="4"
+            maxlength="500"><?= e($old['description'] ?? '') ?></textarea>
+        <small class="field-hint">Máximo 500 caracteres. Solo se muestra (con botón de copiar) debajo de materiales tipo Imagen en la vista de Materiales.</small>
         <?php if (!empty($errors['description'])): ?>
             <small class="field-error"><?= e($errors['description']) ?></small>
         <?php endif; ?>

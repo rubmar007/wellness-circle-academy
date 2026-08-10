@@ -318,8 +318,8 @@ final class AdminMaterialsController
             $errors['display_order'] = 'El orden debe ser un número entero.';
         }
 
-        if (mb_strlen($data['description']) > 120) {
-            $errors['description'] = 'La descripción debe medir máximo 120 caracteres.';
+        if (mb_strlen($data['description']) > 500) {
+            $errors['description'] = 'La descripción debe medir máximo 500 caracteres.';
         }
 
         // Validación específica por tipo (solo si el tipo es válido).
