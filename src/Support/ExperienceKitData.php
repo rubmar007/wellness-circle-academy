@@ -11,14 +11,26 @@ namespace App\Support;
  * original, sección 5.1 (calendario), 5.3 (campos del diario) y la tabla de
  * metas de pasos/insignias de la sección 4.4/4.6.
  *
- * Actualización docs/agregado.docx: el kit Balance ahora también usa Ice
- * Wave 24h (junto con X39 + Aeon 24h) los días 1, 3 y 5.
- *
- * Actualización docs/agregado2.docx: calendario confirmado de los 3 kits
- * que faltaban (Pain Relief, Vitality, Longevity) y sus campos de diario.
- * Pain Relief usa el mismo patrón que Balance (X39+Aeon24h+IceWave24h en
- * días 1/3/5, X39 solo el resto) más el campo extra "Nivel de dolor".
- * Vitality y Longevity son X39 los 7 días, sin campos de diario extra.
+ * Actualización 2026-08-10 (tabla oficial "WCA Experience Kits – 7 días"):
+ * composición corregida contra la tabla de referencia de Marta. Cambios vs.
+ * el calendario anterior:
+ * - Menopause Premium se separó en dos kits: 'menopause-premium-intl'
+ *   (X39+Alavida+SP6) y 'menopause-premium-mx' (X39+Aeon+SP6). El slug
+ *   viejo 'menopause-premium' ya NO aparece en el selector (ver
+ *   database/migrations/2026-08-10-fix-kit-composition.sql) pero se dejó
+ *   permitido en el CHECK de la BD porque hay 1 cliente ya asignado con ese
+ *   slug (Marta, client_kits.id=15) — hay que reasignarlo manualmente desde
+ *   el admin a uno de los dos kits nuevos.
+ * - Balance: se quitó Ice Wave (la tabla oficial solo marca Aeon x3, no Ice
+ *   Wave). La actualización docs/agregado.docx que había agregado Ice Wave
+ *   a Balance quedó revertida por esta tabla más reciente.
+ * - Pain Relief: Ice Wave baja de 3 a 2 usos (Aeon sigue en 3).
+ * - Senior: se agrega Carnosine x3 (antes no tenía nada además de X39).
+ * - Longevity: se agrega Glutation x3 (antes no tenía nada además de X39).
+ * - Heart & Wellness: pasa de X39 los 7 días a X39 x5 + X49 x2.
+ * Patrón de días usado para "parche extra en N de 7 días": mismo patrón ya
+ * usado en Balance/Pain Relief (días 1, 3 y 5), salvo Menopause Premium que
+ * alterna todos los días excepto el 7 (ver detalle abajo).
  */
 final class ExperienceKitData
 {
@@ -36,6 +48,8 @@ final class ExperienceKitData
         $silentnights = ['slug' => 'silentnights', 'name' => 'Silent Nights', 'hours' => 'noche'];
         $aeon24 = ['slug' => 'aeon', 'name' => 'Aeon', 'hours' => '24h'];
         $icewave24 = ['slug' => 'icewave', 'name' => 'Ice Wave', 'hours' => '24h'];
+        $carnosine24 = ['slug' => 'carnosine', 'name' => 'Carnosine', 'hours' => '24h'];
+        $glutation24 = ['slug' => 'glutation', 'name' => 'Glutation', 'hours' => '24h'];
 
         return [
             'performance' => [
@@ -46,9 +60,13 @@ final class ExperienceKitData
                 'label' => 'Menopause',
                 'days' => array_fill(0, 7, [$x39]),
             ],
-            'menopause-premium' => [
-                'label' => 'Menopause Premium',
-                'days' => [[$x39, $alavida], [$x39, $sp6], [$x39, $alavida], [$x39, $sp6], [$x39, $alavida], [$x39, $sp6], [$x39, $alavida]],
+            'menopause-premium-intl' => [
+                'label' => 'Menopause Premium – Internacional',
+                'days' => [[$x39, $alavida], [$x39, $sp6], [$x39, $alavida], [$x39, $sp6], [$x39, $alavida], [$x39, $sp6], [$x39]],
+            ],
+            'menopause-premium-mx' => [
+                'label' => 'Menopause Premium – México',
+                'days' => [[$x39, $aeon24], [$x39, $sp6], [$x39, $aeon24], [$x39, $sp6], [$x39, $aeon24], [$x39, $sp6], [$x39]],
             ],
             'sleep' => [
                 'label' => 'Sleep',
@@ -56,27 +74,32 @@ final class ExperienceKitData
             ],
             'heart-wellness' => [
                 'label' => 'Heart & Wellness',
-                'days' => array_fill(0, 7, [$x39]),
+                'days' => [[$x39], [$x39], [$x49], [$x39], [$x39], [$x49], [$x39]],
             ],
             'balance' => [
                 'label' => 'Balance',
                 'days' => [
-                    [$x39, $aeon24, $icewave24], [$x39],
-                    [$x39, $aeon24, $icewave24], [$x39],
-                    [$x39, $aeon24, $icewave24], [$x39],
+                    [$x39, $aeon24], [$x39],
+                    [$x39, $aeon24], [$x39],
+                    [$x39, $aeon24], [$x39],
                     [$x39],
                 ],
             ],
             'senior' => [
                 'label' => 'Senior',
-                'days' => array_fill(0, 7, [$x39]),
+                'days' => [
+                    [$x39, $carnosine24], [$x39],
+                    [$x39, $carnosine24], [$x39],
+                    [$x39, $carnosine24], [$x39],
+                    [$x39],
+                ],
             ],
             'pain-relief' => [
                 'label' => 'Pain Relief',
                 'days' => [
                     [$x39, $aeon24, $icewave24], [$x39],
                     [$x39, $aeon24, $icewave24], [$x39],
-                    [$x39, $aeon24, $icewave24], [$x39],
+                    [$x39, $aeon24], [$x39],
                     [$x39],
                 ],
             ],
@@ -86,7 +109,12 @@ final class ExperienceKitData
             ],
             'longevity' => [
                 'label' => 'Longevity',
-                'days' => array_fill(0, 7, [$x39]),
+                'days' => [
+                    [$x39, $glutation24], [$x39],
+                    [$x39, $glutation24], [$x39],
+                    [$x39, $glutation24], [$x39],
+                    [$x39],
+                ],
             ],
         ];
     }
@@ -157,7 +185,7 @@ final class ExperienceKitData
     public static function diaryExtraFields(string $kitSlug): array
     {
         return match ($kitSlug) {
-            'menopause', 'menopause-premium' => [
+            'menopause', 'menopause-premium-intl', 'menopause-premium-mx' => [
                 'hot_flashes'       => ['label' => 'Bochornos', 'type' => 'scale10'],
                 'skin_hydration'    => ['label' => 'Hidratación de la piel', 'type' => 'scale10'],
                 'weight'            => ['label' => 'Peso (opcional, kg)', 'type' => 'number'],

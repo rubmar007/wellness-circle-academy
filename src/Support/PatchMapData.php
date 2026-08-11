@@ -177,14 +177,15 @@ final class PatchMapData
         return [
             'performance' => ['label' => 'Performance', 'patches' => ['x39', 'x49']],
             'menopause' => ['label' => 'Menopause', 'patches' => ['x39']],
-            'menopause-premium' => ['label' => 'Menopause Premium', 'patches' => ['x39', 'alavida', 'sp6']],
+            'menopause-premium-intl' => ['label' => 'Menopause Premium – Internacional', 'patches' => ['x39', 'alavida', 'sp6']],
+            'menopause-premium-mx' => ['label' => 'Menopause Premium – México', 'patches' => ['x39', 'aeon', 'sp6']],
             'sleep' => ['label' => 'Sleep', 'patches' => ['silentnights']],
-            'heart-wellness' => ['label' => 'Heart & Wellness', 'patches' => ['x39']],
-            'balance' => ['label' => 'Balance', 'patches' => ['x39', 'aeon', 'icewave']],
-            'senior' => ['label' => 'Senior', 'patches' => ['x39']],
+            'heart-wellness' => ['label' => 'Heart & Wellness', 'patches' => ['x39', 'x49']],
+            'balance' => ['label' => 'Balance', 'patches' => ['x39', 'aeon']],
+            'senior' => ['label' => 'Senior', 'patches' => ['x39', 'carnosine']],
             'pain-relief' => ['label' => 'Pain Relief', 'patches' => ['x39', 'aeon', 'icewave']],
             'vitality' => ['label' => 'Vitality', 'patches' => ['x39']],
-            'longevity' => ['label' => 'Longevity', 'patches' => ['x39']],
+            'longevity' => ['label' => 'Longevity', 'patches' => ['x39', 'glutation']],
         ];
     }
 }
