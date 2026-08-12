@@ -226,6 +226,17 @@
 #mf-imagenes:checked  ~ .mat-sections .mat-sec-enlaces,
 #mf-enlaces:checked   ~ .mat-sections .mat-sec-pdfs,
 #mf-enlaces:checked   ~ .mat-sections .mat-sec-imagenes { display: none; }
+
+/* Filtro por tipo en el listado admin de materiales (misma técnica, ids propios). */
+#amf-todos:checked ~ .mat-filters label[for="amf-todos"],
+#amf-image:checked ~ .mat-filters label[for="amf-image"],
+#amf-pdf:checked    ~ .mat-filters label[for="amf-pdf"],
+#amf-link:checked   ~ .mat-filters label[for="amf-link"] {
+    background: var(--color-accent); color: var(--color-on-accent);
+    border-color: var(--color-accent); }
+#amf-image:checked ~ .admin-mat-table-wrap .admin-mat-row:not(.admin-mat-row-image),
+#amf-pdf:checked    ~ .admin-mat-table-wrap .admin-mat-row:not(.admin-mat-row-pdf),
+#amf-link:checked   ~ .admin-mat-table-wrap .admin-mat-row:not(.admin-mat-row-link) { display: none; }
 .material-folder { font-size: 0.85rem; font-weight: 600; text-transform: uppercase;
     letter-spacing: 0.05em; color: var(--color-text-muted); margin: 1.2rem 0 0.5rem;
     padding-bottom: 0.3rem; border-bottom: 1px solid var(--color-border-soft); }
@@ -242,29 +253,73 @@
     border: 1px solid var(--color-border); background: var(--media-bg); cursor: pointer;
     transition: opacity 0.15s; display: block; }
 
-/* Descripción breve + botón de copiar debajo de cada imagen. */
+/* Descripciones breves (hasta 3) debajo de cada imagen: vista previa a 2
+   líneas, clic abre un diálogo CSS puro (checkbox hack) con el texto
+   completo y botón de copiar. Clic fuera del cuadro lo cierra. */
 .material-card-desc-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
     background: var(--color-bg-elev);
     border: 1px solid var(--color-border-soft);
     border-left: 2px solid var(--color-gold);
     border-radius: var(--radius-sm);
     padding: 0.5rem 0.6rem;
+    margin-top: 0.4rem;
 }
+.material-card-desc-row:first-of-type { margin-top: 0; }
+.material-desc-toggle { position: absolute; opacity: 0; pointer-events: none; }
 .material-card-desc {
-    flex: 1 1 auto;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
     margin: 0;
     font-size: 0.76rem;
     line-height: 1.4;
     color: var(--color-text-muted);
+    cursor: pointer;
 }
-.material-card-copy {
-    flex: 0 0 auto;
-    padding: 0.25rem 0.55rem;
-    font-size: 0.7rem;
-    line-height: 1.2;
+.material-card-desc:hover { color: var(--color-text); }
+
+.material-desc-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+.material-desc-toggle:checked ~ .material-desc-modal { display: flex; }
+.material-desc-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 11, 20, 0.72);
+    cursor: pointer;
+}
+.material-desc-modal-box {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 520px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: var(--color-bg-elev);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid var(--color-gold);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.2rem;
+    box-shadow: var(--shadow-md);
+}
+.material-desc-modal-text {
+    margin: 0 0 0.9rem;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--color-text);
+    white-space: pre-wrap;
+}
+.material-desc-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
 }
 
 /* ---------- Notificaciones ---------- */

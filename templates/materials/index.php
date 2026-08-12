@@ -10,6 +10,9 @@ $pageTitle = 'Materiales';
 $hasPdfs   = $pdfs   !== [];
 $hasImages = $images !== [];
 $hasLinks  = $links  !== [];
+
+// Hasta 3 descripciones breves por material tipo Imagen, en este orden fijo.
+$descFields = ['description' => 1, 'description2' => 2, 'description3' => 3];
 ?>
 <section class="page-head">
     <p class="breadcrumb"><a href="/dashboard">Dashboard</a> &rsaquo; <span>Materiales</span></p>
@@ -64,29 +67,42 @@ $hasLinks  = $links  !== [];
                     <div class="material-grid">
                         <?php foreach ($items as $img): ?>
                             <?php if (empty($img['image_url'])): continue; endif; ?>
-                            <?php
-                            $link = !empty($img['url']) ? e($img['url']) : e($img['image_url']);
-                            $descId = 'material-desc-' . (int) $img['id'];
-                            ?>
+                            <?php $link = !empty($img['url']) ? e($img['url']) : e($img['image_url']); ?>
                             <div class="material-card">
                                 <a class="material-card-media" href="<?= $link ?>" target="_blank" rel="noopener noreferrer">
                                     <img class="material-img" src="<?= e($img['image_url']) ?>" alt="<?= e($img['title']) ?>" loading="lazy">
                                 </a>
                                 <span class="material-card-title"><?= e($img['title']) ?></span>
-                                <?php if (!empty($img['description'])): ?>
-                                    <div class="material-card-desc-row">
-                                        <p class="material-card-desc" id="<?= e($descId) ?>"><?= e($img['description']) ?></p>
-                                        <button
-                                            type="button"
-                                            class="button button-ghost button-sm copy-button material-card-copy"
-                                            data-copy-target="#<?= e($descId) ?>"
-                                            data-copy-label-original="Copiar"
-                                            data-copy-label-done="Copiado"
-                                            aria-label="Copiar descripción">
-                                            Copiar
-                                        </button>
-                                    </div>
-                                <?php endif; ?>
+                                <?php foreach ($descFields as $field => $n): ?>
+                                    <?php if (!empty($img[$field])): ?>
+                                        <?php
+                                        $toggleId = 'mdesc-' . (int) $img['id'] . '-' . $n;
+                                        $textId   = 'mdesc-text-' . (int) $img['id'] . '-' . $n;
+                                        ?>
+                                        <div class="material-card-desc-row">
+                                            <input type="checkbox" id="<?= e($toggleId) ?>" class="material-desc-toggle" hidden>
+                                            <label for="<?= e($toggleId) ?>" class="material-card-desc"><?= e($img[$field]) ?></label>
+                                            <div class="material-desc-modal">
+                                                <label for="<?= e($toggleId) ?>" class="material-desc-modal-backdrop" aria-hidden="true"></label>
+                                                <div class="material-desc-modal-box" role="dialog" aria-modal="true">
+                                                    <p class="material-desc-modal-text" id="<?= e($textId) ?>"><?= e($img[$field]) ?></p>
+                                                    <div class="material-desc-modal-actions">
+                                                        <button
+                                                            type="button"
+                                                            class="button button-ghost button-sm copy-button"
+                                                            data-copy-target="#<?= e($textId) ?>"
+                                                            data-copy-label-original="Copiar"
+                                                            data-copy-label-done="Copiado"
+                                                            aria-label="Copiar descripción">
+                                                            Copiar
+                                                        </button>
+                                                        <label for="<?= e($toggleId) ?>" class="button button-ghost button-sm">Cerrar</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
                             </div>
                         <?php endforeach; ?>
                     </div>

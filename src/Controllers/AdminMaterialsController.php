@@ -52,6 +52,8 @@ final class AdminMaterialsController
                 'title'         => '',
                 'url'           => '',
                 'description'   => '',
+                'description2'  => '',
+                'description3'  => '',
                 'display_order' => '0',
                 'is_published'  => '1',
             ],
@@ -98,22 +100,26 @@ final class AdminMaterialsController
         $url      = $data['type'] === 'image' ? null : $data['url'];
         $imageCol = $data['type'] === 'image' ? $imageUrl : null;
 
-        $folder      = $data['folder'] !== '' ? $data['folder'] : null;
-        $description = $data['description'] !== '' ? $data['description'] : null;
+        $folder       = $data['folder'] !== '' ? $data['folder'] : null;
+        $description  = $data['description'] !== '' ? $data['description'] : null;
+        $description2 = $data['description2'] !== '' ? $data['description2'] : null;
+        $description3 = $data['description3'] !== '' ? $data['description3'] : null;
 
         $stmt = Connection::get()->prepare(
-            'INSERT INTO materials (type, title, url, image_url, folder, description, display_order, is_published)
-             VALUES (:ty, :ti, :u, :im, :fo, :de, :o, :p)'
+            'INSERT INTO materials (type, title, url, image_url, folder, description, description2, description3, display_order, is_published)
+             VALUES (:ty, :ti, :u, :im, :fo, :de, :de2, :de3, :o, :p)'
         );
         $stmt->execute([
-            ':ty' => $data['type'],
-            ':ti' => $data['title'],
-            ':u'  => $url,
-            ':im' => $imageCol,
-            ':fo' => $folder,
-            ':de' => $description,
-            ':o'  => (int) $data['display_order'],
-            ':p'  => $data['is_published'] === '1' ? 't' : 'f',
+            ':ty'  => $data['type'],
+            ':ti'  => $data['title'],
+            ':u'   => $url,
+            ':im'  => $imageCol,
+            ':fo'  => $folder,
+            ':de'  => $description,
+            ':de2' => $description2,
+            ':de3' => $description3,
+            ':o'   => (int) $data['display_order'],
+            ':p'   => $data['is_published'] === '1' ? 't' : 'f',
         ]);
 
         self::setFlash('Material creado.');
@@ -141,6 +147,8 @@ final class AdminMaterialsController
                 'url'           => (string) ($material['url'] ?? ''),
                 'folder'        => (string) ($material['folder'] ?? ''),
                 'description'   => (string) ($material['description'] ?? ''),
+                'description2'  => (string) ($material['description2'] ?? ''),
+                'description3'  => (string) ($material['description3'] ?? ''),
                 'display_order' => (string) $material['display_order'],
                 'is_published'  => $material['is_published'] ? '1' : '',
             ],
@@ -212,25 +220,30 @@ final class AdminMaterialsController
             $imageCol = null;
         }
 
-        $folder      = $data['folder'] !== '' ? $data['folder'] : null;
-        $description = $data['description'] !== '' ? $data['description'] : null;
+        $folder       = $data['folder'] !== '' ? $data['folder'] : null;
+        $description  = $data['description'] !== '' ? $data['description'] : null;
+        $description2 = $data['description2'] !== '' ? $data['description2'] : null;
+        $description3 = $data['description3'] !== '' ? $data['description3'] : null;
 
         $stmt = Connection::get()->prepare(
             'UPDATE materials
                 SET type = :ty, title = :ti, url = :u, image_url = :im,
-                    folder = :fo, description = :de, display_order = :o, is_published = :p
+                    folder = :fo, description = :de, description2 = :de2, description3 = :de3,
+                    display_order = :o, is_published = :p
               WHERE id = :id'
         );
         $stmt->execute([
-            ':ty' => $data['type'],
-            ':ti' => $data['title'],
-            ':u'  => $url,
-            ':im' => $imageCol,
-            ':fo' => $folder,
-            ':de' => $description,
-            ':o'  => (int) $data['display_order'],
-            ':p'  => $data['is_published'] === '1' ? 't' : 'f',
-            ':id' => $id,
+            ':ty'  => $data['type'],
+            ':ti'  => $data['title'],
+            ':u'   => $url,
+            ':im'  => $imageCol,
+            ':fo'  => $folder,
+            ':de'  => $description,
+            ':de2' => $description2,
+            ':de3' => $description3,
+            ':o'   => (int) $data['display_order'],
+            ':p'   => $data['is_published'] === '1' ? 't' : 'f',
+            ':id'  => $id,
         ]);
 
         self::setFlash('Material actualizado.');
@@ -282,7 +295,7 @@ final class AdminMaterialsController
 
     // ----------------------------------------------------------------
 
-    /** @return array{type:string,title:string,url:string,folder:string,description:string,display_order:string,is_published:string} */
+    /** @return array{type:string,title:string,url:string,folder:string,description:string,description2:string,description3:string,display_order:string,is_published:string} */
     private static function extractInput(): array
     {
         return [
@@ -291,13 +304,15 @@ final class AdminMaterialsController
             'url'           => trim((string) ($_POST['url'] ?? '')),
             'folder'        => trim((string) ($_POST['folder'] ?? '')),
             'description'   => trim((string) ($_POST['description'] ?? '')),
+            'description2'  => trim((string) ($_POST['description2'] ?? '')),
+            'description3'  => trim((string) ($_POST['description3'] ?? '')),
             'display_order' => trim((string) ($_POST['display_order'] ?? '0')),
             'is_published'  => isset($_POST['is_published']) ? '1' : '',
         ];
     }
 
     /**
-     * @param array{type:string,title:string,url:string,folder:string,description:string,display_order:string,is_published:string} $data
+     * @param array{type:string,title:string,url:string,folder:string,description:string,description2:string,description3:string,display_order:string,is_published:string} $data
      * @param string      $imageUrl    Ruta efectiva de la imagen (subida o existente conservada).
      * @param string|null $uploadError Mensaje de error si la subida lanzó RuntimeException.
      * @return array<string,string>
@@ -318,8 +333,16 @@ final class AdminMaterialsController
             $errors['display_order'] = 'El orden debe ser un número entero.';
         }
 
-        if (mb_strlen($data['description']) > 500) {
-            $errors['description'] = 'La descripción debe medir máximo 500 caracteres.';
+        if (mb_strlen($data['description']) > 1000) {
+            $errors['description'] = 'La descripción breve 1 debe medir máximo 1000 caracteres.';
+        }
+
+        if (mb_strlen($data['description2']) > 1000) {
+            $errors['description2'] = 'La descripción breve 2 debe medir máximo 1000 caracteres.';
+        }
+
+        if (mb_strlen($data['description3']) > 1000) {
+            $errors['description3'] = 'La descripción breve 3 debe medir máximo 1000 caracteres.';
         }
 
         // Validación específica por tipo (solo si el tipo es válido).

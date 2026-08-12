@@ -86,15 +86,41 @@ $types     = AdminMaterialsController::TYPES;
     </div>
 
     <div class="field">
-        <label for="description">Descripción breve</label>
+        <label for="description">Descripción Breve 1</label>
         <textarea
             id="description"
             name="description"
             rows="4"
-            maxlength="500"><?= e($old['description'] ?? '') ?></textarea>
-        <small class="field-hint">Máximo 500 caracteres. Solo se muestra (con botón de copiar) debajo de materiales tipo Imagen en la vista de Materiales.</small>
+            maxlength="1000"><?= e($old['description'] ?? '') ?></textarea>
+        <small class="field-hint">Máximo 1000 caracteres. Solo se muestra (con botón de copiar) debajo de materiales tipo Imagen en la vista de Materiales.</small>
         <?php if (!empty($errors['description'])): ?>
             <small class="field-error"><?= e($errors['description']) ?></small>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="description2">Descripción Breve 2</label>
+        <textarea
+            id="description2"
+            name="description2"
+            rows="4"
+            maxlength="1000"><?= e($old['description2'] ?? '') ?></textarea>
+        <small class="field-hint">Máximo 1000 caracteres. Opcional.</small>
+        <?php if (!empty($errors['description2'])): ?>
+            <small class="field-error"><?= e($errors['description2']) ?></small>
+        <?php endif; ?>
+    </div>
+
+    <div class="field">
+        <label for="description3">Descripción Breve 3</label>
+        <textarea
+            id="description3"
+            name="description3"
+            rows="4"
+            maxlength="1000"><?= e($old['description3'] ?? '') ?></textarea>
+        <small class="field-hint">Máximo 1000 caracteres. Opcional.</small>
+        <?php if (!empty($errors['description3'])): ?>
+            <small class="field-error"><?= e($errors['description3']) ?></small>
         <?php endif; ?>
     </div>
 
