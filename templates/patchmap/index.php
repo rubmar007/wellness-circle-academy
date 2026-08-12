@@ -112,6 +112,8 @@ foreach ($patches as $p) {
 
         <main class="bodymap-stage">
             <div class="stage-view stage-front">
+                <span class="side-tag side-tag-left" aria-hidden="true">Derecha</span>
+                <span class="side-tag side-tag-right" aria-hidden="true">Izquierda</span>
                 <img src="/assets/img/bodymap/front.jpg?v=<?= e((string) $frontV) ?>" alt="Figura de frente" class="stage-img">
                 <?php foreach ($allPoints as $ap): if ($ap['pt']['view'] !== 'front') { continue; } ?>
                     <span class="point point-<?= e($ap['patchId']) ?> accent-<?= e($ap['patchId']) ?> pt-<?= $ap['idx'] ?>" tabindex="0">
@@ -120,6 +122,8 @@ foreach ($patches as $p) {
                 <?php endforeach; ?>
             </div>
             <div class="stage-view stage-back">
+                <span class="side-tag side-tag-left" aria-hidden="true">Izquierda</span>
+                <span class="side-tag side-tag-right" aria-hidden="true">Derecha</span>
                 <img src="/assets/img/bodymap/back.jpg?v=<?= e((string) $backV) ?>" alt="Figura de espalda" class="stage-img">
                 <?php foreach ($allPoints as $ap): if ($ap['pt']['view'] !== 'back') { continue; } ?>
                     <span class="point point-<?= e($ap['patchId']) ?> accent-<?= e($ap['patchId']) ?> pt-<?= $ap['idx'] ?>" tabindex="0">

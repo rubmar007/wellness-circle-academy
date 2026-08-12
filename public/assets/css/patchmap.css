@@ -160,6 +160,29 @@
 
 .stage-img { display: block; width: 100%; height: auto; }
 
+/* Rótulo fijo Derecha/Izquierda arriba de la figura: la vista frontal está
+   invertida respecto al cliente (su lado derecho cae a la izquierda de la
+   imagen) y la vista trasera no (ver nota en PatchMapData::patches()). Cada
+   .stage-view trae su propio texto ya resuelto para su vista — nada de JS,
+   nada de lógica condicional en CSS. */
+.side-tag {
+    position: absolute;
+    top: 0.6rem;
+    z-index: 3;
+    background: rgba(5, 11, 20, 0.72);
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.25rem 0.55rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--accent, var(--color-gold));
+    pointer-events: none;
+}
+.side-tag-left { left: 0.6rem; }
+.side-tag-right { right: 0.6rem; }
+
 .point {
     display: none;
     position: absolute;

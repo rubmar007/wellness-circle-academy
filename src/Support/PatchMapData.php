@@ -91,8 +91,8 @@ final class PatchMapData
                     ['label' => 'GV 14', 'desc' => 'Base del cuello', 'view' => 'back', 'x' => 50.0, 'y' => 16.3],
                     ['label' => 'CV 6', 'desc' => 'Bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
                     ['label' => 'LU 9 (der)', 'desc' => 'Muñeca interna', 'view' => 'front', 'x' => 28.4, 'y' => 53.3],
-                    ['label' => 'SP 6 (der)', 'desc' => 'Tobillo interno', 'view' => 'front', 'x' => 46.4, 'y' => 91.7],
-                    ['label' => 'LV 3 (der)', 'desc' => 'Empeine del pie', 'view' => 'front', 'x' => 42.8, 'y' => 96.5],
+                    ['label' => 'SP 6 (der)', 'desc' => 'Tobillo interno', 'view' => 'front', 'x' => 41.8, 'y' => 90.5],
+                    ['label' => 'LV 3 (der)', 'desc' => 'Empeine del pie', 'view' => 'front', 'x' => 38.2, 'y' => 96.0],
                 ],
             ],
             [
@@ -121,8 +121,8 @@ final class PatchMapData
                     ['label' => 'CV 22', 'desc' => 'Base de la garganta', 'view' => 'front', 'x' => 50.0, 'y' => 16.1],
                     ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
                     ['label' => 'LU 9 (der)', 'desc' => 'Muñeca interna', 'view' => 'front', 'x' => 28.4, 'y' => 53.3],
-                    ['label' => 'SP 6 (der)', 'desc' => 'Tobillo interno', 'view' => 'front', 'x' => 46.4, 'y' => 91.7],
-                    ['label' => 'LV 3 (der)', 'desc' => 'Empeine del pie', 'view' => 'front', 'x' => 42.8, 'y' => 96.5],
+                    ['label' => 'SP 6 (der)', 'desc' => 'Tobillo interno', 'view' => 'front', 'x' => 41.8, 'y' => 90.5],
+                    ['label' => 'LV 3 (der)', 'desc' => 'Empeine del pie', 'view' => 'front', 'x' => 38.2, 'y' => 96.0],
                 ],
             ],
             [
@@ -137,7 +137,7 @@ final class PatchMapData
                     ['label' => 'GB 14', 'desc' => 'Un dedo sobre la ceja', 'view' => 'front', 'x' => 50.0, 'y' => 6.5],
                     ['label' => 'TB 17 (der)', 'desc' => 'Detrás del lóbulo de la oreja', 'view' => 'back', 'x' => 59.0, 'y' => 12.0],
                     ['label' => 'ST 36 (der)', 'desc' => 'Bajo la rodilla, por fuera', 'view' => 'front', 'x' => 38.0, 'y' => 77.3],
-                    ['label' => 'LV 3 (der)', 'desc' => 'Empeine del pie', 'view' => 'front', 'x' => 42.8, 'y' => 96.5],
+                    ['label' => 'LV 3 (der)', 'desc' => 'Empeine del pie', 'view' => 'front', 'x' => 38.2, 'y' => 96.0],
                 ],
             ],
             [
