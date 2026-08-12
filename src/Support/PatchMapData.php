@@ -51,7 +51,7 @@ final class PatchMapData
                 'color' => '#22d3ee',
                 'points' => [
                     ['label' => 'GV 14', 'desc' => 'Base del cuello', 'view' => 'back', 'x' => 50.0, 'y' => 16.3],
-                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
+                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 49.0, 'y' => 43.5],
                 ],
             ],
             [
@@ -62,7 +62,7 @@ final class PatchMapData
                 'schedule' => 'Día, 12h puesto / 12h descanso, cada día o según necesidad, uso diurno.',
                 'color' => '#fb923c',
                 'points' => [
-                    ['label' => 'CV 6', 'desc' => 'Abdomen bajo, dos dedos bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
+                    ['label' => 'CV 6', 'desc' => 'Abdomen bajo, dos dedos bajo el ombligo', 'view' => 'front', 'x' => 49.0, 'y' => 43.5],
                     ['label' => 'GV 14', 'desc' => 'Base del cuello', 'view' => 'back', 'x' => 50.0, 'y' => 16.3],
                 ],
             ],
@@ -77,7 +77,7 @@ final class PatchMapData
                     ['label' => 'SP 6 (izq)', 'desc' => '4 dedos sobre el hueso interno del tobillo', 'view' => 'front', 'x' => 56.0, 'y' => 90.5],
                     ['label' => 'ST 36 (izq)', 'desc' => 'Bajo la rodilla, por fuera', 'view' => 'front', 'x' => 63.2, 'y' => 77.3],
                     ['label' => 'KD 3 (izq)', 'desc' => 'Tobillo interno, junto al tendón', 'view' => 'front', 'x' => 54.8, 'y' => 94.1],
-                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
+                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 49.0, 'y' => 43.5],
                 ],
             ],
             [
@@ -89,7 +89,7 @@ final class PatchMapData
                 'color' => '#60a5fa',
                 'points' => [
                     ['label' => 'GV 14', 'desc' => 'Base del cuello', 'view' => 'back', 'x' => 50.0, 'y' => 16.3],
-                    ['label' => 'CV 6', 'desc' => 'Bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
+                    ['label' => 'CV 6', 'desc' => 'Bajo el ombligo', 'view' => 'front', 'x' => 49.0, 'y' => 43.5],
                     ['label' => 'LU 9 (der)', 'desc' => 'Muñeca interna', 'view' => 'front', 'x' => 28.4, 'y' => 53.3],
                     ['label' => 'SP 6 (der)', 'desc' => 'Tobillo interno', 'view' => 'front', 'x' => 41.8, 'y' => 90.5],
                     ['label' => 'LV 3 (der)', 'desc' => 'Empeine del pie', 'view' => 'front', 'x' => 38.2, 'y' => 96.0],
@@ -105,7 +105,7 @@ final class PatchMapData
                 'points' => [
                     ['label' => 'GV 14', 'desc' => 'Base del cuello', 'view' => 'back', 'x' => 50.0, 'y' => 16.3],
                     ['label' => 'GV 2', 'desc' => 'Línea media, zona lumbar', 'view' => 'back', 'x' => 50.0, 'y' => 39.2],
-                    ['label' => 'CV 17', 'desc' => 'Centro del pecho', 'view' => 'front', 'x' => 50.0, 'y' => 25.7],
+                    ['label' => 'CV 17', 'desc' => 'Centro del pecho', 'view' => 'front', 'x' => 49.0, 'y' => 25.7],
                     ['label' => 'LI 4 (der)', 'desc' => 'Dorso de la mano', 'view' => 'back', 'x' => 73.1, 'y' => 57.7],
                     ['label' => 'HT 7 (der)', 'desc' => 'Muñeca, lado del meñique', 'view' => 'front', 'x' => 28.4, 'y' => 53.3],
                 ],
@@ -118,8 +118,8 @@ final class PatchMapData
                 'schedule' => '12h si es uso diario (día o noche); 24h corridas si es día por medio o cada tercer día.',
                 'color' => '#2dd4bf',
                 'points' => [
-                    ['label' => 'CV 22', 'desc' => 'Base de la garganta', 'view' => 'front', 'x' => 50.0, 'y' => 16.1],
-                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 48.0, 'y' => 43.5],
+                    ['label' => 'CV 22', 'desc' => 'Base de la garganta', 'view' => 'front', 'x' => 49.0, 'y' => 16.1],
+                    ['label' => 'CV 6', 'desc' => 'Dos dedos bajo el ombligo', 'view' => 'front', 'x' => 49.0, 'y' => 43.5],
                     ['label' => 'LU 9 (der)', 'desc' => 'Muñeca interna', 'view' => 'front', 'x' => 28.4, 'y' => 53.3],
                     ['label' => 'SP 6 (der)', 'desc' => 'Tobillo interno', 'view' => 'front', 'x' => 41.8, 'y' => 90.5],
                     ['label' => 'LV 3 (der)', 'desc' => 'Empeine del pie', 'view' => 'front', 'x' => 38.2, 'y' => 96.0],
@@ -134,7 +134,7 @@ final class PatchMapData
                 'color' => '#a78bfa',
                 'points' => [
                     ['label' => 'TB 23 (der)', 'desc' => 'Sien, junto a la ceja externa', 'view' => 'front', 'x' => 44.0, 'y' => 6.5],
-                    ['label' => 'GB 14', 'desc' => 'Un dedo sobre la ceja', 'view' => 'front', 'x' => 50.0, 'y' => 6.5],
+                    ['label' => 'GB 14', 'desc' => 'Un dedo sobre la ceja', 'view' => 'front', 'x' => 49.0, 'y' => 6.5],
                     ['label' => 'TB 17 (der)', 'desc' => 'Detrás del lóbulo de la oreja', 'view' => 'back', 'x' => 59.0, 'y' => 12.0],
                     ['label' => 'ST 36 (der)', 'desc' => 'Bajo la rodilla, por fuera', 'view' => 'front', 'x' => 38.0, 'y' => 77.3],
                     ['label' => 'LV 3 (der)', 'desc' => 'Empeine del pie', 'view' => 'front', 'x' => 38.2, 'y' => 96.0],
@@ -149,8 +149,8 @@ final class PatchMapData
                 'color' => '#e879f9',
                 'points' => [
                     ['label' => 'TB 23 (der)', 'desc' => 'Sien, junto a la ceja', 'view' => 'front', 'x' => 44.0, 'y' => 6.5],
-                    ['label' => 'GV 24.5', 'desc' => 'Tercer ojo (entrecejo)', 'view' => 'front', 'x' => 50.0, 'y' => 7.7],
-                    ['label' => 'GB 14', 'desc' => 'Un dedo sobre la ceja', 'view' => 'front', 'x' => 50.0, 'y' => 6.5],
+                    ['label' => 'GV 24.5', 'desc' => 'Tercer ojo (entrecejo)', 'view' => 'front', 'x' => 49.0, 'y' => 7.7],
+                    ['label' => 'GB 14', 'desc' => 'Un dedo sobre la ceja', 'view' => 'front', 'x' => 49.0, 'y' => 6.5],
                     ['label' => 'GV 14', 'desc' => 'Base del cuello', 'view' => 'back', 'x' => 50.0, 'y' => 16.3],
                 ],
             ],
