@@ -268,11 +268,7 @@ final class ClientKitController
     /** @param array<string,mixed> $kit */
     private static function currentDayNumber(array $kit): int
     {
-        $started = new \DateTimeImmutable((string) $kit['started_at']);
-        $today   = new \DateTimeImmutable('today');
-        $diff    = (int) $today->diff($started)->format('%r%a');
-        $day     = 1 - $diff; // días transcurridos + 1
-        return max(1, min(7, $day));
+        return ExperienceKitData::dayNumberForStartDate((string) $kit['started_at']);
     }
 
     /**

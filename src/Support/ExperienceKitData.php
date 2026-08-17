@@ -139,6 +139,20 @@ final class ExperienceKitData
         return $calendar[$kitSlug]['days'][$dayNumber - 1];
     }
 
+    /**
+     * Día del calendario de 7 días (1-7) en el que va un kit según su fecha
+     * de inicio, comparado contra hoy. Compartido por ClientKitController
+     * (área del cliente) y PushService (recordatorios push personalizados).
+     */
+    public static function dayNumberForStartDate(string $startedAt): int
+    {
+        $started = new \DateTimeImmutable($startedAt);
+        $today   = new \DateTimeImmutable('today');
+        $diff    = (int) $today->diff($started)->format('%r%a');
+        $day     = 1 - $diff; // días transcurridos + 1
+        return max(1, min(7, $day));
+    }
+
     public static function stepsGoal(string $kitSlug): int
     {
         return $kitSlug === 'performance' ? 10000 : 2500;

@@ -52,15 +52,23 @@ final class PushService
             ],
         ]);
 
-        $payload = json_encode([
-            'title' => (string) $notification['title'],
-            'body'  => (string) $notification['body'],
-            'url'   => $notification['url'] !== null && $notification['url'] !== ''
-                ? (string) $notification['url']
-                : '/dashboard',
-        ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+        $includePatches = (bool) ($notification['include_patches'] ?? false);
+        $url = $notification['url'] !== null && $notification['url'] !== ''
+            ? (string) $notification['url']
+            : '/dashboard';
 
         foreach ($subscriptions as $sub) {
+            $body = (string) $notification['body'];
+            if ($includePatches) {
+                $body = self::personalizeBody($body, self::patchesForUser((int) $sub['user_id']));
+            }
+
+            $payload = json_encode([
+                'title' => (string) $notification['title'],
+                'body'  => $body,
+                'url'   => $url,
+            ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+
             $webPush->queueNotification(
                 Subscription::create([
                     'endpoint' => $sub['endpoint'],
@@ -154,5 +162,41 @@ final class PushService
         foreach ($endpoints as $endpoint) {
             $stmt->execute([':e' => $endpoint]);
         }
+    }
+
+    /**
+     * Parches que le corresponden hoy al usuario según su kit activo y en
+     * qué día de 7 va. Si no tiene kit activo, no hay nada que agregar.
+     *
+     * @return array<int, array{slug: string, name: string, hours: string}>
+     */
+    private static function patchesForUser(int $userId): array
+    {
+        $stmt = Connection::get()->prepare(
+            'SELECT kit_slug, started_at FROM client_kits WHERE user_id = :u AND is_active = TRUE LIMIT 1'
+        );
+        $stmt->execute([':u' => $userId]);
+        $kit = $stmt->fetch();
+        if ($kit === false) {
+            return [];
+        }
+
+        $day = ExperienceKitData::dayNumberForStartDate((string) $kit['started_at']);
+        return ExperienceKitData::patchesForDay((string) $kit['kit_slug'], $day);
+    }
+
+    /** @param array<int, array{slug: string, name: string, hours: string}> $patches */
+    private static function personalizeBody(string $body, array $patches): string
+    {
+        if ($patches === []) {
+            return $body;
+        }
+
+        $names = array_column($patches, 'name');
+        $suffix = count($names) > 1
+            ? ' Hoy te tocan: ' . implode(', ', $names) . '.'
+            : ' Hoy te toca: ' . $names[0] . '.';
+
+        return $body . $suffix;
     }
 }

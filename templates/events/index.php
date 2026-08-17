@@ -10,6 +10,7 @@ $pageTitle = 'Eventos';
 
 $meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 $types = AdminEventsController::TYPES;
+$currentYm = (new \DateTime('now'))->format('Y-m');
 ?>
 <section class="page-head">
     <h1>Eventos</h1>
@@ -20,12 +21,14 @@ $types = AdminEventsController::TYPES;
     <input type="radio" name="evf" id="evf-taller">
     <input type="radio" name="evf" id="evf-entrenamiento">
     <input type="radio" name="evf" id="evf-oportunidad">
+    <input type="radio" name="evf" id="evf-mes">
 
     <div class="event-filters">
         <label class="event-filter-label" for="evf-todos">Todos</label>
         <label class="event-filter-label" for="evf-taller">Taller</label>
         <label class="event-filter-label" for="evf-entrenamiento">Entrenamiento</label>
         <label class="event-filter-label" for="evf-oportunidad">Oportunidad</label>
+        <label class="event-filter-label" for="evf-mes">Mes completo</label>
     </div>
 
     <?php if ($events === []): ?>
@@ -42,8 +45,9 @@ $types = AdminEventsController::TYPES;
                 $label = $types[$type] ?? $type;
                 $joinUrl = (string) ($ev['join_url'] ?? '');
                 $desc    = (string) ($ev['description'] ?? '');
+                $isCurrentMonth = $dt->format('Y-m') === $currentYm;
                 ?>
-                <article class="event-card type-<?= e($type) ?>">
+                <article class="event-card type-<?= e($type) ?> <?= $isCurrentMonth ? 'event-current-month' : '' ?>">
                     <?php if (!empty($ev['image_url'])): ?>
                         <img class="event-img" src="<?= e($ev['image_url']) ?>" alt="<?= e($ev['title']) ?>" loading="lazy">
                     <?php endif; ?>

@@ -60,6 +60,7 @@ final class AdminNotificationsController
                 'title' => '', 'body' => '', 'url' => '',
                 'audience_type' => 'all', 'audience_role' => '', 'audience_kit_slug' => '', 'audience_user_id' => '',
                 'scheduled_at' => '', 'is_recurring' => '', 'recurrence_freq' => 'daily',
+                'include_patches' => '',
             ],
         ]);
     }
@@ -86,10 +87,10 @@ final class AdminNotificationsController
         $stmt = Connection::get()->prepare(
             'INSERT INTO push_notifications
                 (title, body, url, audience_type, audience_role, audience_kit_slug, audience_user_id,
-                 scheduled_at, is_recurring, recurrence_freq, created_by)
+                 scheduled_at, is_recurring, recurrence_freq, include_patches, created_by)
              VALUES
                 (:title, :body, :url, :atype, :arole, :akit, :auser,
-                 :sched, :recurring, :freq, :created_by)'
+                 :sched, :recurring, :freq, :incpatch, :created_by)'
         );
         $stmt->execute([
             ':title'      => $clean['title'],
@@ -102,6 +103,7 @@ final class AdminNotificationsController
             ':sched'      => $clean['scheduled_at']->format('Y-m-d H:i:s'),
             ':recurring'  => $clean['is_recurring'] ? 't' : 'f',
             ':freq'       => $clean['recurrence_freq'],
+            ':incpatch'   => $clean['include_patches'] ? 't' : 'f',
             ':created_by' => (int) $admin['id'],
         ]);
 
@@ -141,6 +143,7 @@ final class AdminNotificationsController
                 'scheduled_at'      => $sched->format('Y-m-d\TH:i'),
                 'is_recurring'      => $notif['is_recurring'] ? '1' : '',
                 'recurrence_freq'   => (string) ($notif['recurrence_freq'] ?? 'daily'),
+                'include_patches'   => $notif['include_patches'] ? '1' : '',
             ],
         ]);
     }
@@ -174,6 +177,7 @@ final class AdminNotificationsController
                 title = :title, body = :body, url = :url,
                 audience_type = :atype, audience_role = :arole, audience_kit_slug = :akit, audience_user_id = :auser,
                 scheduled_at = :sched, is_recurring = :recurring, recurrence_freq = :freq,
+                include_patches = :incpatch,
                 status = :status, updated_at = now()
              WHERE id = :id'
         );
@@ -188,6 +192,7 @@ final class AdminNotificationsController
             ':sched'     => $clean['scheduled_at']->format('Y-m-d H:i:s'),
             ':recurring' => $clean['is_recurring'] ? 't' : 'f',
             ':freq'      => $clean['recurrence_freq'],
+            ':incpatch'  => $clean['include_patches'] ? 't' : 'f',
             // Reeditar una notificación ya enviada/cancelada la vuelve a poner en cola.
             ':status'    => 'pending',
             ':id'        => (int) $notif['id'],
@@ -246,6 +251,7 @@ final class AdminNotificationsController
             'scheduled_at'      => trim((string) ($_POST['scheduled_at'] ?? '')),
             'is_recurring'      => trim((string) ($_POST['is_recurring'] ?? '')),
             'recurrence_freq'   => trim((string) ($_POST['recurrence_freq'] ?? '')),
+            'include_patches'   => trim((string) ($_POST['include_patches'] ?? '')),
         ];
     }
 
@@ -325,6 +331,8 @@ final class AdminNotificationsController
                 $clean['recurrence_freq'] = $data['recurrence_freq'];
             }
         }
+
+        $clean['include_patches'] = $data['include_patches'] === '1';
 
         return [$errors, $clean];
     }

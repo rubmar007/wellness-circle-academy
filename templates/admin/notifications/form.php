@@ -49,6 +49,14 @@ $aud       = $old['audience_type'] ?? 'all';
         <?php if (!empty($errors['body'])): ?><small class="field-error"><?= e($errors['body']) ?></small><?php endif; ?>
     </div>
 
+    <div class="field field-checkbox">
+        <label>
+            <input type="checkbox" name="include_patches" value="1" <?= ($old['include_patches'] ?? '') === '1' ? 'checked' : '' ?>>
+            Agregar el parche del día a cada destinatario
+        </label>
+        <small class="field-hint">Al enviarse, se agrega al mensaje el nombre del parche (o parches) que le toca ese día a cada persona, según su kit activo. Si la persona no tiene kit activo, no se agrega nada.</small>
+    </div>
+
     <div class="field">
         <label for="url">Enlace al tocar la notificación (opcional)</label>
         <input type="text" id="url" name="url" maxlength="255" placeholder="/mi-kit" value="<?= e($old['url'] ?? '') ?>">
