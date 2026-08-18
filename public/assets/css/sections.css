@@ -153,8 +153,8 @@
 .post-mod { margin-top: 0.7rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
 
 /* ---------- Eventos ---------- */
-.event-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
-.event-filters input { position: absolute; opacity: 0; pointer-events: none; }
+.event-filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; }
+.event-filters input, .event-view-toggle input { position: absolute; opacity: 0; pointer-events: none; }
 .event-filter-label {
     border: 1px solid var(--color-border-strong); color: var(--color-gold);
     border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.78rem; cursor: pointer;
@@ -164,14 +164,30 @@
 #evf-taller:checked    ~ .event-filters label[for="evf-taller"],
 #evf-entrenamiento:checked ~ .event-filters label[for="evf-entrenamiento"],
 #evf-oportunidad:checked ~ .event-filters label[for="evf-oportunidad"],
-#evf-mes:checked        ~ .event-filters label[for="evf-mes"],
 #evf-todos:checked     ~ .event-filters label[for="evf-todos"] {
     background: var(--color-gold); color: var(--color-bg); border-color: var(--color-gold);
 }
-#evf-taller:checked       ~ .events-list .event-card:not(.type-taller),
-#evf-entrenamiento:checked ~ .events-list .event-card:not(.type-entrenamiento),
-#evf-oportunidad:checked  ~ .events-list .event-card:not(.type-oportunidad),
-#evf-mes:checked          ~ .events-list .event-card:not(.event-current-month) { display: none; }
+#evf-taller:checked       ~ .events-week-section .event-card:not(.type-taller),
+#evf-entrenamiento:checked ~ .events-week-section .event-card:not(.type-entrenamiento),
+#evf-oportunidad:checked  ~ .events-week-section .event-card:not(.type-oportunidad) { display: none; }
+
+/* Vista Semanal / Mes completo: segunda fila de pills, tono distinto de los
+   filtros por tipo para diferenciarlas como un control aparte. */
+.event-view-toggle { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.event-view-label {
+    border: 1px solid var(--color-border-strong); color: var(--color-text-muted);
+    background: var(--color-bg-input);
+    border-radius: 999px; padding: 0.4rem 0.85rem; font-size: 0.78rem; cursor: pointer;
+    user-select: none; text-transform: uppercase; letter-spacing: 0.05em;
+}
+#ev-semana:checked ~ .event-view-toggle label[for="ev-semana"],
+#ev-mes:checked     ~ .event-view-toggle label[for="ev-mes"] {
+    background: var(--color-gold-dim); color: var(--color-bg); border-color: var(--color-gold-dim);
+}
+.events-month-section { display: none; }
+#ev-mes:checked ~ .events-week-section  { display: none; }
+#ev-mes:checked ~ .events-month-section { display: block; }
+.cal-month-title { margin: 0 auto 0 0; font-size: 1.1rem; color: var(--color-text); }
 .event-img { width: 100%; max-height: 280px; object-fit: cover;
     border-radius: var(--radius-md) var(--radius-md) 0 0; display: block; }
 .event-card { background: var(--color-bg-elev); border: 1px solid var(--color-border);

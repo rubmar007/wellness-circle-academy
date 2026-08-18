@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Auth;
 use App\Csrf;
 use App\Database\Connection;
+use App\Support\CalendarGrid;
 use App\Upload;
 use App\View;
 use DateTime;
@@ -106,16 +107,9 @@ final class AdminEventsController
     {
         Auth::requireAdmin();
 
-        $monthParam = trim((string) ($_GET['mes'] ?? ''));
-        $monthStart = DateTime::createFromFormat('Y-m-d', $monthParam . '-01');
-        if ($monthStart === false) {
-            $monthStart = new DateTime('first day of this month');
-        }
-        $monthStart->setTime(0, 0);
-
-        $gridStart = clone $monthStart;
-        $gridStart->modify('-' . $gridStart->format('w') . ' days');
-        $gridEnd = (clone $gridStart)->modify('+42 days');
+        $monthStart = CalendarGrid::monthStartFromParam(trim((string) ($_GET['mes'] ?? '')));
+        $gridStart  = CalendarGrid::gridStart($monthStart);
+        $gridEnd    = (clone $gridStart)->modify('+42 days');
 
         $stmt = Connection::get()->prepare(
             'SELECT id, title, event_type, starts_at, is_published
@@ -127,25 +121,7 @@ final class AdminEventsController
             ':start' => $gridStart->format('Y-m-d H:i:s'),
             ':end'   => $gridEnd->format('Y-m-d H:i:s'),
         ]);
-        $events = $stmt->fetchAll();
-
-        $byDay = [];
-        foreach ($events as $ev) {
-            $key = (new DateTime((string) $ev['starts_at']))->format('Y-m-d');
-            $byDay[$key][] = $ev;
-        }
-
-        $cells  = [];
-        $cursor = clone $gridStart;
-        for ($i = 0; $i < 42; $i++) {
-            $key      = $cursor->format('Y-m-d');
-            $cells[]  = [
-                'date'    => clone $cursor,
-                'inMonth' => $cursor->format('Y-m') === $monthStart->format('Y-m'),
-                'events'  => $byDay[$key] ?? [],
-            ];
-            $cursor->modify('+1 day');
-        }
+        $cells = CalendarGrid::buildCells($monthStart, $gridStart, $stmt->fetchAll());
 
         View::render('admin/events/calendar', [
             'monthStart' => $monthStart,
