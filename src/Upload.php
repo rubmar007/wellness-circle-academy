@@ -140,6 +140,41 @@ final class Upload
     }
 
     /**
+     * Copia físicamente una imagen ya subida a un nombre nuevo (usado por
+     * "Duplicar evento"): así el evento duplicado no comparte archivo con el
+     * original — si más tarde alguno de los dos se edita y reemplaza su
+     * imagen, deleteImage() del original no borra el archivo del duplicado
+     * ni viceversa. Devuelve cadena vacía si la ruta no es válida o falla la
+     * copia (no es fatal: el evento se crea igual, solo sin imagen).
+     */
+    public static function copyImage(string $publicPath): string
+    {
+        if (!str_starts_with($publicPath, '/assets/uploads/')) {
+            return '';
+        }
+        $name = basename($publicPath);
+        if (preg_match('/^[a-f0-9]{32}\.(jpg|png|webp)$/', $name, $m) !== 1) {
+            return '';
+        }
+
+        $dir = dirname(__DIR__) . '/public/assets/uploads';
+        $src = $dir . '/' . $name;
+        if (!is_file($src)) {
+            return '';
+        }
+
+        $newName = bin2hex(random_bytes(16)) . '.' . $m[1];
+        $dest    = $dir . '/' . $newName;
+        if (!copy($src, $dest)) {
+            error_log('[wca] Upload::copyImage: copy falló de ' . $src);
+            return '';
+        }
+        @chmod($dest, 0644);
+
+        return '/assets/uploads/' . $newName;
+    }
+
+    /**
      * Elimina una imagen subida previamente. Falla silencioso si no existe o
      * si la ruta no pertenece a la carpeta de uploads (defensa contra path
      * traversal en datos legacy de BD).

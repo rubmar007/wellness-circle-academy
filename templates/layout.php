@@ -69,6 +69,7 @@ $whatsappNumber = preg_replace('/\D+/', '', (string) \App\Support\Env::get('WHAT
     <link rel="stylesheet" href="/assets/css/patchmap.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/patchmap.css') ?>">
     <link rel="stylesheet" href="/assets/css/experiencekit.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/experiencekit.css') ?>">
     <link rel="stylesheet" href="/assets/css/notifications.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/notifications.css') ?>">
+    <link rel="stylesheet" href="/assets/css/events-calendar.css?v=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/assets/css/events-calendar.css') ?>">
 </head>
 <body>
     <a class="skip-link" href="#main">Saltar al contenido</a>

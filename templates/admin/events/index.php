@@ -17,7 +17,10 @@ $types = AdminEventsController::TYPES;
     <p class="breadcrumb"><a href="/admin">Admin</a> &rsaquo; <span>Eventos</span></p>
     <div class="page-head-row">
         <h1>Eventos</h1>
-        <a class="button button-primary" href="/admin/eventos/nuevo">Nuevo evento</a>
+        <div class="table-actions">
+            <a class="button button-ghost" href="/admin/eventos/calendario">📅 Ver calendario</a>
+            <a class="button button-primary" href="/admin/eventos/nuevo">Nuevo evento</a>
+        </div>
     </div>
 </section>
 
@@ -59,6 +62,7 @@ $types = AdminEventsController::TYPES;
                         <td class="ta-right">
                             <div class="table-actions">
                                 <a class="button button-ghost button-sm" href="/admin/eventos/<?= e($ev['id']) ?>/editar">Editar</a>
+                                <a class="button button-ghost button-sm" href="/admin/eventos/<?= e($ev['id']) ?>/duplicar">Duplicar</a>
                                 <a class="button button-ghost button-sm button-danger" href="/admin/eventos/<?= e($ev['id']) ?>/eliminar">Eliminar</a>
                             </div>
                         </td>

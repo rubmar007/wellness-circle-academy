@@ -43,6 +43,15 @@ final class AdminEventsController
     {
         Auth::requireAdmin();
 
+        // Al crear desde un día del calendario (?fecha=YYYY-MM-DD) se
+        // precarga esa fecha con una hora por defecto, para no obligar a
+        // capturarla desde cero.
+        $fecha    = trim((string) ($_GET['fecha'] ?? ''));
+        $startsAt = '';
+        if (\DateTime::createFromFormat('Y-m-d', $fecha) !== false) {
+            $startsAt = $fecha . 'T18:00';
+        }
+
         View::render('admin/events/form', [
             'mode'   => 'create',
             'event'  => null,
@@ -50,11 +59,99 @@ final class AdminEventsController
             'old'    => [
                 'title'        => '',
                 'event_type'   => '',
-                'starts_at'    => '',
+                'starts_at'    => $startsAt,
                 'join_url'     => '',
                 'description'  => '',
                 'is_published' => '1',
             ],
+            'duplicateImageUrl' => null,
+        ]);
+    }
+
+    /** @param array<string,string> $params */
+    public function duplicate(array $params): void
+    {
+        Auth::requireAdmin();
+
+        $id     = self::parseId($params['id'] ?? '');
+        $source = self::findEvent($id);
+        if (!$source) {
+            self::redirect404();
+            return;
+        }
+
+        $imageUrl = '';
+        if (!empty($source['image_url'])) {
+            $imageUrl = Upload::copyImage((string) $source['image_url']);
+        }
+
+        View::render('admin/events/form', [
+            'mode'   => 'create',
+            'event'  => null,
+            'errors' => [],
+            'old'    => [
+                'title'        => (string) $source['title'] . ' (copia)',
+                'event_type'   => (string) $source['event_type'],
+                'starts_at'    => (new DateTime((string) $source['starts_at']))->format('Y-m-d\TH:i'),
+                'join_url'     => (string) ($source['join_url'] ?? ''),
+                'description'  => (string) ($source['description'] ?? ''),
+                'is_published' => $source['is_published'] ? '1' : '',
+            ],
+            'duplicateImageUrl' => $imageUrl !== '' ? $imageUrl : null,
+        ]);
+    }
+
+    /** @param array<string,string> $params */
+    public function calendar(array $params): void
+    {
+        Auth::requireAdmin();
+
+        $monthParam = trim((string) ($_GET['mes'] ?? ''));
+        $monthStart = DateTime::createFromFormat('Y-m-d', $monthParam . '-01');
+        if ($monthStart === false) {
+            $monthStart = new DateTime('first day of this month');
+        }
+        $monthStart->setTime(0, 0);
+
+        $gridStart = clone $monthStart;
+        $gridStart->modify('-' . $gridStart->format('w') . ' days');
+        $gridEnd = (clone $gridStart)->modify('+42 days');
+
+        $stmt = Connection::get()->prepare(
+            'SELECT id, title, event_type, starts_at, is_published
+               FROM events
+              WHERE starts_at >= :start AND starts_at < :end
+              ORDER BY starts_at ASC'
+        );
+        $stmt->execute([
+            ':start' => $gridStart->format('Y-m-d H:i:s'),
+            ':end'   => $gridEnd->format('Y-m-d H:i:s'),
+        ]);
+        $events = $stmt->fetchAll();
+
+        $byDay = [];
+        foreach ($events as $ev) {
+            $key = (new DateTime((string) $ev['starts_at']))->format('Y-m-d');
+            $byDay[$key][] = $ev;
+        }
+
+        $cells  = [];
+        $cursor = clone $gridStart;
+        for ($i = 0; $i < 42; $i++) {
+            $key      = $cursor->format('Y-m-d');
+            $cells[]  = [
+                'date'    => clone $cursor,
+                'inMonth' => $cursor->format('Y-m') === $monthStart->format('Y-m'),
+                'events'  => $byDay[$key] ?? [],
+            ];
+            $cursor->modify('+1 day');
+        }
+
+        View::render('admin/events/calendar', [
+            'monthStart' => $monthStart,
+            'cells'      => $cells,
+            'prevMonth'  => (clone $monthStart)->modify('-1 month')->format('Y-m'),
+            'nextMonth'  => (clone $monthStart)->modify('+1 month')->format('Y-m'),
         ]);
     }
 
@@ -75,12 +172,22 @@ final class AdminEventsController
             } catch (RuntimeException $e) {
                 $uploadError = $e->getMessage();
             }
+            if ($data['duplicate_image_url'] !== '') {
+                // Se subió un archivo nuevo en vez de conservar la imagen
+                // duplicada: la copia física que ya no se usará se descarta.
+                Upload::deleteImage($data['duplicate_image_url']);
+                $data['duplicate_image_url'] = '';
+            }
+        } elseif ($data['duplicate_image_url'] !== '' && self::isValidUploadedImage($data['duplicate_image_url'])) {
+            // "Duplicar evento": si no se subió un archivo nuevo, se conserva
+            // la copia que ya se hizo físicamente en duplicate() (ver form.php).
+            $imageUrl = $data['duplicate_image_url'];
         }
 
         $errors = self::validate($data, $uploadError);
 
         if ($errors !== []) {
-            if ($imageUrl !== '') {
+            if ($hasFile && $imageUrl !== '') {
                 Upload::deleteImage($imageUrl);
             }
             View::render('admin/events/form', [
@@ -88,6 +195,7 @@ final class AdminEventsController
                 'event'  => null,
                 'errors' => $errors,
                 'old'    => $data,
+                'duplicateImageUrl' => $data['duplicate_image_url'] !== '' ? $data['duplicate_image_url'] : null,
             ]);
             return;
         }
@@ -257,7 +365,7 @@ final class AdminEventsController
             && (int) ($_FILES['image']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
     }
 
-    /** @return array{title:string,event_type:string,starts_at:string,join_url:string,description:string,is_published:string} */
+    /** @return array{title:string,event_type:string,starts_at:string,join_url:string,description:string,is_published:string,duplicate_image_url:string} */
     private static function extractInput(): array
     {
         return [
@@ -267,11 +375,25 @@ final class AdminEventsController
             'join_url'     => trim((string) ($_POST['join_url'] ?? '')),
             'description'  => trim((string) ($_POST['description'] ?? '')),
             'is_published' => isset($_POST['is_published']) ? '1' : '',
+            'duplicate_image_url' => trim((string) ($_POST['duplicate_image_url'] ?? '')),
         ];
     }
 
+    /** Valida que la ruta venga realmente de una copia hecha por duplicate() y que el archivo exista. */
+    private static function isValidUploadedImage(string $path): bool
+    {
+        if (!str_starts_with($path, '/assets/uploads/')) {
+            return false;
+        }
+        $name = basename($path);
+        if (preg_match('/^[a-f0-9]{32}\.(jpg|png|webp)$/', $name) !== 1) {
+            return false;
+        }
+        return is_file(dirname(__DIR__, 2) . '/public/assets/uploads/' . $name);
+    }
+
     /**
-     * @param array{title:string,event_type:string,starts_at:string,join_url:string,description:string,is_published:string} $data
+     * @param array{title:string,event_type:string,starts_at:string,join_url:string,description:string,is_published:string,duplicate_image_url:string} $data
      * @return array<string,string>
      */
     private static function validate(array $data, ?string $uploadError): array

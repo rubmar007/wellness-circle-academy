@@ -9,7 +9,9 @@ use App\Controllers\AdminEventsController;
  * @var array<string,string> $errors
  * @var array<string,string> $old
  * @var string $csrf
+ * @var string|null $duplicateImageUrl
  */
+$duplicateImageUrl ??= null;
 $isCreate  = $mode === 'create';
 $pageTitle = $isCreate ? 'Nuevo evento' : 'Editar evento';
 $action    = $isCreate ? '/admin/eventos' : '/admin/eventos/' . (int) $event['id'];
@@ -98,6 +100,12 @@ $types     = AdminEventsController::TYPES;
                 <img src="<?= e($event['image_url']) ?>" alt="" loading="lazy">
                 <span class="muted small">Actual. Sube otra para reemplazarla.</span>
             </p>
+        <?php elseif ($isCreate && $duplicateImageUrl !== null): ?>
+            <p class="form-image-current">
+                <img src="<?= e($duplicateImageUrl) ?>" alt="" loading="lazy">
+                <span class="muted small">Copiada del evento original. Sube otra para reemplazarla.</span>
+            </p>
+            <input type="hidden" name="duplicate_image_url" value="<?= e($duplicateImageUrl) ?>">
         <?php endif; ?>
         <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp">
         <small class="field-hint">Opcional. Flyer o banner del evento. JPG, PNG o WebP. Máximo 5 MB.</small>

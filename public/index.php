@@ -238,9 +238,11 @@ $router->post('/admin/materiales/{id}/eliminar',  [AdminMaterialsController::cla
 
 // Admin · Eventos
 $router->get('/admin/eventos',                 [AdminEventsController::class, 'index']);
+$router->get('/admin/eventos/calendario',      [AdminEventsController::class, 'calendar']);
 $router->get('/admin/eventos/nuevo',           [AdminEventsController::class, 'create']);
 $router->post('/admin/eventos',                [AdminEventsController::class, 'store']);
 $router->get('/admin/eventos/{id}/editar',     [AdminEventsController::class, 'edit']);
+$router->get('/admin/eventos/{id}/duplicar',   [AdminEventsController::class, 'duplicate']);
 $router->post('/admin/eventos/{id}',           [AdminEventsController::class, 'update']);
 $router->get('/admin/eventos/{id}/eliminar',   [AdminEventsController::class, 'confirmDestroy']);
 $router->post('/admin/eventos/{id}/eliminar',  [AdminEventsController::class, 'destroy']);
