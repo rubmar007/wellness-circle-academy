@@ -37,6 +37,8 @@ final class ExperienceKitData
     private const WATER_GLASS_ML = 250;
     private const HYDRATION_ML_PER_KG = 33;
     private const DEFAULT_WATER_GOAL_GLASSES = 8;
+    private const BADGE_HYDRATION_RATIO = 0.6;
+    private const DIAMOND_STEPS_GOAL    = 2000;
 
     /** @return array<string, array{label: string, patches: array<int, array{slug: string, name: string, hours: string}>}> */
     public static function calendar(): array
@@ -251,16 +253,47 @@ final class ExperienceKitData
     }
 
     /**
-     * Día "cumplido" para efectos de insignias: parche puesto, meta de
-     * hidratación alcanzada y meta de pasos alcanzada.
+     * Umbral de hidratación para efectos de insignias (Silver/Gold): 60% de
+     * la meta normal del día (peso × 33ml/kg), NO el 100% que se usa para
+     * el indicador "meta cumplida" del checklist diario ni para el stat
+     * informativo "Hidratación cumplida" del resumen — esos siguen usando
+     * waterGoalMet() sin cambios.
      *
      * @param array<string,mixed> $log fila de client_kit_logs
      */
-    public static function isDayComplete(array $log, string $kitSlug, ?float $weightKg): bool
+    public static function badgeHydrationMet(array $log, ?float $weightKg): bool
+    {
+        $required = (int) ceil(self::waterGoalGlasses($weightKg) * self::BADGE_HYDRATION_RATIO);
+        return (int) $log['water_count'] >= $required;
+    }
+
+    /**
+     * Día "cumplido" para Silver/Gold: parche puesto, al menos 60% de la
+     * meta de hidratación del día, y el diario guardado ese día (con que
+     * exista el registro basta, no se exige que estén todas las preguntas
+     * contestadas). Los pasos NO cuentan aquí — solo importan para Diamond.
+     *
+     * @param array<string,mixed> $log fila de client_kit_logs
+     */
+    public static function isDayComplete(array $log, ?float $weightKg): bool
     {
         return (bool) $log['patch_applied']
-            && self::waterGoalMet($log, $weightKg)
-            && self::stepsGoalMet($log, $kitSlug);
+            && self::badgeHydrationMet($log, $weightKg)
+            && $log['diary'] !== null;
+    }
+
+    /**
+     * Día "cumplido" para el requisito extra de Diamond: mínimo 2000 pasos
+     * y algún tipo de ejercicio marcado ese día. Mismo umbral de pasos para
+     * cualquier Experience Kit (no usa stepsGoal(), que varía por kit).
+     *
+     * @param array<string,mixed> $log fila de client_kit_logs
+     */
+    public static function diamondDayMet(array $log): bool
+    {
+        return $log['steps'] !== null
+            && (int) $log['steps'] >= self::DIAMOND_STEPS_GOAL
+            && (bool) $log['exercise_done'];
     }
 
     /**
@@ -288,7 +321,18 @@ final class ExperienceKitData
 
     /**
      * Insignia alcanzada según los 7 registros del kit (uno por día, puede
-     * haber menos de 7 si el kit está en curso).
+     * haber menos de 7 si el kit está en curso). Reglas confirmadas por Rub
+     * 2026-08-22:
+     * - Silver: 4 de los 7 días "cumplidos" (parche + hidratación ≥60% +
+     *   diario guardado). Los pasos no cuentan.
+     * - Gold: los 7 días "cumplidos" con el mismo criterio que Silver.
+     * - Diamond: Gold + los 7 días con ≥2000 pasos y ejercicio marcado
+     *   (aplica igual a cualquier Experience Kit, no solo Performance).
+     *
+     * $kitSlug ya no participa en el cálculo de insignias (el paso de la
+     * meta de pasos por kit se usaba antes; ahora Diamond usa un umbral
+     * fijo de 2000 pasos para todos) — se deja el parámetro por
+     * compatibilidad con los llamadores existentes.
      *
      * @param array<int, array<string,mixed>> $logs
      * @return array{badge: string|null, completedDays: int, exerciseDays: int}
@@ -296,13 +340,17 @@ final class ExperienceKitData
     public static function badgeProgress(array $logs, string $kitSlug, ?float $weightKg): array
     {
         $completedDays = 0;
-        $exerciseDays = 0;
+        $exerciseDays  = 0;
+        $diamondDays   = 0;
         foreach ($logs as $log) {
-            if (self::isDayComplete($log, $kitSlug, $weightKg)) {
+            if (self::isDayComplete($log, $weightKg)) {
                 $completedDays++;
             }
             if ($log['exercise_done']) {
                 $exerciseDays++;
+            }
+            if (self::diamondDayMet($log)) {
+                $diamondDays++;
             }
         }
 
@@ -313,7 +361,7 @@ final class ExperienceKitData
         if ($completedDays >= 7) {
             $badge = 'gold';
         }
-        if ($badge === 'gold' && $exerciseDays >= 3) {
+        if ($badge === 'gold' && $diamondDays >= 7) {
             $badge = 'diamond';
         }
 

@@ -134,14 +134,14 @@ $badgeName   = $badge['badge'] !== null ? ($badgeLabels[$badge['badge']] ?? $bad
 <article class="section-card">
     <h2>Puntos e insignias</h2>
     <p>
-        Días cumplidos (parche + hidratación + pasos): <strong><?= e($badge['completedDays']) ?>/7</strong>
+        Días cumplidos (parche + hidratación + diario): <strong><?= e($badge['completedDays']) ?>/7</strong>
         &nbsp;·&nbsp;
         Días con ejercicio: <strong><?= e($badge['exerciseDays']) ?></strong>
     </p>
     <?php if ($badgeName !== null): ?>
         <p><span class="badge badge-gold">Insignia actual: <?= e($badgeName) ?></span></p>
     <?php else: ?>
-        <p class="muted">Cumple al menos 4 de los 7 días (parche + hidratación + pasos) para tu primera insignia (Silver).</p>
+        <p class="muted">Cumple al menos 4 de los 7 días (parche puesto + al menos 60% de tu meta de hidratación + diario del día guardado) para tu primera insignia (Silver).</p>
     <?php endif; ?>
 </article>
 

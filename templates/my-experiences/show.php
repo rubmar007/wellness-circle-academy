@@ -67,7 +67,7 @@ $st = $statusLabels[$status];
     <article class="section-card">
         <h2>Puntos e insignias (en curso)</h2>
         <p>
-            Días cumplidos (parche + hidratación + pasos): <strong><?= e($badge['completedDays']) ?>/7</strong>
+            Días cumplidos (parche + hidratación + diario): <strong><?= e($badge['completedDays']) ?>/7</strong>
             &nbsp;·&nbsp;
             Días con ejercicio: <strong><?= e($badge['exerciseDays']) ?></strong>
         </p>
