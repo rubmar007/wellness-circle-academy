@@ -29,10 +29,20 @@ final class ClientKitController
             return;
         }
 
-        $dayNumber = self::currentDayNumber($kit);
-        $log       = self::todayLog($kit, $dayNumber);
         $logs      = self::allLogs((int) $kit['id']);
         $weightKg  = $kit['weight_kg'] !== null ? (float) $kit['weight_kg'] : null;
+        $rawDay    = ExperienceKitData::rawDayNumberForStartDate((string) $kit['started_at']);
+
+        if ($rawDay > 7) {
+            View::render('client-kit/completed', [
+                'kitLabel' => ExperienceKitData::kitLabels()[$kit['kit_slug']] ?? $kit['kit_slug'],
+                'badge'    => ExperienceKitData::badgeProgress($logs, $kit['kit_slug'], $weightKg),
+            ]);
+            return;
+        }
+
+        $dayNumber = $rawDay;
+        $log       = self::todayLog($kit, $dayNumber);
 
         View::render('client-kit/index', [
             'kit'         => $kit,

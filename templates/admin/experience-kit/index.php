@@ -53,7 +53,12 @@ $pageTitle = 'WCA Experience Kit';
                                 : '<span class="muted">Sin asignar</span>' ?>
                         </td>
                         <td><?= e($kitLabels[$kit['kit_slug']] ?? $kit['kit_slug']) ?></td>
-                        <td><?= e($r['dayNumber']) ?>/7</td>
+                        <td>
+                            <?= e($r['dayNumber']) ?>/7
+                            <?php if ($r['isCompleted']): ?>
+                                <br><span class="badge badge-gold small">Completado</span>
+                            <?php endif; ?>
+                        </td>
                         <td>
                             <?= $r['patchApplied']
                                 ? '<span class="badge badge-success">sí</span>'

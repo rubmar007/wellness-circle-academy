@@ -140,17 +140,30 @@ final class ExperienceKitData
     }
 
     /**
+     * Día transcurrido desde el inicio del kit (1 = día de inicio), SIN
+     * límite superior — puede ser mayor a 7 si ya se cumplió el kit. Única
+     * fuente de verdad para este cálculo: antes existían copias sueltas en
+     * MyExperiencesController y AdminClientKitsController con el signo
+     * invertido (`1 + diff` en vez de `1 - diff`), lo que las dejaba
+     * pegadas en "Día 1" para siempre sin importar cuántos días hubieran
+     * pasado. No lo vuelvas a duplicar inline — usa este método.
+     */
+    public static function rawDayNumberForStartDate(string $startedAt): int
+    {
+        $started = new \DateTimeImmutable($startedAt);
+        $today   = new \DateTimeImmutable('today');
+        $diff    = (int) $today->diff($started)->format('%r%a');
+        return max(1, 1 - $diff); // días transcurridos + 1
+    }
+
+    /**
      * Día del calendario de 7 días (1-7) en el que va un kit según su fecha
      * de inicio, comparado contra hoy. Compartido por ClientKitController
      * (área del cliente) y PushService (recordatorios push personalizados).
      */
     public static function dayNumberForStartDate(string $startedAt): int
     {
-        $started = new \DateTimeImmutable($startedAt);
-        $today   = new \DateTimeImmutable('today');
-        $diff    = (int) $today->diff($started)->format('%r%a');
-        $day     = 1 - $diff; // días transcurridos + 1
-        return max(1, min(7, $day));
+        return min(7, self::rawDayNumberForStartDate($startedAt));
     }
 
     public static function stepsGoal(string $kitSlug): int
@@ -305,6 +318,27 @@ final class ExperienceKitData
         }
 
         return ['badge' => $badge, 'completedDays' => $completedDays, 'exerciseDays' => $exerciseDays];
+    }
+
+    /** @return array<string, string> */
+    public static function badgeLabels(): array
+    {
+        return ['silver' => 'Silver', 'gold' => 'Gold', 'diamond' => 'Diamond'];
+    }
+
+    /**
+     * Mensaje de felicitación al terminar los 7 días (pantalla "Mi Kit" y
+     * push de finalización). Mismo texto en ambos canales a propósito.
+     */
+    public static function completionMessage(?string $badge): string
+    {
+        if ($badge !== null) {
+            $badgeName = self::badgeLabels()[$badge] ?? $badge;
+            return "¡Felicidades, completaste tus 7 días! Lograste tu insignia \"{$badgeName}\". "
+                . "Ponte en contacto con tu promotor para pedir tu siguiente kit o empezar con un reto de 30 o 90 días.";
+        }
+        return "¡Completaste tus 7 días! Ponte en contacto con tu promotor para pedir tu siguiente kit "
+            . "o empezar con un reto de 30 o 90 días.";
     }
 
     /** Texto oficial del aviso de bienestar (docs/PLAN_A_1act sección 5.4). */

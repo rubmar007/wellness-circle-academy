@@ -39,14 +39,20 @@ final class MyExperiencesController
         $stmt->execute([':p' => $promoterId, ':active' => $tab === 'activos' ? 't' : 'f']);
         $kits = $stmt->fetchAll();
 
-        $today = new \DateTimeImmutable('today');
         $rows  = [];
         foreach ($kits as $kit) {
-            $started   = new \DateTimeImmutable((string) $kit['started_at']);
-            $dayNumber = max(1, min(7, 1 + (int) $today->diff($started)->format('%r%a')));
+            $rawDay      = ExperienceKitData::rawDayNumberForStartDate((string) $kit['started_at']);
+            $dayNumber   = min(7, $rawDay);
+            $isCompleted = !$kit['is_active'] || $rawDay > 7;
 
             $log = self::dayLog((int) $kit['id'], $dayNumber);
             $hydration = ExperienceKitData::hydrationStatus($log);
+
+            $badge = null;
+            if ($isCompleted) {
+                $weightKg = $kit['weight_kg'] !== null ? (float) $kit['weight_kg'] : null;
+                $badge = ExperienceKitData::badgeProgress(self::allLogs((int) $kit['id']), (string) $kit['kit_slug'], $weightKg);
+            }
 
             $rows[] = [
                 'kit'           => $kit,
@@ -54,7 +60,8 @@ final class MyExperiencesController
                 'patchApplied'  => $log ? (bool) $log['patch_applied'] : false,
                 'exerciseDone'  => $log ? (bool) $log['exercise_done'] : false,
                 'diaryAnswered' => $log !== null && $log['diary'] !== null,
-                'status'        => !$kit['is_active'] ? 'completado' : ($hydration['needsFollowUp'] ? 'seguimiento' : 'al_dia'),
+                'status'        => $isCompleted ? 'completado' : ($hydration['needsFollowUp'] ? 'seguimiento' : 'al_dia'),
+                'badge'         => $badge,
             ];
         }
 
@@ -115,21 +122,23 @@ final class MyExperiencesController
         $kitSlug  = (string) $kit['kit_slug'];
         $weightKg = $kit['weight_kg'] !== null ? (float) $kit['weight_kg'] : null;
 
-        $today     = new \DateTimeImmutable('today');
-        $started   = new \DateTimeImmutable((string) $kit['started_at']);
-        $dayNumber = max(1, min(7, 1 + (int) $today->diff($started)->format('%r%a')));
-        $todayLog  = $logsByDay[$dayNumber] ?? null;
-        $hydration = ExperienceKitData::hydrationStatus($todayLog);
+        $rawDay      = ExperienceKitData::rawDayNumberForStartDate((string) $kit['started_at']);
+        $dayNumber   = min(7, $rawDay);
+        $isCompleted = !$kit['is_active'] || $rawDay > 7;
+        $todayLog    = $logsByDay[$dayNumber] ?? null;
+        $hydration   = ExperienceKitData::hydrationStatus($todayLog);
 
-        $status = !$kit['is_active']
+        $status = $isCompleted
             ? 'completado'
             : ($hydration['needsFollowUp'] ? 'seguimiento' : 'al_dia');
 
         $badge = ExperienceKitData::badgeProgress($logs, $kitSlug, $weightKg);
 
-        // Resumen final (sección 16), solo relevante si el Experience ya terminó.
+        // Resumen final (sección 16), relevante en cuanto el Experience ya
+        // terminó — ya sea porque el admin lo finalizó manualmente o porque
+        // ya pasaron los 7 días, aunque nadie le haya dado clic a "Finalizar".
         $summary = null;
-        if (!$kit['is_active']) {
+        if ($isCompleted) {
             $daysHydration = 0;
             $daysSteps     = 0;
             $daysExercise  = 0;
@@ -192,6 +201,16 @@ final class MyExperiencesController
             exit;
         }
         return (int) $user['id'];
+    }
+
+    /** @return array<int, array<string,mixed>> */
+    private static function allLogs(int $clientKitId): array
+    {
+        $stmt = Connection::get()->prepare(
+            'SELECT * FROM client_kit_logs WHERE client_kit_id = :k ORDER BY day_number ASC'
+        );
+        $stmt->execute([':k' => $clientKitId]);
+        return $stmt->fetchAll();
     }
 
     /** @return array<string,mixed>|null */

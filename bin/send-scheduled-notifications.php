@@ -24,6 +24,7 @@ require $basePath . '/vendor/autoload.php';
 
 use App\Database\Connection;
 use App\Support\Env;
+use App\Support\ExperienceKitData;
 use App\Support\PushService;
 
 Env::load($basePath);
@@ -92,4 +93,46 @@ foreach ($due as $notification) {
             ':id'     => (int) $notification['id'],
         ]);
     }
+}
+
+// Mensaje de felicitación al terminar los 7 días del Experience Kit — se
+// envía una sola vez por kit (completion_notified_at IS NULL como guarda de
+// idempotencia; >=7 días desde started_at en vez de "== día 8 exacto" para
+// que no se pierda si el cron no corrió justo ese día).
+$completedKits = $pdo->query(
+    "SELECT ck.*, u.id AS user_id
+       FROM client_kits ck
+       JOIN users u ON u.id = ck.user_id
+      WHERE u.is_active = TRUE
+        AND ck.completion_notified_at IS NULL
+        AND (CURRENT_DATE - ck.started_at) >= 7"
+)->fetchAll();
+
+foreach ($completedKits as $kit) {
+    $logsStmt = $pdo->prepare('SELECT * FROM client_kit_logs WHERE client_kit_id = :k');
+    $logsStmt->execute([':k' => (int) $kit['id']]);
+    $logs = $logsStmt->fetchAll();
+
+    $weightKg = $kit['weight_kg'] !== null ? (float) $kit['weight_kg'] : null;
+    $badge    = ExperienceKitData::badgeProgress($logs, (string) $kit['kit_slug'], $weightKg);
+
+    $result = PushService::send([
+        'id'               => 'kit-completion-' . (int) $kit['id'],
+        'audience_type'    => 'user',
+        'audience_user_id' => (int) $kit['user_id'],
+        'title'            => '¡Completaste tu Experience Kit!',
+        'body'             => ExperienceKitData::completionMessage($badge['badge']),
+        'url'              => '/mi-kit',
+        'include_patches'  => false,
+    ]);
+
+    fwrite(STDOUT, sprintf(
+        "[kit #%d] mensaje de finalización -> enviadas: %d, fallidas: %d\n",
+        (int) $kit['id'],
+        $result['sent'],
+        $result['failed']
+    ));
+
+    $upd = $pdo->prepare('UPDATE client_kits SET completion_notified_at = NOW() WHERE id = :id');
+    $upd->execute([':id' => (int) $kit['id']]);
 }

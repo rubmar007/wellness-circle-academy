@@ -21,7 +21,7 @@ $statusLabels = [
     'seguimiento' => ['label' => 'Requiere seguimiento', 'class' => 'badge-error'],
     'completado'  => ['label' => 'Completado', 'class' => 'badge-gold'],
 ];
-$badgeLabels = ['silver' => 'Silver', 'gold' => 'Gold', 'diamond' => 'Diamond'];
+$badgeLabels = \App\Support\ExperienceKitData::badgeLabels();
 $st = $statusLabels[$status];
 ?>
 <section class="page-head">

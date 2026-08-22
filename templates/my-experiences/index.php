@@ -13,6 +13,7 @@ $statusLabels = [
     'seguimiento' => ['label' => 'Requiere seguimiento', 'class' => 'badge-error'],
     'completado'  => ['label' => 'Completado', 'class' => 'badge-gold'],
 ];
+$badgeLabels = \App\Support\ExperienceKitData::badgeLabels();
 ?>
 <section class="page-head">
     <h1>Mis Experience</h1>
@@ -82,7 +83,12 @@ $statusLabels = [
                                 ? '<span class="badge badge-success">sí</span>'
                                 : '<span class="badge badge-muted">no</span>' ?>
                         </td>
-                        <td><span class="badge <?= $st['class'] ?>"><?= e($st['label']) ?></span></td>
+                        <td>
+                            <span class="badge <?= $st['class'] ?>"><?= e($st['label']) ?></span>
+                            <?php if ($r['status'] === 'completado' && $r['badge'] !== null && $r['badge']['badge'] !== null): ?>
+                                <br><span class="badge badge-gold small">Insignia: <?= e($badgeLabels[$r['badge']['badge']] ?? $r['badge']['badge']) ?></span>
+                            <?php endif; ?>
+                        </td>
                         <td class="ta-right">
                             <a class="button button-ghost button-sm" href="/mis-experience/<?= e($kit['id']) ?>">Ver</a>
                         </td>

@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+
+use App\Support\ExperienceKitData;
+
 /**
  * @var array<string,mixed> $kit
  * @var string $kitLabel
@@ -15,7 +18,7 @@ declare(strict_types=1);
  */
 $pageTitle = 'Mi Kit';
 
-$badgeLabels = ['silver' => 'Silver', 'gold' => 'Gold', 'diamond' => 'Diamond'];
+$badgeLabels = ExperienceKitData::badgeLabels();
 $badgeName   = $badge['badge'] !== null ? ($badgeLabels[$badge['badge']] ?? $badge['badge']) : null;
 ?>
 <section class="page-head">

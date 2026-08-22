@@ -38,11 +38,11 @@ final class AdminClientKitsController
               ORDER BY u.name ASC"
         )->fetchAll();
 
-        $today = (new \DateTimeImmutable('today'));
         $rows  = [];
         foreach ($kits as $kit) {
-            $started   = new \DateTimeImmutable((string) $kit['started_at']);
-            $dayNumber = max(1, min(7, 1 + (int) $today->diff($started)->format('%r%a')));
+            $rawDay      = ExperienceKitData::rawDayNumberForStartDate((string) $kit['started_at']);
+            $dayNumber   = min(7, $rawDay);
+            $isCompleted = $rawDay > 7;
 
             $stmt = Connection::get()->prepare(
                 'SELECT * FROM client_kit_logs WHERE client_kit_id = :k AND day_number = :d LIMIT 1'
@@ -55,6 +55,7 @@ final class AdminClientKitsController
             $rows[] = [
                 'kit'              => $kit,
                 'dayNumber'        => $dayNumber,
+                'isCompleted'      => $isCompleted,
                 'patchApplied'     => $log ? (bool) $log['patch_applied'] : false,
                 'hoursSinceWater'  => $hydration['hoursSinceWater'],
                 'needsFollowUp'    => $hydration['needsFollowUp'],
