@@ -36,8 +36,7 @@ $due = $pdo->query(
 )->fetchAll();
 
 if ($due === []) {
-    fwrite(STDOUT, "Sin notificaciones pendientes.\n");
-    exit(0);
+    fwrite(STDOUT, "Sin notificaciones programadas pendientes.\n");
 }
 
 foreach ($due as $notification) {
