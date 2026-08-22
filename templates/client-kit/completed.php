@@ -20,7 +20,7 @@ $badgeName   = $badge['badge'] !== null ? ($badgeLabels[$badge['badge']] ?? $bad
     <h2>¡Felicidades, completaste tus 7 días!</h2>
 
     <?php if ($badgeName !== null): ?>
-        <p><span class="badge badge-gold">Insignia obtenida: <?= e($badgeName) ?></span></p>
+        <img class="kit-badge-img" src="<?= e(ExperienceKitData::badgeImagePath($badge['badge'])) ?>" alt="Insignia <?= e($badgeName) ?>">
     <?php endif; ?>
 
     <p><?= e(ExperienceKitData::completionMessage($badge['badge'])) ?></p>

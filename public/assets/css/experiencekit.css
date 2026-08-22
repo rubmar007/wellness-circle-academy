@@ -93,6 +93,10 @@
 .kit-movement-form .field-row { margin-bottom: 0.8rem; }
 .kit-movement-form .field-checkbox { margin-bottom: 0.8rem; }
 
+/* ---------- Kit completado ---------- */
+.kit-badge-img { display: block; width: 100%; max-width: 320px; margin: 0 auto 1rem; border-radius: 12px; }
+.kit-badge-img-sm { max-width: 160px; margin: 0 0 0.75rem; }
+
 /* ---------- Aviso de bienestar ---------- */
 .kit-notice p { color: var(--color-text-muted); font-size: 0.85rem; line-height: 1.6; }
 

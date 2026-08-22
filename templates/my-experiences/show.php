@@ -56,13 +56,12 @@ $st = $statusLabels[$status];
             <li>Ejercicio registrado: <strong><?= e($summary['daysExercise']) ?>/7</strong></li>
             <li>Diario completado: <strong><?= e($summary['daysDiary']) ?>/7</strong></li>
         </ul>
-        <p>
-            <?php if ($summary['badge'] !== null): ?>
-                <span class="badge badge-gold">Insignia obtenida: <?= e($badgeLabels[$summary['badge']] ?? $summary['badge']) ?></span>
-            <?php else: ?>
-                <span class="muted">No alcanzó ninguna insignia.</span>
-            <?php endif; ?>
-        </p>
+        <?php if ($summary['badge'] !== null): ?>
+            <img class="kit-badge-img kit-badge-img-sm" src="<?= e(\App\Support\ExperienceKitData::badgeImagePath($summary['badge'])) ?>" alt="Insignia <?= e($badgeLabels[$summary['badge']] ?? $summary['badge']) ?>">
+            <p><span class="badge badge-gold">Insignia obtenida: <?= e($badgeLabels[$summary['badge']] ?? $summary['badge']) ?></span></p>
+        <?php else: ?>
+            <p><span class="muted">No alcanzó ninguna insignia.</span></p>
+        <?php endif; ?>
     </article>
 <?php else: ?>
     <article class="section-card">

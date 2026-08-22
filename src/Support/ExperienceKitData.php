@@ -326,6 +326,15 @@ final class ExperienceKitData
         return ['silver' => 'Silver', 'gold' => 'Gold', 'diamond' => 'Diamond'];
     }
 
+    /** Imagen del diploma/insignia (Silver/Gold/Diamond) para mostrar al ganarla. */
+    public static function badgeImagePath(?string $badge): ?string
+    {
+        if (!isset(self::badgeLabels()[$badge ?? ''])) {
+            return null;
+        }
+        return '/assets/img/badges/' . $badge . '.png';
+    }
+
     /**
      * Mensaje de felicitación al terminar los 7 días (pantalla "Mi Kit" y
      * push de finalización). Mismo texto en ambos canales a propósito.
